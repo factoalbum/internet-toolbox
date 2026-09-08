@@ -18,7 +18,5 @@ export const tools: Tool[] = [
   { slug: "character-counter", name: "Character Counter", description: "Count characters with and without spaces.", category: "text", icon: FileText, status: "live" },
   { slug: "image-compressor", name: "Image Compressor", description: "Reduce image file size without unnecessary complexity.", category: "files", icon: ImageIcon, status: "coming-soon" },
 ];
-export const featuredTools = [
-  tools.find((tool) => tool.slug === "percentage-calculator")!, tools.find((tool) => tool.slug === "json-formatter")!, tools.find((tool) => tool.slug === "word-counter")!, tools.find((tool) => tool.slug === "age-calculator")!, tools.find((tool) => tool.slug === "discount-calculator")!, tools.find((tool) => tool.slug === "uuid-generator")!,
-];
+export const featuredTools = [tools[0], tools[3], tools[5], tools[1], tools[2], tools[4]];
 export const brandIcon = Sparkles;
