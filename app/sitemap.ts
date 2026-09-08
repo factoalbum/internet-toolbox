@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { tools, categories } from "@/lib/tools";
 
+export const dynamic = "force-static";
+
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
 
 export default function sitemap(): MetadataRoute.Sitemap {
