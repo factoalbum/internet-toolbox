@@ -19,19 +19,19 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="bg-[#171717] pb-14 text-white md:pb-20">
+      <section className="bg-[#e8e4d9] pb-14 text-[#171717] md:pb-20">
         <div className="container grid gap-10 pt-14 md:grid-cols-[1.35fr_.65fr] md:items-end md:pt-20">
           <div>
-            <p className="mb-6 inline-flex items-center gap-2 border border-white/15 px-3 py-1.5 text-xs font-semibold tracking-wide text-white/60">
+            <p className="mb-6 inline-flex items-center gap-2 border border-black/10 px-3 py-1.5 text-xs font-semibold tracking-wide text-black/55">
               Simple tools for everyday tasks
             </p>
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.055em] md:text-7xl lg:text-8xl">Small tools.<br /><span className="text-[#c8f169]">Big time saved.</span></h1>
-            <p className="mt-7 max-w-2xl text-base leading-7 text-white/60 md:text-lg">A growing collection of sharp, useful utilities for calculations, text, code, files and everyday internet work.</p>
+            <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.055em] md:text-7xl lg:text-8xl">Small tools.<br /><span className="text-[#5f7429]">Big time saved.</span></h1>
+            <p className="mt-7 max-w-2xl text-base leading-7 text-black/55 md:text-lg">A growing collection of sharp, useful utilities for calculations, text, code, files and everyday internet work.</p>
           </div>
           <div className="md:pb-1">
-            <p className="mb-3 text-right font-mono text-xs text-white/35">01 / TOOL INDEX</p>
+            <p className="mb-3 text-right font-mono text-xs text-black/35">01 / TOOL INDEX</p>
             <ToolSearch />
-            <p className="mt-3 text-right text-xs text-white/35">Try: percentage · JSON · word count · UUID</p>
+            <p className="mt-3 text-right text-xs text-black/35">Try: percentage · JSON · word count · UUID</p>
           </div>
         </div>
       </section>
