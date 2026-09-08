@@ -4,66 +4,80 @@ import { categories, featuredTools } from "@/lib/tools";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      <header className="border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight" aria-label="Internet Toolbox home">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-slate-950 text-white"><Sparkles size={18} /></span>
-            <span>Internet Toolbox</span>
+    <main className="min-h-screen bg-[#f3f0e8] text-[#171717]">
+      <header className="bg-[#171717] text-white">
+        <div className="container flex h-[72px] items-center justify-between">
+          <Link href="/" className="flex items-center gap-3" aria-label="Internet Toolbox home">
+            <span className="flex size-9 items-center justify-center rounded-lg bg-[#c8f169] text-[#171717]"><Sparkles size={18} /></span>
+            <span className="font-bold tracking-tight">Internet Toolbox</span>
           </Link>
-          <Link href="#tools" className="flex min-h-11 items-center rounded-xl px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-950">Browse tools</Link>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/55">
+            <span className="hidden sm:inline">Free utilities</span>
+            <span className="size-1 rounded-full bg-[#c8f169]" />
+            <Link href="#tools" className="rounded-lg px-3 py-2 text-white transition hover:bg-white/10">Explore</Link>
+          </div>
         </div>
       </header>
 
-      <section className="border-b border-slate-200 bg-white">
-        <div className="container py-16 text-center md:py-24">
-          <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700"><Sparkles size={14} /> Simple tools. Zero friction.</div>
-          <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-slate-950 md:text-6xl">Get small digital tasks done in seconds.</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 md:text-lg">Free, focused tools for calculations, coding, text, files and everyday tasks. No signup required.</p>
-          <div className="mx-auto mt-9 max-w-2xl">
-            <label htmlFor="tool-search" className="sr-only">Search tools</label>
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-300 bg-white px-4 py-3 shadow-sm ring-4 ring-slate-100">
-              <Search className="shrink-0 text-slate-400" size={21} />
-              <input id="tool-search" placeholder="Search for a tool…" className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-slate-400" />
-              <span className="hidden rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-400 sm:block">Search</span>
-            </div>
+      <section className="bg-[#171717] pb-14 text-white md:pb-20">
+        <div className="container grid gap-10 pt-14 md:grid-cols-[1.35fr_.65fr] md:items-end md:pt-20">
+          <div>
+            <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#c8f169]">
+              <span className="size-1.5 rounded-full bg-[#c8f169]" /> No signup. No nonsense.
+            </p>
+            <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.055em] md:text-7xl lg:text-8xl">Small tools.<br /><span className="text-[#c8f169]">Big time saved.</span></h1>
+            <p className="mt-7 max-w-2xl text-base leading-7 text-white/60 md:text-lg">A growing collection of sharp, useful utilities for calculations, text, code, files and everyday internet work.</p>
           </div>
-          <p className="mt-4 text-sm text-slate-400">Popular: Percentage Calculator · JSON Formatter · Word Counter</p>
+          <div className="md:pb-1">
+            <p className="mb-3 text-right font-mono text-xs text-white/35">01 / TOOL INDEX</p>
+            <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-2">
+              <label htmlFor="tool-search" className="sr-only">Search tools</label>
+              <div className="flex items-center gap-3 rounded-xl bg-white px-4 py-3.5 text-[#171717]">
+                <Search className="shrink-0 text-black/45" size={20} />
+                <input id="tool-search" placeholder="Find a tool…" className="min-w-0 flex-1 bg-transparent text-base font-medium outline-none placeholder:text-black/35" />
+                <kbd className="hidden rounded-md bg-black/5 px-2 py-1 font-mono text-[10px] text-black/40 sm:block">⌘ K</kbd>
+              </div>
+            </div>
+            <p className="mt-3 text-right text-xs text-white/35">Popular: Percentage · JSON · Word Counter</p>
+          </div>
         </div>
       </section>
 
-      <section id="tools" className="container py-14 md:py-20">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <div><p className="text-sm font-semibold uppercase tracking-wider text-blue-600">Start here</p><h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 md:text-3xl">Popular tools</h2></div>
-          <span className="text-sm text-slate-500">{featuredTools.length} tools available</span>
+      <section id="tools" className="container py-16 md:py-24">
+        <div className="mb-8 flex items-end justify-between border-b border-[#d8d4c9] pb-4">
+          <div><p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-black/40">02 / Start here</p><h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">Popular tools</h2></div>
+          <span className="hidden font-mono text-xs text-black/40 sm:block">{featuredTools.length.toString().padStart(2, "0")} utilities</span>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredTools.map((tool) => { const Icon = tool.icon; return (
-            <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-blue-100">
-              <div className="flex items-start justify-between gap-4"><span className="flex size-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition group-hover:bg-blue-50 group-hover:text-blue-700"><Icon size={21} /></span><ArrowRight size={18} className="text-slate-300 transition group-hover:translate-x-1 group-hover:text-slate-600" /></div>
-              <h3 className="mt-5 font-semibold text-slate-950">{tool.name}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{tool.description}</p>
+        <div className="grid gap-3 md:grid-cols-3">
+          {featuredTools.map((tool, index) => { const Icon = tool.icon; return (
+            <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group relative min-h-64 overflow-hidden border border-[#d8d4c9] bg-[#fffdf8] p-6 transition duration-200 hover:-translate-y-1 hover:border-[#171717] hover:shadow-[8px_8px_0_#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">
+              <div className="flex items-start justify-between"><span className="font-mono text-xs text-black/30">0{index + 1}</span><span className="flex size-10 items-center justify-center rounded-lg bg-[#edf7d5] text-[#171717]"><Icon size={20} /></span></div>
+              <div className="absolute bottom-6 left-6 right-6"><h3 className="text-xl font-bold tracking-tight">{tool.name}</h3><p className="mt-2 text-sm leading-6 text-black/55">{tool.description}</p><span className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em]">Open tool <ArrowRight size={14} className="transition group-hover:translate-x-1" /></span></div>
             </Link>
           ); })}
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-slate-50">
-        <div className="container py-14 md:py-20">
-          <div className="max-w-2xl"><p className="text-sm font-semibold uppercase tracking-wider text-blue-600">Browse by category</p><h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 md:text-3xl">Find the right tool</h2><p className="mt-3 leading-7 text-slate-600">Choose a category and get straight to the utility you need.</p></div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((category) => { const Icon = category.icon; return (
-              <Link key={category.slug} href={`/categories/${category.slug}`} className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-100">
-                <Icon size={21} className="text-slate-700" /><h3 className="mt-4 font-semibold text-slate-950">{category.name}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{category.description}</p>
-              </Link>
-            ); })}
+      <section className="border-y border-[#d8d4c9] bg-[#e8e4d9]">
+        <div className="container py-16 md:py-24">
+          <div className="grid gap-10 md:grid-cols-[.7fr_1.3fr]">
+            <div><p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-black/40">03 / Browse</p><h2 className="mt-3 max-w-sm text-3xl font-black tracking-tight md:text-4xl">Pick a lane. Get it done.</h2></div>
+            <div className="grid gap-px overflow-hidden border border-[#d8d4c9] bg-[#d8d4c9] sm:grid-cols-2">
+              {categories.map((category) => { const Icon = category.icon; return (
+                <Link key={category.slug} href={`/categories/${category.slug}`} className="group bg-[#f3f0e8] p-6 transition hover:bg-[#c8f169] focus:outline-none focus:ring-4 focus:ring-[#171717] focus:ring-inset">
+                  <div className="flex items-center justify-between"><Icon size={20} /><ArrowRight size={16} className="opacity-30 transition group-hover:translate-x-1 group-hover:opacity-100" /></div>
+                  <h3 className="mt-8 font-bold">{category.name}</h3><p className="mt-2 text-sm leading-6 text-black/50">{category.description}</p>
+                </Link>
+              ); })}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="container py-14 md:py-20"><div className="grid gap-8 md:grid-cols-3">
-        {[["Fast by design", "Lightweight tools built to get you from question to answer quickly."], ["Private where possible", "We prefer browser-side processing when a task can be completed safely on your device."], ["Made for real people", "Clear language, accessible controls and responsive layouts across devices."]].map(([title, text]) => <div key={title}><h2 className="font-semibold text-slate-950">{title}</h2><p className="mt-2 text-sm leading-6 text-slate-500">{text}</p></div>)}
+      <section className="container py-16 md:py-24"><div className="grid gap-8 md:grid-cols-3">
+        {[["FAST", "Lightweight tools built to get you from question to answer quickly."], ["PRIVATE", "Browser-side processing whenever a task can safely stay on your device."], ["CLEAR", "Useful interfaces, plain language and controls that work on every screen."]].map(([title, text]) => <div key={title} className="border-t-2 border-[#171717] pt-4"><p className="font-mono text-xs font-bold tracking-[0.16em]">{title}</p><p className="mt-3 max-w-sm text-sm leading-6 text-black/55">{text}</p></div>)}
       </div></section>
-      <footer className="border-t border-slate-200 bg-white"><div className="container flex flex-col gap-3 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} Internet Toolbox</p><p>Simple tools. Zero friction.</p></div></footer>
+      <footer className="bg-[#171717] text-white"><div className="container flex flex-col gap-3 py-8 text-sm sm:flex-row sm:items-center sm:justify-between"><p className="font-semibold">Internet Toolbox</p><p className="text-white/40">© {new Date().getFullYear()} · Built for the little things.</p></div></footer>
     </main>
   );
 }
