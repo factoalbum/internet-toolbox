@@ -47,8 +47,13 @@ function calculate(income: number, regime: "old" | "new", deductions: number): R
 
   let tax = slabTax(taxable, slabs);
 
-  if (regime === "new" && taxable <= 1_200_000) {
-    tax = Math.max(0, tax - Math.min(tax, 60_000));
+  if (regime === "new") {
+    if (taxable <= 1_200_000) {
+      tax = Math.max(0, tax - Math.min(tax, 60_000));
+    } else {
+      // Marginal relief prevents a small rise above ₹12 lakh from causing a disproportionate tax jump.
+      tax = Math.min(tax, taxable - 1_200_000);
+    }
   }
   if (regime === "old" && taxable <= 500_000) {
     tax = Math.max(0, tax - Math.min(tax, 12_500));
