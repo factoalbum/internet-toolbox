@@ -21,7 +21,7 @@ export const categories = [
 export const tools: Tool[] = [
   { slug: "percentage-calculator", name: "Percentage Calculator", description: "Calculate percentages, increases and decreases instantly.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "age-calculator", name: "Age Calculator", description: "Find an exact age between two dates.", category: "calculators", icon: Calculator, status: "coming-soon" },
-  { slug: "discount-calculator", name: "Discount Calculator", description: "Calculate sale prices and savings quickly.", category: "calculators", icon: Calculator, status: "coming-soon" },
+  { slug: "discount-calculator", name: "Discount Calculator", description: "Calculate sale prices and savings quickly.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "json-formatter", name: "JSON Formatter", description: "Format and inspect JSON with readable indentation.", category: "developer", icon: Code2, status: "live" },
   { slug: "uuid-generator", name: "UUID Generator", description: "Generate UUIDs instantly in your browser.", category: "developer", icon: Code2, status: "live" },
   { slug: "word-counter", name: "Word Counter", description: "Count words, characters and reading time.", category: "text", icon: FileText, status: "live" },
