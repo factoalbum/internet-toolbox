@@ -1,30 +1,29 @@
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import ToolSearch from "@/components/tool-search";
 import { categories, featuredTools } from "@/lib/tools";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#f3f0e8] text-[#171717]">
-      <header className="bg-[#171717] text-white">
-        <div className="container flex h-[72px] items-center justify-between">
+      <header className="border-b border-[#d8d4c9] bg-[#f3f0e8]">
+        <div className="container flex h-[68px] items-center justify-between">
           <Link href="/" className="flex items-center gap-3" aria-label="Internet Toolbox home">
-            <span className="flex size-9 items-center justify-center rounded-lg bg-[#c8f169] text-[#171717]"><Sparkles size={18} /></span>
-            <span className="font-bold tracking-tight">Internet Toolbox</span>
+            <span className="flex size-8 items-center justify-center border border-[#171717] bg-[#171717] text-xs font-bold text-white" aria-hidden="true">IT</span>
+            <span className="text-[15px] font-semibold tracking-[-0.01em]">Internet Toolbox</span>
           </Link>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/55">
-            <span className="hidden sm:inline">Free utilities</span>
-            <span className="size-1 rounded-full bg-[#c8f169]" />
-            <Link href="/tools" className="rounded-lg px-3 py-2 text-white transition hover:bg-white/10">All tools</Link>
-          </div>
+          <nav className="flex items-center gap-1" aria-label="Main navigation">
+            <Link href="/tools" className="rounded-md px-3 py-2 text-sm font-medium text-black/60 transition hover:bg-black/5 hover:text-[#171717]">All tools</Link>
+            <Link href="#tools" className="hidden rounded-md px-3 py-2 text-sm font-medium text-black/60 transition hover:bg-black/5 hover:text-[#171717] sm:inline-flex">Popular</Link>
+          </nav>
         </div>
       </header>
 
       <section className="bg-[#171717] pb-14 text-white md:pb-20">
         <div className="container grid gap-10 pt-14 md:grid-cols-[1.35fr_.65fr] md:items-end md:pt-20">
           <div>
-            <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#c8f169]">
-              <span className="size-1.5 rounded-full bg-[#c8f169]" /> No signup. No nonsense.
+            <p className="mb-6 inline-flex items-center gap-2 border border-white/15 px-3 py-1.5 text-xs font-semibold tracking-wide text-white/60">
+              Simple tools for everyday tasks
             </p>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.055em] md:text-7xl lg:text-8xl">Small tools.<br /><span className="text-[#c8f169]">Big time saved.</span></h1>
             <p className="mt-7 max-w-2xl text-base leading-7 text-white/60 md:text-lg">A growing collection of sharp, useful utilities for calculations, text, code, files and everyday internet work.</p>
