@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Search, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import ToolSearch from "@/components/tool-search";
 import { categories, featuredTools } from "@/lib/tools";
 
 export default function Home() {
@@ -14,7 +15,7 @@ export default function Home() {
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/55">
             <span className="hidden sm:inline">Free utilities</span>
             <span className="size-1 rounded-full bg-[#c8f169]" />
-            <Link href="#tools" className="rounded-lg px-3 py-2 text-white transition hover:bg-white/10">Explore</Link>
+            <Link href="/tools" className="rounded-lg px-3 py-2 text-white transition hover:bg-white/10">All tools</Link>
           </div>
         </div>
       </header>
@@ -30,15 +31,8 @@ export default function Home() {
           </div>
           <div className="md:pb-1">
             <p className="mb-3 text-right font-mono text-xs text-white/35">01 / TOOL INDEX</p>
-            <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-2">
-              <label htmlFor="tool-search" className="sr-only">Search tools</label>
-              <div className="flex items-center gap-3 rounded-xl bg-white px-4 py-3.5 text-[#171717]">
-                <Search className="shrink-0 text-black/45" size={20} />
-                <input id="tool-search" placeholder="Find a tool…" className="min-w-0 flex-1 bg-transparent text-base font-medium outline-none placeholder:text-black/35" />
-                <kbd className="hidden rounded-md bg-black/5 px-2 py-1 font-mono text-[10px] text-black/40 sm:block">⌘ K</kbd>
-              </div>
-            </div>
-            <p className="mt-3 text-right text-xs text-white/35">Popular: Percentage · JSON · Word Counter</p>
+            <ToolSearch />
+            <p className="mt-3 text-right text-xs text-white/35">Try: percentage · JSON · word count · UUID</p>
           </div>
         </div>
       </section>
