@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Wrench } from "lucide-react";
+import JsonFormatter from "@/components/tools/json-formatter";
 import PercentageCalculator from "@/components/tools/percentage-calculator";
+import WordCounter from "@/components/tools/word-counter";
 import { tools } from "@/lib/tools";
 
 export function generateStaticParams() {
@@ -27,7 +29,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       <header className="bg-[#171717] text-white">
         <div className="container flex h-[72px] items-center justify-between">
           <Link href="/" className="font-bold tracking-tight">Internet Toolbox</Link>
-          <Link href="/" className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-xs font-bold uppercase tracking-[0.12em] text-white/55 transition hover:bg-white/10 hover:text-white"><ArrowLeft size={15} /> All tools</Link>
+          <Link href="/tools" className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-xs font-bold uppercase tracking-[0.12em] text-white/55 transition hover:bg-white/10 hover:text-white"><ArrowLeft size={15} /> All tools</Link>
         </div>
       </header>
 
@@ -39,7 +41,10 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           </div>
 
           <div className="mt-8">
-            {slug === "percentage-calculator" ? <PercentageCalculator /> : (
+            {slug === "percentage-calculator" && <PercentageCalculator />}
+            {slug === "json-formatter" && <JsonFormatter />}
+            {slug === "word-counter" && <WordCounter />}
+            {!tool.status.includes("live") && (
               <div className="border border-[#d8d4c9] bg-[#fffdf8] p-6 md:p-8">
                 <div className="flex min-h-64 flex-col items-center justify-center border border-dashed border-[#bcb8ae] bg-[#f3f0e8] px-6 text-center">
                   <Wrench className="text-black/35" size={28} aria-hidden="true" />
