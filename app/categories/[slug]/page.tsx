@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { categories, tools } from "@/lib/tools";
 
@@ -25,10 +24,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   return (
     <main className="min-h-screen bg-[#f3f0e8] text-[#171717]">
-      <header className="bg-[#171717] text-white">
-        <div className="container flex h-[72px] items-center justify-between">
-          <Link href="/" className="font-bold tracking-tight">Internet Toolbox</Link>
-          <Link href="/" className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-xs font-bold uppercase tracking-[0.12em] text-white/55 transition hover:bg-white/10 hover:text-white"><ArrowLeft size={15} /> Home</Link>
+      <header className="border-b border-[#d8d4c9] bg-[#f3f0e8]">
+        <div className="container flex h-[68px] items-center justify-between">
+          <Link href="/" className="flex items-center gap-3" aria-label="Internet Toolbox home">
+            <span className="flex size-8 items-center justify-center border border-[#171717] bg-[#171717] text-xs font-bold text-white" aria-hidden="true">IT</span>
+            <span className="text-[15px] font-semibold tracking-[-0.01em]">Internet Toolbox</span>
+          </Link>
+          <nav className="flex items-center gap-1" aria-label="Main navigation">
+            <Link href="/tools" className="flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-black/60 transition hover:bg-black/5 hover:text-[#171717]"><ArrowLeft size={15} /> All tools</Link>
+          </nav>
         </div>
       </header>
 
