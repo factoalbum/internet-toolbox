@@ -12,10 +12,7 @@ export function generateMetadata({ params }: { params: Promise<{ slug: string }>
   return params.then(({ slug }) => {
     const tool = tools.find((item) => item.slug === slug);
     if (!tool) return {};
-    return {
-      title: tool.name,
-      description: `${tool.description} Free, fast and easy to use.`,
-    };
+    return { title: tool.name, description: `${tool.description} Free, fast and easy to use.` };
   });
 }
 
@@ -26,38 +23,36 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const Icon = tool.icon;
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="font-semibold tracking-tight text-slate-950">Internet Toolbox</Link>
-          <Link href="/" className="flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm text-slate-500 transition hover:bg-slate-100 hover:text-slate-950">
-            <ArrowLeft size={16} /> All tools
-          </Link>
+    <main className="min-h-screen bg-[#f3f0e8] text-[#171717]">
+      <header className="bg-[#171717] text-white">
+        <div className="container flex h-[72px] items-center justify-between">
+          <Link href="/" className="font-bold tracking-tight">Internet Toolbox</Link>
+          <Link href="/" className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-xs font-bold uppercase tracking-[0.12em] text-white/55 transition hover:bg-white/10 hover:text-white"><ArrowLeft size={15} /> All tools</Link>
         </div>
       </header>
 
       <section className="container py-12 md:py-16">
-        <div className="mx-auto max-w-4xl">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700" aria-hidden="true"><Icon size={22} /></div>
-          <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-blue-600">{tool.category}</p>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-950 md:text-5xl">{tool.name}</h1>
-          <p className="mt-3 max-w-3xl text-lg leading-8 text-slate-600">{tool.description}</p>
+        <div className="mx-auto max-w-5xl">
+          <div className="flex items-start justify-between gap-8 border-b-2 border-[#171717] pb-8">
+            <div><p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-black/40">Tool / {tool.category}</p><h1 className="mt-3 text-4xl font-black tracking-[-0.04em] md:text-6xl">{tool.name}</h1><p className="mt-4 max-w-2xl text-base leading-7 text-black/55 md:text-lg">{tool.description}</p></div>
+            <div className="hidden size-14 shrink-0 items-center justify-center rounded-xl bg-[#c8f169] md:flex" aria-hidden="true"><Icon size={25} /></div>
+          </div>
 
           <div className="mt-8">
             {slug === "percentage-calculator" ? <PercentageCalculator /> : (
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-                <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
-                  <Wrench className="text-slate-400" size={28} aria-hidden="true" />
-                  <h2 className="mt-4 font-semibold text-slate-900">Coming soon</h2>
-                  <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">We are building this tool with the same fast, privacy-friendly experience. Check back soon.</p>
+              <div className="border border-[#d8d4c9] bg-[#fffdf8] p-6 md:p-8">
+                <div className="flex min-h-64 flex-col items-center justify-center border border-dashed border-[#bcb8ae] bg-[#f3f0e8] px-6 text-center">
+                  <Wrench className="text-black/35" size={28} aria-hidden="true" />
+                  <h2 className="mt-4 font-bold">Coming soon</h2>
+                  <p className="mt-2 max-w-md text-sm leading-6 text-black/50">We are building this tool with the same fast, privacy-friendly experience. Check back soon.</p>
                 </div>
               </div>
             )}
           </div>
 
-          <article className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
-            <h2 className="text-xl font-semibold text-slate-950">About {tool.name}</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-600">Internet Toolbox provides simple online utilities designed to answer common questions quickly. Our tools work in your browser where practical, require no account, and are built with clear instructions and accessible controls.</p>
+          <article className="mt-10 grid gap-6 border-t border-[#d8d4c9] pt-8 md:grid-cols-[.35fr_.65fr]">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-black/40">About this tool</h2>
+            <p className="text-sm leading-7 text-black/55">Internet Toolbox provides simple online utilities designed to answer common questions quickly. Our tools work in your browser where practical, require no account, and are built with clear instructions and accessible controls.</p>
           </article>
         </div>
       </section>
