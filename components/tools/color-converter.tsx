@@ -35,30 +35,7 @@ function rgbToHsl(r: number, g: number, b: number) {
   if (max === red) hue = (green - blue) / delta + (green < blue ? 6 : 0);
   else if (max === green) hue = (blue - red) / delta + 2;
   else hue = (red - green) / delta + 4;
-  hue /= 6;
-  return [hue * 360, saturation * 100, lightness * 100] as [number, number, number];
-}
-
-function hslToRgb(h: number, s: number, l: number): [number, number, number] {
-  const hue = ((h % 360) + 360) % 360 / 360;
-  const saturation = clamp(s, 0, 100) / 100;
-  const lightness = clamp(l, 0, 100) / 100;
-  if (saturation === 0) {
-    const value = lightness * 255;
-    return [value, value, value];
-  }
-  const q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
-  const p = 2 * lightness - q;
-  const hueToRgb = (t: number) => {
-    let next = t;
-    if (next < 0) next += 1;
-    if (next > 1) next -= 1;
-    if (next < 1 / 6) return p + (q - p) * 6 * next;
-    if (next < 1 / 2) return q;
-    if (next < 2 / 3) return p + (q - p) * (2 / 3 - next) * 6;
-    return p;
-  };
-  return [hueToRgb(hue + 1 / 3) * 255, hueToRgb(hue) * 255, hueToRgb(hue - 1 / 3) * 255];
+  return [hue * 60, saturation * 100, lightness * 100] as [number, number, number];
 }
 
 export default function ColorConverter() {
@@ -84,11 +61,14 @@ export default function ColorConverter() {
     setB(String(parsed[2]));
   };
 
-  const updateFromRgb = (setter: (value: string) => void, value: string) => {
-    setter(value);
-    const red = Number(setter === setR ? value : r);
-    const green = Number(setter === setG ? value : g);
-    const blue = Number(setter === setB ? value : b);
+  const updateFromRgb = (channel: "r" | "g" | "b", value: string) => {
+    const next = { r, g, b, [channel]: value };
+    if (channel === "r") setR(value);
+    if (channel === "g") setG(value);
+    if (channel === "b") setB(value);
+    const red = Number(next.r);
+    const green = Number(next.g);
+    const blue = Number(next.b);
     if ([red, green, blue].every((item) => Number.isFinite(item) && item >= 0 && item <= 255)) {
       setHex(`#${componentToHex(red)}${componentToHex(green)}${componentToHex(blue)}`);
       setError("");
@@ -109,10 +89,10 @@ export default function ColorConverter() {
             <span className="mb-2 block text-sm font-semibold">HEX</span>
             <input value={hex} onChange={(event) => updateFromHex(event.target.value)} spellCheck={false} className="h-12 w-full border border-[#bcb8ae] bg-white px-3 font-mono text-sm outline-none focus:border-[#171717] focus:ring-2 focus:ring-[#c8f169]" placeholder="#5f7429" />
           </label>
-          {[["Red", r, setR], ["Green", g, setG], ["Blue", b, setB]].map(([label, value, setter]) => (
-            <label key={label as string} className="block">
+          {[['Red', 'r', r], ['Green', 'g', g], ['Blue', 'b', b]].map(([label, channel, value]) => (
+            <label key={channel as string} className="block">
               <span className="mb-2 block text-sm font-semibold">{label as string}</span>
-              <input type="number" min="0" max="255" value={value as string} onChange={(event) => updateFromRgb(setter as (value: string) => void, event.target.value)} className="h-12 w-full border border-[#bcb8ae] bg-white px-3 font-mono text-sm outline-none focus:border-[#171717] focus:ring-2 focus:ring-[#c8f169]" />
+              <input type="number" min="0" max="255" value={value as string} onChange={(event) => updateFromRgb(channel as "r" | "g" | "b", event.target.value)} className="h-12 w-full border border-[#bcb8ae] bg-white px-3 font-mono text-sm outline-none focus:border-[#171717] focus:ring-2 focus:ring-[#c8f169]" />
             </label>
           ))}
         </div>
