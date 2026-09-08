@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Wrench } from "lucide-react";
 import JsonFormatter from "@/components/tools/json-formatter";
 import PercentageCalculator from "@/components/tools/percentage-calculator";
+import UuidGenerator from "@/components/tools/uuid-generator";
 import WordCounter from "@/components/tools/word-counter";
 import { tools } from "@/lib/tools";
 
@@ -46,6 +47,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           <div className="mt-8">
             {slug === "percentage-calculator" && <PercentageCalculator />}
             {slug === "json-formatter" && <JsonFormatter />}
+            {slug === "uuid-generator" && <UuidGenerator />}
             {slug === "word-counter" && <WordCounter />}
             {!tool.status.includes("live") && (
               <div className="border border-[#d8d4c9] bg-[#fffdf8] p-6 md:p-8">
