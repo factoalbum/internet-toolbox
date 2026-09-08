@@ -30,9 +30,9 @@ export default function ToolSearch() {
 
   return (
     <div className="relative">
-      <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-2">
+      <div className="rounded-2xl border border-black/10 bg-black/[0.03] p-2">
         <label htmlFor="tool-search" className="sr-only">Search tools</label>
-        <div className="flex items-center gap-3 rounded-xl bg-white px-4 py-3.5 text-[#171717] ring-0 transition focus-within:ring-4 focus-within:ring-[#c8f169]/30">
+        <div className="flex items-center gap-3 rounded-xl bg-[#fffdf8] px-4 py-3.5 text-[#171717] ring-0 transition focus-within:ring-4 focus-within:ring-[#5f7429]/15">
           <Search className="shrink-0 text-black/45" size={20} />
           <input
             ref={inputRef}
