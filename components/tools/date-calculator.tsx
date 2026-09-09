@@ -6,6 +6,13 @@ type Mode = "difference" | "add" | "subtract";
 
 const DAY = 24 * 60 * 60 * 1000;
 
+function localDateInputValue(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function parseDate(value: string) {
   return new Date(`${value}T00:00:00`);
 }
@@ -23,7 +30,7 @@ function wholeDaysBetween(start: Date, end: Date) {
 }
 
 export default function DateCalculator() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateInputValue();
   const [mode, setMode] = useState<Mode>("difference");
   const [start, setStart] = useState(today);
   const [end, setEnd] = useState(today);
@@ -39,7 +46,7 @@ export default function DateCalculator() {
     }
 
     const amount = Number(days);
-    if (!Number.isFinite(amount) || amount < 0) return null;
+    if (!Number.isInteger(amount) || amount < 0) return null;
     const resultDate = new Date(startDate);
     resultDate.setDate(resultDate.getDate() + (mode === "add" ? amount : -amount));
     return { kind: "date" as const, date: resultDate, amount };
@@ -48,7 +55,7 @@ export default function DateCalculator() {
   return (
     <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-8">
       <div className="grid gap-2 sm:grid-cols-3" role="tablist" aria-label="Date calculation type">
-        {([['difference', 'Date difference'], ['add', 'Add days'], ['subtract', 'Subtract days']] as const).map(([value, label]) => (
+        {([["difference", "Date difference"], ["add", "Add days"], ["subtract", "Subtract days"]] as const).map(([value, label]) => (
           <button
             key={value}
             type="button"
@@ -114,7 +121,7 @@ export default function DateCalculator() {
           <p className="mt-2 text-sm text-black/60">{result.amount.toLocaleString("en-IN")} days {mode === "add" ? "after" : "before"} {formatDate(parseDate(start))}.</p>
         </div>
       ) : (
-        <p className="mt-6 text-sm text-black/50">Enter a valid number of days.</p>
+        <p className="mt-6 text-sm text-black/50">Enter a whole number of days.</p>
       )}
 
       <p className="mt-5 text-xs leading-5 text-black/45">Date differences count full calendar days. Results do not account for time zones or business days.</p>
