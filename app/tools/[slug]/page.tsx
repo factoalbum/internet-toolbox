@@ -17,7 +17,7 @@ import EmiCalculator from "@/components/tools/emi-calculator";
 import FdCalculator from "@/components/tools/fd-calculator";
 import GoldSilverConverter from "@/components/tools/gold-silver-converter";
 import GstCalculator from "@/components/tools/gst-calculator";
-import HousingAllowanceCalculator from "@/components/tools/\u0068\u0072\u0061-calculator";
+import HousingAllowanceCalculator from "@/components/tools/hra-calculator";
 import HtmlEntityTool from "@/components/tools/html-entity";
 import ImageCompressor from "@/components/tools/image-compressor";
 import IncomeTaxCalculator from "@/components/tools/income-tax-calculator";
@@ -84,7 +84,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             {slug === "time-zone-converter" && <TimeZoneConverter />}
             {slug === "emi-calculator" && <EmiCalculator />}
             {slug === "gst-calculator" && <GstCalculator />}
-            {slug === "\u0068\u0072\u0061-calculator" && <HousingAllowanceCalculator />}
+            {slug === "hra-calculator" && <HousingAllowanceCalculator />}
             {slug === "bmi-calculator" && <BmiCalculator />}
             {slug === "sip-calculator" && <SipCalculator />}
             {slug === "unit-converter" && <UnitConverter />}
