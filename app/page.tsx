@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Calculator, Code2, FileImage, FileText, Search, ShieldCheck } from "lucide-react";
 import ToolSearch from "@/components/tool-search";
+import CategorySidebar from "@/components/category-sidebar";
 import { categories, featuredTools, tools } from "@/lib/tools";
 
 const quickTools = [
@@ -31,10 +32,10 @@ export default function Home() {
             <span className="flex size-8 items-center justify-center border border-[#171717] bg-[#171717] text-xs font-bold text-white" aria-hidden="true">IT</span>
             <span className="text-[15px] font-bold tracking-tight">Internet Toolbox</span>
           </Link>
-          <nav className="flex items-center gap-1" aria-label="Main navigation">
-            <Link href="/tools" className="rounded-md px-3 py-2 text-sm font-semibold text-black/60 transition hover:bg-black/5 hover:text-[#171717]">All tools</Link>
-            <Link href="/about" className="hidden rounded-md px-3 py-2 text-sm font-semibold text-black/60 transition hover:bg-black/5 hover:text-[#171717] sm:inline-flex">About</Link>
-          </nav>
+          <div className="flex items-center gap-2">
+            <Link href="/tools" className="hidden rounded-md px-3 py-2 text-sm font-semibold text-black/60 transition hover:bg-black/5 hover:text-[#171717] sm:inline-flex">All tools</Link>
+            <CategorySidebar />
+          </div>
         </div>
       </header>
 
