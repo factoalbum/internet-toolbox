@@ -16,6 +16,11 @@ const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const componentNames = [...routeSource.matchAll(/import\s+([A-Za-z0-9]+)\s+from\s+"@\/components\/tools\/([^"]+)"/g)].map(([, component, file]) => ({ component, file }));
 
 function componentFileExists(file) { return fs.existsSync(path.join(root, "components", "tools", `${file}.tsx`)); }
+function source(slug) { return fs.readFileSync(path.join(root, "components", "tools", `${slug}.tsx`), "utf8"); }
+function assertContains(file, patterns) {
+  const content = source(file);
+  for (const pattern of patterns) assert.match(content, pattern, `${file} is missing expected QA invariant: ${pattern}`);
+}
 
 test("tool registry is structurally valid", () => {
   assert.ok(tools.length >= 20, `Expected at least 20 tools, found ${tools.length}`);
@@ -55,9 +60,30 @@ test("core site pages exist", () => {
 test("tool components do not inject raw HTML", () => {
   const toolDir = path.join(root, "components", "tools");
   for (const file of fs.readdirSync(toolDir).filter(entry => entry.endsWith(".tsx"))) {
-    const source = fs.readFileSync(path.join(toolDir, file), "utf8");
-    assert.doesNotMatch(source, /dangerouslySetInnerHTML/, `Unexpected raw HTML injection in ${file}`);
+    const content = fs.readFileSync(path.join(toolDir, file), "utf8");
+    assert.doesNotMatch(content, /dangerouslySetInnerHTML/, `Unexpected raw HTML injection in ${file}`);
   }
+});
+
+test("financial calculators guard invalid inputs and expose estimates", () => {
+  assertContains("emi-calculator", [/p <= 0/, /annual < 0/, /n <= 0/, /r === 0/, /Estimate only/]);
+  assertContains("gst-calculator", [/value < 0/, /tax < 0/, /tax > 100/, /1 \+ tax \/ 100/, /simple GST estimate/]);
+  assertContains("fd-calculator", [/principal/, /rate/, /years/, /compounding/, /Estimate/]);
+  assertContains("compound-interest-calculator", [/principal/, /rate/, /years/, /compounding/, /Estimate/]);
+  assertContains("sip-calculator", [/monthly/, /annual/, /years/, /market-linked/]);
+  assertContains("ppf-calculator", [/150000|1\.5/, /15/, /7\.1/]);
+  assertContains("hra-calculator", [/rent/, /metro/, /taxable/]);
+});
+
+test("tax and salary calculators contain current-rule safeguards", () => {
+  assertContains("income-tax-calculator", [/75000|75_000/, /60000|60_000/, /1200000|1_200_000/, /0\.04|4/]);
+  assertContains("salary-calculator", [/75000|75_000/, /marginal/, /professional tax|professionalTax/i]);
+});
+
+test("simple calculators expose numeric validation", () => {
+  assertContains("percentage-calculator", [/Number\(/, /Number\.isFinite/]);
+  assertContains("discount-calculator", [/Number\(/, /Number\.isFinite/]);
+  assertContains("bmi-calculator", [/Number\(/, /Number\.isFinite/]);
 });
 
 test("live market tools use explicit external rate sources", () => {
