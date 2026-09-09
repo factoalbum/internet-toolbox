@@ -86,6 +86,11 @@ test("simple calculators expose numeric validation", () => {
   assertContains("bmi-calculator", [/Number\(/, /Number\.isFinite/]);
 });
 
+test("date calculator uses local calendar dates and whole-day inputs", () => {
+  assertContains("date-calculator", [/localDateInputValue/, /getFullYear\(\)/, /getMonth\(\)/, /getDate\(\)/, /Number\.isInteger\(amount\)/]);
+  assert.doesNotMatch(source("date-calculator"), /toISOString\(\)\.slice\(0, 10\)/, "Date calculator should not initialize from UTC date");
+});
+
 test("live market tools use explicit external rate sources", () => {
   assert.match(currencySource, /https:\/\/open\.er-api\.com\/v6\/latest\/USD/);
   assert.match(currencySource, /rates\[target\] \/ rates\[base\]/);
