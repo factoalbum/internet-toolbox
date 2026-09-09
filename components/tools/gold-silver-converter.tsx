@@ -6,8 +6,14 @@ const OUNCE_TO_GRAMS = 31.1034768;
 const TOLA_TO_GRAMS = 11.6638125;
 type Metal = "XAU" | "XAG";
 type Unit = "mg" | "g" | "10g" | "tola" | "kg";
-type MetalResponse = { price?: number; symbol?: string; name?: string; updatedAt?: string };
-type FxResponse = { result: string; rates?: Record<string, number>; time_last_update_utc?: string };
+type RatesResponse = { base?: string; date?: string; rates?: Record<string, number> };
+type FallbackMetalResponse = { price?: number; updatedAt?: string };
+type FallbackFxResponse = { result: string; rates?: Record<string, number>; time_last_update_utc?: string };
+
+const HOURLY_SOURCE = "https://api.exchangerate.fun/latest?base=USD";
+const GOLD_FALLBACK = "https://api.gold-api.com/price/XAU";
+const SILVER_FALLBACK = "https://api.gold-api.com/price/XAG";
+const FX_FALLBACK = "https://open.er-api.com/v6/latest/USD";
 
 function money(value: number) { return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(value); }
 function gramsFor(amount: number, unit: Unit) { return unit === "mg" ? amount / 1000 : unit === "10g" ? amount * 10 : unit === "tola" ? amount * TOLA_TO_GRAMS : unit === "kg" ? amount * 1000 : amount; }
@@ -21,31 +27,49 @@ export default function GoldSilverConverter() {
   const [goldUsd, setGoldUsd] = useState<number | null>(null);
   const [silverUsd, setSilverUsd] = useState<number | null>(null);
   const [updated, setUpdated] = useState("");
+  const [sourceName, setSourceName] = useState("Hourly commodity reference");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   async function loadRates() {
     setLoading(true); setError("");
     try {
-      const [goldResponse, silverResponse, fxResponse] = await Promise.all([
-        fetch("https://api.gold-api.com/price/XAU", { cache: "no-store" }),
-        fetch("https://api.gold-api.com/price/XAG", { cache: "no-store" }),
-        fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" }),
-      ]);
-      if (!goldResponse.ok || !silverResponse.ok || !fxResponse.ok) throw new Error("Rate service unavailable");
-      const [goldData, silverData, fxData] = await Promise.all([
-        goldResponse.json() as Promise<MetalResponse>,
-        silverResponse.json() as Promise<MetalResponse>,
-        fxResponse.json() as Promise<FxResponse>,
-      ]);
-      const gold = Number(goldData.price);
-      const silver = Number(silverData.price);
-      const inr = Number(fxData.rates?.INR);
-      if (![gold, silver, inr].every((value) => Number.isFinite(value) && value > 0)) throw new Error("Invalid market data");
-      setGoldUsd(gold); setSilverUsd(silver); setUsdInr(inr);
-      setUpdated(goldData.updatedAt || silverData.updatedAt || fxData.time_last_update_utc || "");
-    } catch { setError("Live gold and silver rates could not be loaded. Please try again."); }
-    finally { setLoading(false); }
+      const response = await fetch(HOURLY_SOURCE, { cache: "no-store" });
+      if (!response.ok) throw new Error("Hourly source unavailable");
+      const data = await response.json() as RatesResponse;
+      const inr = Number(data.rates?.INR);
+      const goldUnitsPerUsd = Number(data.rates?.XAU);
+      const silverUnitsPerUsd = Number(data.rates?.XAG);
+      if (![inr, goldUnitsPerUsd, silverUnitsPerUsd].every(value => Number.isFinite(value) && value > 0)) throw new Error("Hourly commodity data incomplete");
+      setUsdInr(inr);
+      setGoldUsd(1 / goldUnitsPerUsd);
+      setSilverUsd(1 / silverUnitsPerUsd);
+      setUpdated(data.date ?? "");
+      setSourceName("ExchangeRate.fun · hourly reference");
+    } catch {
+      try {
+        const [goldResponse, silverResponse, fxResponse] = await Promise.all([
+          fetch(GOLD_FALLBACK, { cache: "no-store" }),
+          fetch(SILVER_FALLBACK, { cache: "no-store" }),
+          fetch(FX_FALLBACK, { cache: "no-store" }),
+        ]);
+        if (!goldResponse.ok || !silverResponse.ok || !fxResponse.ok) throw new Error("Fallback rate service unavailable");
+        const [goldData, silverData, fxData] = await Promise.all([
+          goldResponse.json() as Promise<FallbackMetalResponse>,
+          silverResponse.json() as Promise<FallbackMetalResponse>,
+          fxResponse.json() as Promise<FallbackFxResponse>,
+        ]);
+        const gold = Number(goldData.price);
+        const silver = Number(silverData.price);
+        const inr = Number(fxData.rates?.INR);
+        if (![gold, silver, inr].every(value => Number.isFinite(value) && value > 0)) throw new Error("Fallback market data invalid");
+        setGoldUsd(gold); setSilverUsd(silver); setUsdInr(inr);
+        setUpdated(goldData.updatedAt || silverData.updatedAt || fxData.time_last_update_utc || "");
+        setSourceName("Gold API + ExchangeRate-API · fallback");
+      } catch {
+        setError("Live gold and silver rates could not be loaded. Please try again.");
+      }
+    } finally { setLoading(false); }
   }
 
   useEffect(() => {
@@ -55,7 +79,7 @@ export default function GoldSilverConverter() {
 
   const pureGoldPerGram = goldUsd !== null && usdInr !== null ? goldUsd * usdInr / OUNCE_TO_GRAMS : null;
   const silverPerGram = silverUsd !== null && usdInr !== null ? silverUsd * usdInr / OUNCE_TO_GRAMS : null;
-  const selectedPerGram = (metal === "XAU" ? pureGoldPerGram : silverPerGram);
+  const selectedPerGram = metal === "XAU" ? pureGoldPerGram : silverPerGram;
   const perGram = selectedPerGram === null ? null : metal === "XAU" ? selectedPerGram * (Number(purity) / 24) : selectedPerGram;
 
   const result = useMemo(() => {
@@ -90,8 +114,8 @@ export default function GoldSilverConverter() {
       </div>
     </section>
 
-    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-black/45"><p>Live international spot prices converted to INR.</p><button type="button" onClick={() => void loadRates()} disabled={loading} className="font-bold underline disabled:opacity-40">Refresh rates</button></div>
-    {updated && <p className="mt-2 text-xs text-black/40">Latest source update: {updated}.</p>}
-    <p className="mt-2 text-xs leading-5 text-black/40">This is a live international spot-price estimate, not a jeweller&apos;s, MCX or city bullion-board final selling price. Indian prices can include GST, import duties, making charges, wastage, local premiums and dealer spreads. Gold API supplies the metal spot prices; INR conversion uses ExchangeRate-API data.</p>
+    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-black/45"><p>Hourly international spot references converted to INR.</p><button type="button" onClick={() => void loadRates()} disabled={loading} className="font-bold underline disabled:opacity-40">Refresh rates</button></div>
+    {updated && <p className="mt-2 text-xs text-black/40">Latest source update: {updated}. {sourceName} may differ slightly from Google, MCX, jewellers and local bullion boards.</p>}
+    <p className="mt-2 text-xs leading-5 text-black/40">This is an international spot-price estimate, not a jeweller&apos;s, MCX or city bullion-board final selling price. Indian prices can include GST, import duties, making charges, wastage, local premiums and dealer spreads.</p>
   </div>;
 }
