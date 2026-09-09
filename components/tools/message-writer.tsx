@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { Copy, RotateCcw, Sparkles } from "lucide-react";
+import { hasEnoughContext, type MessageKind, type MessageLength, type MessageTone } from "@/lib/message-writer";
 
-const options = [
+const options: Array<{ value: MessageKind; label: string }> = [
   { value: "linkedin", label: "LinkedIn post" },
   { value: "birthday", label: "Birthday message" },
   { value: "leave", label: "Leave request" },
@@ -12,15 +13,11 @@ const options = [
   { value: "announcement", label: "Professional announcement" },
   { value: "instagram", label: "Instagram caption" },
   { value: "email", label: "Professional email" },
-] as const;
+];
 
-type Kind = (typeof options)[number]["value"];
-type Tone = "professional" | "friendly" | "warm" | "confident" | "simple";
-type Length = "short" | "medium" | "long";
-
-const contextHints: Record<Kind, { placeholder: string; help: string }> = {
+const contextHints: Record<MessageKind, { placeholder: string; help: string }> = {
   linkedin: {
-    placeholder: "Example: Completed my first backend project at CargoForce. Built APIs with NestJS and learned a lot about security and testing.",
+    placeholder: "Example: Completed my first backend project. Built APIs with NestJS and learned a lot about security and testing.",
     help: "Include what happened, your role, the result or lesson, and anything you want to thank.",
   },
   birthday: {
@@ -63,67 +60,67 @@ function sentenceCase(value: string) {
   return clean.charAt(0).toUpperCase() + clean.slice(1);
 }
 
-function buildMessage(kind: Kind, context: string, tone: Tone, length: Length) {
+function buildMessage(kind: MessageKind, context: string, tone: MessageTone, length: MessageLength) {
   const clean = cleanContext(context);
-  const detail = sentenceCase(clean) || "your recent update";
+  if (!hasEnoughContext(clean)) return "Add a little context first, then create your message.";
+
+  const detail = sentenceCase(clean);
   const isShort = length === "short";
   const isLong = length === "long";
 
   if (kind === "linkedin") {
     const lead = tone === "confident"
-      ? "Proud to share an update."
+      ? "Proud to share this update."
       : tone === "friendly"
-        ? "Excited to share a little update."
+        ? "Excited to share this update."
         : tone === "warm"
-          ? "I am grateful to share an update."
-          : "I am happy to share an update.";
+          ? "Grateful to share this update."
+          : "Happy to share this update.";
     if (isShort) return `${lead}\n\n${detail}`;
-    if (isLong) {
-      return `${lead}\n\n${detail}\n\nThis has been a valuable experience, and I am glad to have learned through the process. The challenges, feedback and small improvements along the way have helped me grow.\n\nGrateful to the people who supported me through it. Looking forward to what comes next.`;
-    }
-    return `${lead}\n\n${detail}\n\nIt has been a valuable learning experience, and I am looking forward to building on this progress.`;
+    if (isLong) return `${lead}\n\n${detail}\n\nThank you to everyone who was part of this journey. I am looking forward to what comes next.`;
+    return `${lead}\n\n${detail}\n\nLooking forward to building on this progress.`;
   }
 
   if (kind === "birthday") {
-    if (isShort) return `Happy Birthday! Wishing you happiness, good health and a wonderful year ahead.`;
-    return `Happy Birthday!\n\n${detail}\n\nWishing you a beautiful year ahead filled with happiness, good health and plenty of good memories. I hope you have a day that feels as special as you are.\n\nHave a wonderful birthday!`;
+    if (isShort) return `${detail}\n\nHappy Birthday! Wishing you a wonderful year ahead.`;
+    return `${detail}\n\nHappy Birthday! Wishing you happiness, good health and many good memories in the year ahead.`;
   }
 
   if (kind === "leave") {
-    return `Subject: Leave Request\n\nHi,\n\nI would like to request leave for ${detail}.\n\nI will make sure any important work is completed or properly handed over before the leave period. Please let me know if you need any additional information from my side.\n\nThank you for your consideration.\n\nBest regards`;
+    return `Subject: Leave Request\n\nHi,\n\nI would like to request leave based on the following details:\n\n${detail}\n\nI will complete or hand over any important work before the leave period. Please let me know if you need any additional information.\n\nThank you.\n\nBest regards`;
   }
 
   if (kind === "congratulations") {
     return isShort
-      ? `Congratulations on ${clean || "this achievement"}! Wishing you many more successes ahead.`
-      : `Congratulations on ${clean || "this achievement"}!\n\nThis is a well-deserved milestone. Your hard work has clearly paid off, and I hope this is the beginning of many more great achievements.\n\nWishing you continued success ahead.`;
+      ? `Congratulations!\n\n${detail}`
+      : `Congratulations!\n\n${detail}\n\nWishing you continued success and many more milestones ahead.`;
   }
 
   if (kind === "thank-you") {
     return isShort
-      ? `Thank you so much for ${clean || "your support"}. I really appreciate it.`
-      : `Thank you so much for ${clean || "your support"}.\n\nI genuinely appreciate the time, effort and support you gave me. It made a real difference, and I am grateful for it.\n\nThank you again.`;
+      ? `Thank you.\n\n${detail}`
+      : `Thank you so much.\n\n${detail}\n\nI genuinely appreciate it.`;
   }
 
   if (kind === "announcement") {
-    const opening = tone === "confident" ? "Proud to announce" : tone === "friendly" ? "Excited to share" : "I am happy to share";
+    const opening = tone === "confident" ? "Proud to announce:" : tone === "friendly" ? "Excited to share:" : "Happy to share:";
     return isShort
-      ? `${opening}: ${clean || "an important update"}.`
-      : `${opening}: ${clean || "an important update"}.\n\nThis is an important step for me, and I am looking forward to the work, learning and opportunities ahead.\n\nThank you to everyone who has supported me along the way.`;
+      ? `${opening}\n\n${detail}`
+      : `${opening}\n\n${detail}\n\nI am looking forward to this next step.`;
   }
 
   if (kind === "instagram") {
-    if (isShort) return `${detail}\n\nOne step at a time.`;
-    return `${detail}\n\nA moment worth remembering. Grateful for the journey, the lessons and the people who make it meaningful.`;
+    if (isShort) return detail;
+    return `${detail}\n\nA moment worth sharing.`;
   }
 
-  return `Subject: ${clean || "Request"}\n\nHi,\n\nI am writing regarding ${detail}.\n\nI wanted to share the details and request your guidance on the next steps. Please let me know if you need any additional information from my side.\n\nThank you.\n\nBest regards`;
+  return `Subject: ${isShort ? "Request" : "Regarding your request"}\n\nHi,\n\n${detail}\n\nPlease let me know if you need any additional information from my side.\n\nThank you.\n\nBest regards`;
 }
 
 export default function MessageWriter() {
-  const [kind, setKind] = useState<Kind>("linkedin");
-  const [tone, setTone] = useState<Tone>("professional");
-  const [length, setLength] = useState<Length>("medium");
+  const [kind, setKind] = useState<MessageKind>("linkedin");
+  const [tone, setTone] = useState<MessageTone>("professional");
+  const [length, setLength] = useState<MessageLength>("medium");
   const [context, setContext] = useState("");
   const [copied, setCopied] = useState(false);
   const [result, setResult] = useState("");
@@ -162,11 +159,11 @@ export default function MessageWriter() {
       <section className="border border-[#d8d4c9] bg-[#fffdf8] p-5 sm:p-6" aria-labelledby="writer-input-heading">
         <div className="flex items-start gap-3">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#c8f169]"><Sparkles size={19} aria-hidden="true" /></span>
-          <div><h2 id="writer-input-heading" className="font-bold">Give a little context</h2><p className="mt-1 text-sm leading-5 text-black/50">The more specific your details, the more relevant the result will be. You do not need to write it perfectly.</p></div>
+          <div><h2 id="writer-input-heading" className="font-bold">Give a little context</h2><p className="mt-1 text-sm leading-5 text-black/50">Write the details in your own words. You do not need to format them first.</p></div>
         </div>
 
         <label className="mt-6 block text-sm font-semibold" htmlFor="message-type">What are you writing?</label>
-        <select id="message-type" value={kind} onChange={(event) => { setKind(event.target.value as Kind); setResult(""); }} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]">
+        <select id="message-type" value={kind} onChange={(event) => { setKind(event.target.value as MessageKind); setResult(""); }} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]">
           {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
 
@@ -175,8 +172,8 @@ export default function MessageWriter() {
         <div className="mt-1 flex justify-between gap-3 text-xs text-black/35"><span>{hint.help}</span><span className="shrink-0">{context.length}/1200</span></div>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div><label className="text-sm font-semibold" htmlFor="message-tone">Tone</label><select id="message-tone" value={tone} onChange={(event) => { setTone(event.target.value as Tone); setResult(""); }} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="professional">Professional</option><option value="friendly">Friendly</option><option value="warm">Warm</option><option value="confident">Confident</option><option value="simple">Simple</option></select></div>
-          <div><label className="text-sm font-semibold" htmlFor="message-length">Length</label><select id="message-length" value={length} onChange={(event) => { setLength(event.target.value as Length); setResult(""); }} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="short">Short</option><option value="medium">Medium</option><option value="long">Long</option></select></div>
+          <div><label className="text-sm font-semibold" htmlFor="message-tone">Tone</label><select id="message-tone" value={tone} onChange={(event) => { setTone(event.target.value as MessageTone); setResult(""); }} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="professional">Professional</option><option value="friendly">Friendly</option><option value="warm">Warm</option><option value="confident">Confident</option><option value="simple">Simple</option></select></div>
+          <div><label className="text-sm font-semibold" htmlFor="message-length">Length</label><select id="message-length" value={length} onChange={(event) => { setLength(event.target.value as MessageLength); setResult(""); }} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="short">Short</option><option value="medium">Medium</option><option value="long">Long</option></select></div>
         </div>
 
         <div className="mt-5 flex flex-wrap gap-2"><button type="button" onClick={generate} className="min-h-11 flex-1 rounded-lg bg-[#171717] px-5 text-sm font-bold text-white transition hover:bg-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Create message</button><button type="button" onClick={reset} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[#bcb8ae] bg-white px-4 text-sm font-semibold hover:border-[#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><RotateCcw size={15} aria-hidden="true" />Reset</button></div>
