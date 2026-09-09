@@ -37,7 +37,7 @@ export default function PasswordGenerator() {
   const [useUpper, setUseUpper] = useState(true);
   const [useNumbers, setUseNumbers] = useState(true);
   const [useSymbols, setUseSymbols] = useState(true);
-  const [password, setPassword] = useState(() => createPassword(DEFAULT_LENGTH, true, true, true));
+  const [password, setPassword] = useState("");
   const [copied, setCopied] = useState(false);
 
   const strength = useMemo(() => {
@@ -54,6 +54,7 @@ export default function PasswordGenerator() {
   }
 
   async function copyPassword() {
+    if (!password) return;
     try {
       await navigator.clipboard.writeText(password);
       setCopied(true);
@@ -68,7 +69,7 @@ export default function PasswordGenerator() {
     setUseUpper(true);
     setUseNumbers(true);
     setUseSymbols(true);
-    setPassword(createPassword(DEFAULT_LENGTH, true, true, true));
+    setPassword("");
     setCopied(false);
   }
 
@@ -78,8 +79,8 @@ export default function PasswordGenerator() {
         <div className="rounded-lg border border-[#d8d4c9] bg-[#f8f5ed] p-4">
           <label htmlFor="generated-password" className="text-xs font-bold uppercase tracking-[0.12em] text-black/45">Generated password</label>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-            <output id="generated-password" aria-label="Generated password" className="min-h-12 flex-1 overflow-x-auto rounded-md border border-[#d8d4c9] bg-[#fffdf8] px-3 py-3 font-mono text-sm font-semibold tracking-wide">{password}</output>
-            <button type="button" onClick={copyPassword} className="min-h-12 rounded-md bg-[#171717] px-5 text-sm font-bold text-white transition hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-[#c8f169] focus:ring-offset-2">{copied ? "Copied" : "Copy"}</button>
+            <output id="generated-password" aria-label="Generated password" className="min-h-12 flex-1 overflow-x-auto rounded-md border border-[#d8d4c9] bg-[#fffdf8] px-3 py-3 font-mono text-sm font-semibold tracking-wide">{password || "Click Generate password"}</output>
+            <button type="button" onClick={copyPassword} disabled={!password} className="min-h-12 rounded-md bg-[#171717] px-5 text-sm font-bold text-white transition hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-[#c8f169] focus:ring-offset-2">{copied ? "Copied" : "Copy"}</button>
           </div>
           <p className="mt-3 text-xs text-black/50" aria-live="polite">Strength: <span className="font-bold text-black">{strength}</span></p>
         </div>
