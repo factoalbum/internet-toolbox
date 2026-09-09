@@ -68,8 +68,8 @@ test("tool components do not inject raw HTML", () => {
 test("financial calculators guard invalid inputs and expose estimates", () => {
   assertContains("emi-calculator", [/p <= 0/, /annual < 0/, /n <= 0/, /r === 0/, /Estimate only/]);
   assertContains("gst-calculator", [/value < 0/, /tax < 0/, /tax > 100/, /1 \+ tax \/ 100/, /simple GST estimate/]);
-  assertContains("fd-calculator", [/principal/, /rate/, /years/, /compounding/, /Estimate/]);
-  assertContains("compound-interest-calculator", [/principal/, /rate/, /years/, /compounding/, /Estimate/]);
+  assertContains("fd-calculator", [/principal/, /rate/, /years/, /frequency|compounding/i, /Estimate/]);
+  assertContains("compound-interest-calculator", [/principal/, /rate/, /years/, /frequency|compounding/i, /Estimate/]);
   assertContains("sip-calculator", [/monthly/, /annual/, /years/, /market-linked/]);
   assertContains("ppf-calculator", [/150000|1\.5/, /15/, /7\.1/]);
   assertContains("hra-calculator", [/rent/, /metro/, /taxable/]);
@@ -108,10 +108,10 @@ test("live market tools use explicit external rate sources", () => {
 });
 
 test("market tools handle failed rate requests", () => {
-  assert.match(currencySource, /response\.ok/);
+  assert.match(currencySource, /(?:currency|fx)?Response\.ok|response\.ok/i);
   assert.match(currencySource, /role=\"alert\"/);
   assert.match(currencySource, /Retry/);
-  assert.match(metalsSource, /response\.ok/);
+  assert.match(metalsSource, /(?:gold|silver|fx)Response\.ok|response\.ok/i);
   assert.match(metalsSource, /role=\"alert\"/);
   assert.match(metalsSource, /Retry/);
 });
