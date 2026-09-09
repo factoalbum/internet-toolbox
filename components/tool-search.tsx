@@ -20,6 +20,19 @@ const searchAliases: Record<string, string[]> = {
   text: ["word", "character", "case"],
   coding: ["json", "base64", "uuid", "url", "html"],
   developer: ["json", "base64", "uuid", "url", "timestamp"],
+  linkedin: ["caption", "message", "post", "writer"],
+  "linkedin content": ["linkedin", "caption", "message", "post", "writer"],
+  "linkedin post": ["linkedin", "caption", "message", "post", "writer"],
+  post: ["caption", "message", "writer"],
+  caption: ["message", "writer", "instagram"],
+  message: ["writer", "birthday", "congratulations", "thank you", "email"],
+  writing: ["writer", "message", "caption", "post"],
+  writer: ["caption", "message", "post"],
+  birthday: ["birthday", "message", "writer"],
+  congratulations: ["congratulations", "message", "writer"],
+  "thank you": ["thank you", "message", "writer"],
+  "leave request": ["leave", "message", "writer"],
+  "professional email": ["email", "message", "writer"],
 };
 
 export default function ToolSearch() {
@@ -28,6 +41,8 @@ export default function ToolSearch() {
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  const normalizedQuery = query.trim().toLowerCase();
 
   useEffect(() => {
     function handleShortcut(event: KeyboardEvent) {
@@ -41,15 +56,23 @@ export default function ToolSearch() {
   }, []);
 
   const matches = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return featuredTools.slice(0, 6);
+    if (!normalizedQuery) return featuredTools.slice(0, 6);
 
-    const terms = [normalized, ...(searchAliases[normalized] ?? [])];
-    return tools.filter((tool) => {
-      const haystack = `${tool.name} ${tool.description} ${tool.category}`.toLowerCase();
-      return terms.some((term) => haystack.includes(term));
-    }).slice(0, 6);
-  }, [query]);
+    const exactAliases = searchAliases[normalizedQuery] ?? [];
+    const queryWords = normalizedQuery.split(/\s+/).filter(Boolean);
+    const terms = [normalizedQuery, ...exactAliases, ...queryWords];
+
+    return tools
+      .map((tool) => {
+        const haystack = `${tool.name} ${tool.description} ${tool.category}`.toLowerCase();
+        const score = terms.reduce((total, term) => total + (haystack.includes(term) ? (term === normalizedQuery ? 4 : 1) : 0), 0);
+        return { tool, score };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6)
+      .map(({ tool }) => tool);
+  }, [normalizedQuery]);
 
   const showResults = focused || Boolean(query);
 
@@ -93,7 +116,7 @@ export default function ToolSearch() {
         {matches.length > 0 ? <>
           {!query && <div className="border-b border-[#e8e4d9] px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-black/35">Popular tools</div>}
           <div className="divide-y divide-[#e8e4d9]">{matches.map((tool, index) => { const Icon = tool.icon; return <Link key={tool.slug} id={`tool-result-${tool.slug}`} role="option" aria-selected={index === activeIndex} href={`/tools/${tool.slug}`} onMouseEnter={() => setActiveIndex(index)} onClick={() => { clearSearch(); setFocused(false); }} className={`group flex min-w-0 items-center gap-4 p-4 transition ${index === activeIndex ? "bg-[#c8f169]" : "hover:bg-[#c8f169]"}`}><span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#edf7d5]"><Icon size={17} aria-hidden="true" /></span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{tool.name}</span><span className="block truncate text-xs text-black/45">{tool.description}</span></span><ArrowUpRight size={16} className="shrink-0 opacity-30" aria-hidden="true" /></Link>; })}</div>
-        </> : <div className="p-5"><p className="font-bold">No tool found</p><p className="mt-1 text-sm text-black/45">Try loan, tax, image, JSON or date.</p></div>}
+        </> : <div className="p-5"><p className="font-bold">No tool found</p><p className="mt-1 text-sm text-black/45">Try loan, tax, image, JSON, date or message.</p></div>}
       </div>}
     </div>
   );
