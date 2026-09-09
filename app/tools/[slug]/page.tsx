@@ -17,7 +17,6 @@ import EmiCalculator from "@/components/tools/emi-calculator";
 import FdCalculator from "@/components/tools/fd-calculator";
 import GoldSilverConverter from "@/components/tools/gold-silver-converter";
 import GstCalculator from "@/components/tools/gst-calculator";
-import HraCalculator from "@/components/tools/hra-calculator";
 import HtmlEntityTool from "@/components/tools/html-entity";
 import ImageCompressor from "@/components/tools/image-compressor";
 import IncomeTaxCalculator from "@/components/tools/income-tax-calculator";
@@ -27,6 +26,7 @@ import PasswordGenerator from "@/components/tools/password-generator";
 import PercentageCalculator from "@/components/tools/percentage-calculator";
 import PpfCalculator from "@/components/tools/ppf-calculator";
 import RandomNumberGenerator from "@/components/tools/random-number-generator";
+import RemoveDuplicateLines from "@/components/tools/remove-duplicate-lines";
 import SalaryCalculator from "@/components/tools/salary-calculator";
 import SipCalculator from "@/components/tools/sip-calculator";
 import SlugGenerator from "@/components/tools/slug-generator";
@@ -112,6 +112,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             {slug === "character-counter" && <CharacterCounter />}
             {slug === "case-converter" && <CaseConverter />}
             {slug === "text-cleaner" && <TextCleaner />}
+            {slug === "remove-duplicate-lines" && <RemoveDuplicateLines />}
             {slug === "url-slug-generator" && <SlugGenerator />}
             {slug === "image-compressor" && <ImageCompressor />}
             {slug === "direct-video-downloader" && <DirectVideoDownloader />}
