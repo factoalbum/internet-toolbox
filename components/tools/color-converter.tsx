@@ -101,7 +101,7 @@ export default function ColorConverter() {
           <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-black/40">Conversions</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             {[['HEX', normalizedHex], ['RGB', rgbText], ['HSL', hslText]].map(([label, value]) => (
-              <div key={label} className="border border-[#d8d4c9] bg-[#f3f0e8] p-4"><p className="text-xs font-bold text-black/45">{label}</p><p className="mt-2 break-all font-mono text-sm">{value || "—"}</p></div>
+              <div key={label} className="border border-[#d8d4c9] bg-[#f3f0e8] p-4"><p className="text-xs font-bold text-black/45">{label}</p><p className="mt-2 break-all font-mono text-sm">{value || "-"}</p></div>
             ))}
           </div>
         </div>
