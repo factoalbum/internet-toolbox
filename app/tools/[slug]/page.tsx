@@ -64,7 +64,30 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
   const Icon = tool.icon;
   const relatedTools = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug && item.status === "live").slice(0, 3);
-  const structuredData = { "@context": "https://schema.org", "@type": "WebApplication", name: tool.name, description: tool.description, url: `/tools/${tool.slug}`, applicationCategory: "UtilitiesApplication", operatingSystem: "Any", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } };
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
+  const toolUrl = `${siteUrl}/tools/${tool.slug}/`;
+  const categoryUrl = `${siteUrl}/categories/${tool.category}/`;
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name: tool.name,
+      description: tool.description,
+      url: toolUrl,
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "Any",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+        { "@type": "ListItem", position: 2, name: tool.category, item: categoryUrl },
+        { "@type": "ListItem", position: 3, name: tool.name, item: toolUrl },
+      ],
+    },
+  ];
 
   return (
     <main className="min-h-screen overflow-x-clip bg-[#f3f0e8] text-[#171717]">
