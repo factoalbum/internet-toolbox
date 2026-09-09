@@ -29,7 +29,7 @@ export default function Home() {
       <SiteHeader sticky />
 
       <section className="border-b border-[#d8d4c9] bg-[#fffdf8]">
-        <div className="container py-14 md:py-20 lg:py-24">
+        <div className="container py-12 md:py-18 lg:py-22">
           <div className="mx-auto max-w-4xl text-center">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[#5f7429]">Simple online tools for real-life tasks</p>
             <h1 className="text-5xl font-black leading-[0.96] tracking-[-0.055em] md:text-7xl">What do you need<br className="hidden sm:block" /> to get done?</h1>
@@ -37,14 +37,18 @@ export default function Home() {
           </div>
 
           <div className="mx-auto mt-9 max-w-3xl border border-[#171717] bg-[#f3f0e8] p-3 shadow-[6px_6px_0_#171717] sm:p-4">
-            <div className="mb-3 flex items-center gap-2 px-1 text-sm font-bold"><Search size={17} className="text-black/40" aria-hidden="true" /><span>Tell us what you want to do</span></div>
+            <div className="mb-3 flex items-center gap-2 px-1 text-sm font-bold"><Search size={17} className="text-black/40" aria-hidden="true" /><span>What are you trying to do?</span></div>
             <ToolSearch />
             <div className="mt-4 flex flex-wrap gap-2" aria-label="Popular tasks">
               {quickTools.map((item) => <Link key={item.slug} href={`/tools/${item.slug}`} className="rounded-full border border-[#d8d4c9] bg-[#fffdf8] px-3 py-2 text-xs font-semibold text-black/65 transition hover:border-[#171717] hover:bg-[#c8f169] hover:text-[#171717]">{item.label}</Link>)}
             </div>
           </div>
 
-          <p className="mt-6 text-center text-xs text-black/40">{tools.length} tools · Free to use · No account needed</p>
+          <div className="mx-auto mt-5 flex max-w-3xl flex-wrap justify-center gap-x-5 gap-y-1 text-xs text-black/40">
+            <span>{tools.length} tools</span>
+            <span>Free to use</span>
+            <span>No account needed</span>
+          </div>
         </div>
       </section>
 
