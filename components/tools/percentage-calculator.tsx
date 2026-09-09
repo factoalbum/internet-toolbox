@@ -27,15 +27,17 @@ export default function PercentageCalculator() {
   }, [value, percentage, mode]);
 
   function reset() {
-    setValue("500"); setPercentage("20"); setMode("of");
+    setValue("500");
+    setPercentage("20");
+    setMode("of");
   }
 
   return (
     <div className="overflow-hidden border border-[#d8d4c9] bg-[#fffdf8] shadow-[6px_6px_0_#171717]">
       <div className="border-b border-[#d8d4c9] bg-[#e8e4d9] px-5 py-4 md:px-7">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3"><span className="flex size-10 items-center justify-center rounded-lg bg-[#c8f169]" aria-hidden="true"><Calculator size={20} /></span><div><p className="font-bold">Calculate a percentage</p><p className="text-sm text-black/50">Get the answer instantly for everyday money, marks and price calculations.</p></div></div>
-          <button type="button" onClick={reset} className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-bold text-black/45 transition hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-[#c8f169]" aria-label="Reset percentage calculator"><RotateCcw size={16} /><span className="hidden sm:inline">Reset</span></button>
+          <div className="flex min-w-0 items-center gap-3"><span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#c8f169]" aria-hidden="true"><Calculator size={20} /></span><div className="min-w-0"><p className="font-bold">Calculate a percentage</p><p className="text-sm text-black/50">Work out a percentage, increase or decrease.</p></div></div>
+          <button type="button" onClick={reset} className="flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 text-sm font-bold text-black/45 transition hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-[#c8f169]" aria-label="Reset percentage calculator"><RotateCcw size={16} /><span className="hidden sm:inline">Reset</span></button>
         </div>
       </div>
 
