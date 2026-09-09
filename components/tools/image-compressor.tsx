@@ -97,7 +97,7 @@ export default function ImageCompressor() {
           <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Compressed</p><p className="mt-1 font-mono text-sm">{formatBytes(output.size)}</p></div>
         </div>}
 
-        <button type="button" onClick={download} disabled={!output || busy} className="min-h-11 rounded-md bg-[#c8f169] px-5 text-sm font-bold text-[#171717] disabled:cursor-not-allowed disabled:opacity-45">{busy ? "Compressing…" : "Download compressed image"}</button>
+        <button type="button" onClick={download} disabled={!output || busy} className="min-h-11 rounded-md bg-[#c8f169] px-5 text-sm font-bold text-[#171717] disabled:cursor-not-allowed disabled:opacity-45">{busy ? "Compressing" : "Download compressed image"}</button>
       </div>
     </div>
   );
