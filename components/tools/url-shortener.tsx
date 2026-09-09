@@ -97,7 +97,7 @@ export default function UrlShortener() {
           <p className="mt-2 text-xs text-black/45">Available aliases depend on the shortening service.</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <button onClick={shorten} disabled={loading} className="min-h-11 rounded-lg bg-[#171717] px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50">{loading ? "Shortening…" : "Shorten URL"}</button>
+          <button onClick={shorten} disabled={loading} className="min-h-11 rounded-lg bg-[#171717] px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50">{loading ? "Shortening..." : "Shorten URL"}</button>
           <button onClick={reset} className="min-h-11 rounded-lg border border-[#d8d4c9] px-5 text-sm font-semibold hover:bg-black/5">Clear</button>
         </div>
 
