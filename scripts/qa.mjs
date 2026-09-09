@@ -6,11 +6,13 @@ import { test } from "node:test";
 const root = process.cwd();
 const toolsSource = fs.readFileSync(path.join(root, "lib", "tools.ts"), "utf8");
 const routeSource = fs.readFileSync(path.join(root, "app", "tools", "[slug]", "page.tsx"), "utf8");
+const headerSource = fs.readFileSync(path.join(root, "components", "site-header.tsx"), "utf8");
+const sidebarSource = fs.readFileSync(path.join(root, "components", "category-sidebar.tsx"), "utf8");
 const currencySource = fs.readFileSync(path.join(root, "components", "tools", "currency-converter.tsx"), "utf8");
 const metalsSource = fs.readFileSync(path.join(root, "components", "tools", "gold-silver-converter.tsx"), "utf8");
 
-const toolMatches = [...toolsSource.matchAll(/slug:"([^"]+)"[^}]*name:"([^"]+)"[^}]*category:"([^"]+)"[^}]*status:"([^"]+)"/g)];
-const tools = toolMatches.map(([, slug, name, category, status]) => ({ slug, name, category, status }));
+const toolMatches = [...toolsSource.matchAll(/slug:\s*"([^"]+)"\s*,\s*name:\s*"([^"]+)"\s*,\s*description:\s*"([^"]+)"\s*,\s*category:\s*"([^"]+)"\s*,\s*icon:[^,]+,\s*status:\s*"([^"]+)"/g)];
+const tools = toolMatches.map(([, slug, name, description, category, status]) => ({ slug, name, description, category, status }));
 const categories = new Set(["calculators", "developer", "text", "files"]);
 const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const componentNames = [...routeSource.matchAll(/import\s+([A-Za-z0-9]+)\s+from\s+"@\/components\/tools\/([^"]+)"/g)].map(([, component, file]) => ({ component, file }));
@@ -21,25 +23,40 @@ function assertContains(file, patterns) {
   const content = source(file);
   for (const pattern of patterns) assert.match(content, pattern, `${file} is missing expected QA invariant: ${pattern}`);
 }
+function sourceFiles() {
+  const roots = [path.join(root, "app"), path.join(root, "components"), path.join(root, "lib")];
+  const files = [];
+  function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (/\.(tsx|ts|mjs)$/.test(entry.name)) files.push(full);
+    }
+  }
+  roots.forEach(walk);
+  return files;
+}
+
 
 test("tool registry is structurally valid", () => {
   assert.ok(tools.length >= 20, `Expected at least 20 tools, found ${tools.length}`);
-  assert.equal(new Set(tools.map(tool => tool.slug)).size, tools.length, "Duplicate tool slugs found");
+  assert.equal(new Set(tools.map((tool) => tool.slug)).size, tools.length, "Duplicate tool slugs found");
   for (const tool of tools) {
     assert.match(tool.slug, validSlug, `Invalid slug: ${tool.slug}`);
     assert.ok(tool.name.trim(), `Missing name for ${tool.slug}`);
+    assert.ok(tool.description.trim(), `Missing description for ${tool.slug}`);
     assert.ok(categories.has(tool.category), `Invalid category for ${tool.slug}: ${tool.category}`);
     assert.equal(tool.status, "live", `Unexpected non-live tool in registry: ${tool.slug}`);
-    assert.ok(routeSource.includes(`slug===\"${tool.slug}\"`), `Missing route renderer for ${tool.slug}`);
+    assert.match(routeSource, new RegExp(`slug\\s*===\\s*"${tool.slug}"`), `Missing route renderer for ${tool.slug}`);
   }
 });
 
 test("every live tool has a component file", () => {
   for (const tool of tools) {
-    const rendered = routeSource.match(new RegExp(`slug===\\\"${tool.slug}\\\"&&<([A-Za-z0-9]+)`));
+    const rendered = routeSource.match(new RegExp(`slug\\s*===\\s*"${tool.slug}"\\s*&&\\s*<([A-Za-z0-9]+)`));
     assert.ok(rendered, `No JSX renderer found for ${tool.slug}`);
     const component = rendered[1];
-    const importEntry = componentNames.find(entry => entry.component === component);
+    const importEntry = componentNames.find((entry) => entry.component === component);
     assert.ok(importEntry, `Renderer ${component} for ${tool.slug} is not imported`);
     assert.ok(componentFileExists(importEntry.file), `Missing component file for ${tool.slug}: ${importEntry.file}.tsx`);
   }
@@ -47,21 +64,61 @@ test("every live tool has a component file", () => {
 
 test("static tool routing is configured", () => {
   assert.match(routeSource, /export function generateStaticParams\(\)/);
-  assert.match(routeSource, /tools\.map\(tool=>\(\{slug:tool\.slug\}\)\)/);
-  assert.match(routeSource, /if\(!tool\)notFound\(\)/);
+  assert.match(routeSource, /return tools\.map\(\(tool\) => \(\{ slug: tool\.slug \}\)\)/);
+  assert.match(routeSource, /if \(!tool\) notFound\(\)/);
 });
 
-test("core site pages exist", () => {
-  for (const page of ["app/page.tsx", "app/tools/page.tsx", "app/about/page.tsx", "app/privacy/page.tsx", "app/support/page.tsx"]) {
+test("core site pages exist and use shared navigation", () => {
+  for (const page of ["app/page.tsx", "app/tools/page.tsx", "app/about/page.tsx", "app/privacy/page.tsx", "app/support/page.tsx", "app/categories/[slug]/page.tsx", "app/tools/[slug]/page.tsx"]) {
     assert.ok(fs.existsSync(path.join(root, page)), `Missing required page: ${page}`);
   }
+  assert.match(headerSource, /CategorySidebar/);
+  for (const page of ["app/page.tsx", "app/tools/page.tsx", "app/about/page.tsx", "app/privacy/page.tsx", "app/support/page.tsx", "app/categories/[slug]/page.tsx", "app/tools/[slug]/page.tsx"]) {
+    const content = fs.readFileSync(path.join(root, page), "utf8");
+    assert.match(content, /SiteHeader/ , `${page} does not use the shared SiteHeader`);
+  }
+});
+
+test("category sidebar is safe for SSR and scroll locking", () => {
+  assert.match(sidebarSource, /useState\(false\)/);
+  assert.match(sidebarSource, /const \[mounted, setMounted\] = useState\(false\)/);
+  assert.match(sidebarSource, /useEffect\(\(\) => setMounted\(true\), \[\]\)/);
+  assert.match(sidebarSource, /mounted && open/);
+  assert.match(sidebarSource, /document\.body\.style\.overflow/);
+  assert.match(sidebarSource, /h-dvh/);
+  assert.match(sidebarSource, /overflow-y-auto/);
+});
+
+test("shared layout prevents horizontal overflow and long text issues", () => {
+  const css = fs.readFileSync(path.join(root, "app", "globals.css"), "utf8");
+  assert.match(css, /overflow-x:\s*clip/);
+  assert.match(routeSource, /overflow-x-clip/);
+  assert.match(routeSource, /min-w-0/);
 });
 
 test("tool components do not inject raw HTML", () => {
   const toolDir = path.join(root, "components", "tools");
-  for (const file of fs.readdirSync(toolDir).filter(entry => entry.endsWith(".tsx"))) {
+  for (const file of fs.readdirSync(toolDir).filter((entry) => entry.endsWith(".tsx"))) {
     const content = fs.readFileSync(path.join(toolDir, file), "utf8");
     assert.doesNotMatch(content, /dangerouslySetInnerHTML/, `Unexpected raw HTML injection in ${file}`);
+  }
+});
+
+test("site copy avoids AI-style typography artifacts", () => {
+  for (const file of sourceFiles()) {
+    const content = fs.readFileSync(file, "utf8");
+    assert.doesNotMatch(content, /[—–…]/, `Avoid em dash, en dash and ellipsis in UI/source copy: ${path.relative(root, file)}`);
+    const stringLiterals = content.match(/"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`/g) ?? [];
+    for (const literal of stringLiterals) {
+      assert.doesNotMatch(literal, / {2,}/, `Extra spaces found in copy: ${path.relative(root, file)}`);
+    }
+  }
+});
+
+test("tool descriptions stay short and human-readable", () => {
+  for (const tool of tools) {
+    assert.ok(tool.description.length <= 100, `${tool.slug} description is too long`);
+    assert.doesNotMatch(tool.description, /\b(instantly|effortlessly|seamlessly|powerful|robust|comprehensive)\b/i, `${tool.slug} uses marketing-heavy wording`);
   }
 });
 
