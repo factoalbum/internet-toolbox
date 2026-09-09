@@ -15,7 +15,7 @@ const categories = new Set(["calculators", "developer", "text", "files"]);
 const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const componentNames = [...routeSource.matchAll(/import\s+([A-Za-z0-9]+)\s+from\s+"@\/components\/tools\/([^"]+)"/g)].map(([, component, file]) => ({ component, file }));
 
-function componentFileExists(file) { return fs.existsSync(path.join(root, "components", "tools", `${file}.tsx")); }
+function componentFileExists(file) { return fs.existsSync(path.join(root, "components", "tools", `${file}.tsx`)); }
 
 test("tool registry is structurally valid", () => {
   assert.ok(tools.length >= 20, `Expected at least 20 tools, found ${tools.length}`);
@@ -63,16 +63,24 @@ test("tool components do not inject raw HTML", () => {
 test("live market tools use explicit external rate sources", () => {
   assert.match(currencySource, /https:\/\/open\.er-api\.com\/v6\/latest\/USD/);
   assert.match(currencySource, /rates\[target\] \/ rates\[base\]/);
+  assert.match(currencySource, /popularRates/);
+  assert.match(currencySource, /rateToInr/);
   assert.match(metalsSource, /https:\/\/api\.gold-api\.com\/price\/\$\{metal\}/);
   assert.match(metalsSource, /https:\/\/open\.er-api\.com\/v6\/latest\/USD/);
   assert.match(metalsSource, /31\.1034768/);
   assert.match(metalsSource, /Number\(purity\) \/ 24/);
+  assert.match(metalsSource, /gold24/);
+  assert.match(metalsSource, /gold22/);
+  assert.match(metalsSource, /gold18/);
+  assert.match(metalsSource, /perGram \* 10/);
+  assert.match(metalsSource, /perGram \* 1000/);
   assert.doesNotMatch(metalsSource, /₹\s*1[0-9]{4,6}/, "Metal tool must not hardcode a current INR price");
 });
 
 test("market tools handle failed rate requests", () => {
   assert.match(currencySource, /response\.ok/);
   assert.match(currencySource, /role=\"alert\"/);
+  assert.match(currencySource, /Retry/);
   assert.match(metalsSource, /response\.ok/);
   assert.match(metalsSource, /role=\"alert\"/);
   assert.match(metalsSource, /Retry/);
