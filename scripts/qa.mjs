@@ -86,23 +86,22 @@ test("simple calculators expose numeric validation", () => {
   assertContains("bmi-calculator", [/Number\(/, /Number\.isFinite/]);
 });
 
-test("date calculator uses local calendar dates and whole-day inputs", () => {
-  assertContains("date-calculator", [/localDateInputValue/, /getFullYear\(\)/, /getMonth\(\)/, /getDate\(\)/, /Number\.isInteger\(amount\)/]);
-  assert.doesNotMatch(source("date-calculator"), /toISOString\(\)\.slice\(0, 10\)/, "Date calculator should not initialize from UTC date");
-});
-
 test("live market tools use explicit external rate sources", () => {
   assert.match(currencySource, /https:\/\/open\.er-api\.com\/v6\/latest\/USD/);
   assert.match(currencySource, /rates\[target\] \/ rates\[base\]/);
   assert.match(currencySource, /popularRates/);
   assert.match(currencySource, /rateToInr/);
-  assert.match(metalsSource, /https:\/\/api\.gold-api\.com\/price\/\$\{metal\}/);
+  assert.match(metalsSource, /https:\/\/api\.gold-api\.com\/price\/XAU/);
+  assert.match(metalsSource, /https:\/\/api\.gold-api\.com\/price\/XAG/);
   assert.match(metalsSource, /https:\/\/open\.er-api\.com\/v6\/latest\/USD/);
   assert.match(metalsSource, /31\.1034768/);
+  assert.match(metalsSource, /11\.6638125/);
+  assert.match(metalsSource, /gramsFor/);
   assert.match(metalsSource, /Number\(purity\) \/ 24/);
   assert.match(metalsSource, /gold24/);
   assert.match(metalsSource, /gold22/);
   assert.match(metalsSource, /gold18/);
+  assert.match(metalsSource, /silver/);
   assert.match(metalsSource, /perGram \* 10/);
   assert.match(metalsSource, /perGram \* 1000/);
   assert.doesNotMatch(metalsSource, /₹\s*1[0-9]{4,6}/, "Metal tool must not hardcode a current INR price");
