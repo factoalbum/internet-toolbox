@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Calculator, Code2, FileImage, FileText, Search, ShieldCheck } from "lucide-react";
+import { ArrowRight, Calculator, Code2, FileImage, FileText, Search, ShieldCheck, Sparkles } from "lucide-react";
 import ToolSearch from "@/components/tool-search";
 import SiteHeader from "@/components/site-header";
 import { categories, featuredTools, tools } from "@/lib/tools";
@@ -9,6 +9,7 @@ const quickTools = [
   { slug: "discount-calculator", label: "Find a sale price" },
   { slug: "emi-calculator", label: "Calculate loan EMI" },
   { slug: "currency-converter", label: "Convert currency" },
+  { slug: "message-writer", label: "Write a LinkedIn post" },
   { slug: "unit-converter", label: "Convert units" },
   { slug: "gold-silver-rate-converter", label: "Check gold and silver" },
 ];
@@ -16,6 +17,7 @@ const quickTools = [
 const taskCards = [
   { label: "Money", title: "Work out money", text: "EMI, GST, salary, tax, discounts and investments.", href: "/categories/calculators", icon: Calculator },
   { label: "Everyday", title: "Convert or calculate", text: "Percentages, age, dates, time, units and more.", href: "/categories/calculators", icon: FileText },
+  { label: "Writing", title: "Write something", text: "Turn a few words into a LinkedIn post, message, request or caption.", href: "/tools/message-writer", icon: Sparkles },
   { label: "Work", title: "Get something done", text: "Clean text, shorten URLs and prepare content.", href: "/categories/text", icon: FileText },
   { label: "Tech", title: "Solve a developer task", text: "Format JSON, generate UUIDs, encode data and check values.", href: "/categories/developer", icon: Code2 },
   { label: "Files", title: "Fix a file", text: "Compress images and handle common file tasks in your browser.", href: "/categories/files", icon: FileImage },
