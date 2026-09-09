@@ -49,7 +49,7 @@ export default function HtmlEntityTool() {
       <div className="mt-6 grid gap-5 md:grid-cols-2">
         <label className="block">
           <span className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-black/45">Input</span>
-          <textarea value={input} onChange={(event) => setInput(event.target.value)} placeholder={mode === "encode" ? "Type HTML text here…" : "Paste entities such as &amp; or &#169;…"} className="min-h-72 w-full resize-y rounded-md border border-[#d8d4c9] bg-white p-4 font-mono text-sm leading-6 outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" spellCheck={false} />
+          <textarea value={input} onChange={(event) => setInput(event.target.value)} placeholder={mode === "encode" ? "Type HTML text here..." : "Paste entities such as &amp; or &#169;..."} className="min-h-72 w-full resize-y rounded-md border border-[#d8d4c9] bg-white p-4 font-mono text-sm leading-6 outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" spellCheck={false} />
         </label>
         <div>
           <span className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-black/45">Result</span>
