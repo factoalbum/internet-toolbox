@@ -16,6 +16,7 @@ export const tools: Tool[] = [
   { slug: "age-calculator", name: "Age Calculator", description: "Find an exact age between two dates.", category: "everyday", icon: Calculator, status: "live" },
   { slug: "discount-calculator", name: "Discount Calculator", description: "Find the sale price and your savings.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "time-converter", name: "Time Converter", description: "Convert seconds, minutes, hours and days.", category: "everyday", icon: Calculator, status: "live" },
+  { slug: "time-zone-converter", name: "Time Zone Converter", description: "Convert a date and time between common world time zones.", category: "everyday", icon: Calculator, status: "live" },
   { slug: "emi-calculator", name: "EMI Calculator", description: "Estimate monthly loan payments, interest and total repayment.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "gst-calculator", name: "GST Calculator", description: "Add or remove GST and see the tax amount.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "bmi-calculator", name: "BMI Calculator", description: "Calculate body mass index from height and weight.", category: "calculators", icon: Calculator, status: "live" },
@@ -52,5 +53,5 @@ export const tools: Tool[] = [
   { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
 ];
 
-export const featuredTools = [tools[0], tools[4], tools[5], tools[7], tools[22], tools[6], tools[12], tools[16], tools[17], tools[8]];
+export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[23], tools[8], tools[13], tools[17], tools[18], tools[9]];
 export const brandIcon = Sparkles;
