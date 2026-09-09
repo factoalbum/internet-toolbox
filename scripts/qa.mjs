@@ -16,10 +16,9 @@ const componentNames = [...routeSource.matchAll(/import\s+([A-Za-z0-9]+)\s+from\
   .map(([, component, file]) => ({ component, file }));
 
 function componentFileExists(file) {
-  return fs.existsSync(path.join(root, "components", "tools", `${file}.tsx"));
+  return fs.existsSync(path.join(root, "components", "tools", `${file}.tsx`));
 }
 
-// The registry is intentionally parsed from source so this QA suite has zero runtime dependency on Next.js.
 test("tool registry is structurally valid", () => {
   assert.ok(tools.length >= 20, `Expected at least 20 tools, found ${tools.length}`);
   assert.equal(new Set(tools.map((tool) => tool.slug)).size, tools.length, "Duplicate tool slugs found");
@@ -56,10 +55,9 @@ test("core site pages exist", () => {
   }
 });
 
-test("dangerous browser shortcuts are not used in tool components", () => {
+test("tool components do not inject raw HTML", () => {
   const toolDir = path.join(root, "components", "tools");
-  const files = fs.readdirSync(toolDir).filter((file) => file.endsWith(".tsx"));
-  for (const file of files) {
+  for (const file of fs.readdirSync(toolDir).filter((entry) => entry.endsWith(".tsx"))) {
     const source = fs.readFileSync(path.join(toolDir, file), "utf8");
     assert.doesNotMatch(source, /dangerouslySetInnerHTML/, `Unexpected raw HTML injection in ${file}`);
   }
