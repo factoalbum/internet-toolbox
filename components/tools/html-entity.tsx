@@ -12,7 +12,7 @@ const namedEntities: Record<string, string> = {
 };
 
 function encodeHtml(value: string) {
-  return value.replace(/[&<>"']/g, (char) => {
+  return value.replace(/[\u0026\u003c\u003e\u0022\u0027]/g, (char) => {
     const named = Object.entries(namedEntities).find(([, decoded]) => decoded === char)?.[0];
     return named ? `&${named};` : `&#${char.charCodeAt(0)};`;
   });
