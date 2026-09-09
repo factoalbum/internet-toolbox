@@ -33,6 +33,10 @@ const searchAliases: Record<string, string[]> = {
   "thank you": ["thank you", "message", "writer"],
   "leave request": ["leave", "message", "writer"],
   "professional email": ["email", "message", "writer"],
+  timezone: ["time zone", "time"],
+  "time zone": ["timezone", "world clock", "time"],
+  "time zone converter": ["timezone", "time"],
+  international: ["timezone", "time zone", "currency"],
 };
 
 export default function ToolSearch() {
@@ -116,7 +120,7 @@ export default function ToolSearch() {
         {matches.length > 0 ? <>
           {!query && <div className="border-b border-[#e8e4d9] px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-black/35">Popular tools</div>}
           <div className="divide-y divide-[#e8e4d9]">{matches.map((tool, index) => { const Icon = tool.icon; return <Link key={tool.slug} id={`tool-result-${tool.slug}`} role="option" aria-selected={index === activeIndex} href={`/tools/${tool.slug}`} onMouseEnter={() => setActiveIndex(index)} onClick={() => { clearSearch(); setFocused(false); }} className={`group flex min-w-0 items-center gap-4 p-4 transition ${index === activeIndex ? "bg-[#c8f169]" : "hover:bg-[#c8f169]"}`}><span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#edf7d5]"><Icon size={17} aria-hidden="true" /></span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{tool.name}</span><span className="block truncate text-xs text-black/45">{tool.description}</span></span><ArrowUpRight size={16} className="shrink-0 opacity-30" aria-hidden="true" /></Link>; })}</div>
-        </> : <div className="p-5"><p className="font-bold">No tool found</p><p className="mt-1 text-sm text-black/45">Try loan, tax, image, JSON, date or message.</p></div>}
+        </> : <div className="p-5"><p className="font-bold">No tool found</p><p className="mt-1 text-sm text-black/45">Try loan, tax, image, JSON, date, message or time zone.</p></div>}
       </div>}
     </div>
   );
