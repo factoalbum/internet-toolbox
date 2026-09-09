@@ -45,7 +45,10 @@ export default function CurrencyConverter() {
     } finally { setLoading(false); }
   }
 
-  useEffect(() => { void loadRates(); }, []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void loadRates(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const result = useMemo(() => {
     const value = Number(amount);
