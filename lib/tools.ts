@@ -43,6 +43,7 @@ export const tools: Tool[] = [
   { slug: "word-counter", name: "Word Counter", description: "Count words, characters and reading time.", category: "text", icon: FileText, status: "live" },
   { slug: "character-counter", name: "Character Counter", description: "Count characters with and without spaces.", category: "text", icon: FileText, status: "live" },
   { slug: "case-converter", name: "Case Converter", description: "Change text between common letter cases.", category: "text", icon: Type, status: "live" },
+  { slug: "text-cleaner", name: "Text Cleaner", description: "Remove extra spaces and blank lines from pasted text.", category: "text", icon: Type, status: "live" },
   { slug: "url-slug-generator", name: "URL Slug Generator", description: "Turn page titles into clean URL slugs.", category: "text", icon: Type, status: "live" },
   { slug: "image-compressor", name: "Image Compressor", description: "Compress JPG, PNG and WebP images in your browser.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
