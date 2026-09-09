@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type RatesResponse = { result: string; base_code?: string; rates?: Record<string, number>; time_last_update_utc?: string; time_next_update_utc?: string };
+type RatesResponse = { base?: string; date?: string; rates?: Record<string, number> };
+type FallbackRatesResponse = RatesResponse & { result?: string; time_last_update_utc?: string };
 
 const currencies = [
   ["INR", "Indian Rupee"], ["USD", "US Dollar"], ["EUR", "Euro"], ["GBP", "British Pound"],
@@ -13,6 +14,8 @@ const currencies = [
 ] as const;
 
 const popularRates = ["USD", "EUR", "GBP", "AED", "SAR", "JPY"] as const;
+const HOURLY_SOURCE = "https://api.exchangerate.fun/latest?base=USD";
+const FALLBACK_SOURCE = "https://open.er-api.com/v6/latest/USD";
 
 function format(value: number, code: string) {
   return new Intl.NumberFormat(undefined, { style: "currency", currency: code, maximumFractionDigits: code === "JPY" ? 0 : 2 }).format(value);
@@ -28,20 +31,32 @@ export default function CurrencyConverter() {
   const [amount, setAmount] = useState("1");
   const [rates, setRates] = useState<Record<string, number> | null>(null);
   const [updated, setUpdated] = useState("");
+  const [sourceName, setSourceName] = useState("Hourly reference rates");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   async function loadRates() {
     setLoading(true); setError("");
     try {
-      const response = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
-      if (!response.ok) throw new Error("Rate service unavailable");
-      const data = (await response.json()) as RatesResponse;
-      if (data.result !== "success" || !data.rates || !Number.isFinite(data.rates.INR)) throw new Error("Could not read exchange rates");
+      const response = await fetch(HOURLY_SOURCE, { cache: "no-store" });
+      if (!response.ok) throw new Error("Primary rate service unavailable");
+      const data = await response.json() as RatesResponse;
+      if (!data.rates || !Number.isFinite(data.rates.INR) || !Number.isFinite(data.rates.SAR)) throw new Error("Primary rate data incomplete");
       setRates(data.rates);
-      setUpdated(data.time_last_update_utc ?? "");
+      setUpdated(data.date ?? "");
+      setSourceName("ExchangeRate.fun · hourly reference");
     } catch {
-      setError("Live rates could not be loaded. Please try again.");
+      try {
+        const response = await fetch(FALLBACK_SOURCE, { cache: "no-store" });
+        if (!response.ok) throw new Error("Fallback unavailable");
+        const data = await response.json() as FallbackRatesResponse;
+        if (data.result !== "success" || !data.rates || !Number.isFinite(data.rates.INR)) throw new Error("Fallback data invalid");
+        setRates(data.rates);
+        setUpdated(data.time_last_update_utc ?? "");
+        setSourceName("ExchangeRate-API · daily fallback");
+      } catch {
+        setError("Live rates could not be loaded. Please try again.");
+      }
     } finally { setLoading(false); }
   }
 
@@ -78,8 +93,8 @@ export default function CurrencyConverter() {
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">{popularRates.map(code => <div key={code} className="border border-[#d8d4c9] bg-[#f8f5ed] p-3"><p className="text-xs font-bold text-black/45">{code}</p><p className="mt-1 font-bold">{loading ? "—" : rateToInr(code) === null ? "—" : formatInr(rateToInr(code)!)}</p></div>)}</div>
     </section>
 
-    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-black/45"><p>Rates update about once per day on this free data source.</p><button type="button" onClick={() => void loadRates()} disabled={loading} className="font-bold underline disabled:opacity-40">Refresh rates</button></div>
-    {updated && <p className="mt-2 text-xs text-black/40">Source update: {updated}. Rates are indicative, not bank/card settlement rates.</p>}
-    <p className="mt-2 text-xs text-black/40">Rates by ExchangeRate-API. This tool does not add bank spreads, card fees or transfer charges.</p>
+    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-black/45"><p>Reference rates refresh about once per hour.</p><button type="button" onClick={() => void loadRates()} disabled={loading} className="font-bold underline disabled:opacity-40">Refresh rates</button></div>
+    {updated && <p className="mt-2 text-xs text-black/40">Source update: {updated}. {sourceName} is indicative and may differ slightly from Google, banks, cards and remittance providers.</p>}
+    <p className="mt-2 text-xs text-black/40">This tool shows indicative midpoint/reference rates and does not add bank spreads, card fees or transfer charges.</p>
   </div>;
 }
