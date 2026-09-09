@@ -9,8 +9,11 @@ const SYMBOLS = "!@#$%^&*()-_=+[]{}:;,.?";
 const DEFAULT_LENGTH = 16;
 
 function randomIndex(max: number) {
+  const limit = Math.floor(0x100000000 / max) * max;
   const values = new Uint32Array(1);
-  crypto.getRandomValues(values);
+  do {
+    crypto.getRandomValues(values);
+  } while (values[0] >= limit);
   return values[0] % max;
 }
 
