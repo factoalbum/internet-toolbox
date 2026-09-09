@@ -22,11 +22,11 @@ function incomeTax(gross: number) {
   const taxable = Math.max(0, gross - 75000);
   let tax = slabTax(taxable);
 
-  // Section 87A rebate and marginal relief around the ₹12 lakh threshold.
+  // Section 87A rebate up to ₹12 lakh taxable income. Above ₹12 lakh,
+  // marginal relief limits tax before cess to the income above ₹12 lakh.
   if (taxable <= 1200000) {
     tax = 0;
   } else {
-    tax = Math.max(0, tax - 60000);
     tax = Math.min(tax, taxable - 1200000);
   }
 
