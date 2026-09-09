@@ -12,6 +12,7 @@ const currencySource = fs.readFileSync(path.join(root, "components", "tools", "c
 const metalsSource = fs.readFileSync(path.join(root, "components", "tools", "gold-silver-converter.tsx"), "utf8");
 const messageWriterSource = fs.readFileSync(path.join(root, "components", "tools", "message-writer.tsx"), "utf8");
 const messageWriterRulesSource = fs.readFileSync(path.join(root, "lib", "message-writer.ts"), "utf8");
+const duplicateLinesSource = fs.readFileSync(path.join(root, "components", "tools", "remove-duplicate-lines.tsx"), "utf8");
 
 const toolMatches = [...toolsSource.matchAll(/slug:\s*"([^"]+)"\s*,\s*name:\s*"([^"]+)"\s*,\s*description:\s*"([^"]+)"\s*,\s*category:\s*"([^"]+)"\s*,\s*icon:[^,]+,\s*status:\s*"([^"]+)"/g)];
 const tools = toolMatches.map(([, slug, name, description, category, status]) => ({ slug, name, description, category, status }));
@@ -138,6 +139,14 @@ test("message writer keeps the local fallback factual and context-driven", () =>
   assert.match(messageWriterRulesSource, /Use only facts provided in the user's context/);
   assert.match(messageWriterRulesSource, /Do not invent names, dates, achievements, numbers, companies, relationships or events/);
   assert.match(messageWriterRulesSource, /Do not add hashtags unless the user asks for them/);
+});
+
+test("duplicate line remover preserves order and ignores blank duplicates", () => {
+  assert.match(duplicateLinesSource, /new Set<string>\(\)/);
+  assert.match(duplicateLinesSource, /seen\.has\(key\)/);
+  assert.match(duplicateLinesSource, /seen\.add\(key\)/);
+  assert.match(duplicateLinesSource, /\.split\("\\n"\)/);
+  assert.match(duplicateLinesSource, /Processing happens in your browser/);
 });
 
 test("financial calculators guard invalid inputs and expose estimates", () => {
