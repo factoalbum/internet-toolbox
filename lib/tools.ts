@@ -6,7 +6,7 @@ export type Tool = { slug: string; name: string; description: string; category: 
 export const categories = [
   { slug: "calculators", name: "Calculators", description: "Work out numbers, money and everyday questions.", icon: Calculator },
   { slug: "developer", name: "Developer Tools", description: "Handle common coding and data tasks.", icon: Code2 },
-  { slug: "text", name: "Text Tools", description: "Clean, count and change text.", icon: FileText },
+  { slug: "text", name: "Text Tools", description: "Clean, count, write and change text.", icon: FileText },
   { slug: "files", name: "File & Image Tools", description: "Handle common image and file tasks in your browser.", icon: ImageIcon },
 ] as const;
 
@@ -32,6 +32,7 @@ export const tools: Tool[] = [
   { slug: "random-number-generator", name: "Random Number Generator", description: "Generate random integers in your browser.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "tip-calculator", name: "Tip Calculator", description: "Calculate a tip, final bill and each person's share.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "url-shortener", name: "URL Shortener", description: "Create a shorter, shareable link from a long URL.", category: "text", icon: Link2, status: "live" },
+  { slug: "message-writer", name: "Caption & Message Writer", description: "Turn a few words into a ready-to-use caption, message or request.", category: "text", icon: Sparkles, status: "live" },
   { slug: "json-formatter", name: "JSON Formatter", description: "Format and inspect JSON with readable indentation.", category: "developer", icon: Code2, status: "live" },
   { slug: "uuid-generator", name: "UUID Generator", description: "Generate UUIDs in your browser.", category: "developer", icon: Code2, status: "live" },
   { slug: "password-generator", name: "Password Generator", description: "Generate strong passwords locally in your browser.", category: "developer", icon: ShieldCheck, status: "live" },
@@ -49,5 +50,5 @@ export const tools: Tool[] = [
   { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
 ];
 
-export const featuredTools = [tools[0], tools[4], tools[5], tools[7], tools[6], tools[12], tools[16], tools[17], tools[13], tools[8]];
+export const featuredTools = [tools[0], tools[4], tools[5], tools[7], tools[21], tools[6], tools[12], tools[16], tools[17], tools[8]];
 export const brandIcon = Sparkles;
