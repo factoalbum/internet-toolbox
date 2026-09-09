@@ -26,9 +26,9 @@ export default function WordCounter() {
 
       <div className="p-5 md:p-7">
         <label htmlFor="word-counter-input" className="mb-2 block text-sm font-bold">Your text</label>
-        <textarea id="word-counter-input" value={text} onChange={(event) => setText(event.target.value)} placeholder="Start typing or paste text here…" className="min-h-72 w-full resize-y border border-[#cfcabf] bg-[#f8f5ed] p-4 text-base leading-7 outline-none transition placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
+        <textarea id="word-counter-input" value={text} onChange={(event) => setText(event.target.value)} placeholder="Start typing or paste text here" className="min-h-72 w-full resize-y border border-[#cfcabf] bg-[#f8f5ed] p-4 text-base leading-7 outline-none transition placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
         <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden border border-[#d8d4c9] bg-[#d8d4c9] sm:grid-cols-5">
-          {[["Words", stats.words], ["Characters", stats.characters], ["No spaces", stats.noSpaces], ["Sentences", stats.sentences], ["Read time", stats.readingMinutes ? `${stats.readingMinutes} min` : "—"]].map(([label, value]) => <div key={label} className="bg-[#fffdf8] p-4"><p className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-black/35">{label}</p><p className="mt-2 text-xl font-black">{value}</p></div>)}
+          {[["Words", stats.words], ["Characters", stats.characters], ["No spaces", stats.noSpaces], ["Sentences", stats.sentences], ["Read time", stats.readingMinutes ? `${stats.readingMinutes} min` : "-"]].map(([label, value]) => <div key={label} className="bg-[#fffdf8] p-4"><p className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-black/35">{label}</p><p className="mt-2 text-xl font-black">{value}</p></div>)}
         </div>
       </div>
     </div>
