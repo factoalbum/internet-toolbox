@@ -107,19 +107,19 @@ export default function IncomeTaxCalculator() {
 
         <div className="space-y-4">
           <div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5">
-            <div className="flex items-center justify-between gap-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">New regime · FY 2026–27</p>{result.best === "new" && <span className="rounded-full bg-[#c8f169] px-2.5 py-1 text-xs font-bold">Lower tax</span>}</div>
+            <div className="flex items-center justify-between gap-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">New regime · FY 2026-27</p>{result.best === "new" && <span className="rounded-full bg-[#c8f169] px-2.5 py-1 text-xs font-bold">Lower tax</span>}</div>
             <p className="mt-3 text-3xl font-black tracking-tight">{inr.format(result.newer.total)}</p>
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div>Taxable income <strong className="block">{inr.format(result.newer.taxable)}</strong></div><div>Monthly equivalent <strong className="block">{inr.format(result.newer.total / 12)}</strong></div></div>
           </div>
           <div className="border border-[#d8d4c9] p-5">
-            <div className="flex items-center justify-between gap-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Old regime · FY 2026–27</p>{result.best === "old" && <span className="rounded-full bg-[#c8f169] px-2.5 py-1 text-xs font-bold">Lower tax</span>}</div>
+            <div className="flex items-center justify-between gap-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Old regime · FY 2026-27</p>{result.best === "old" && <span className="rounded-full bg-[#c8f169] px-2.5 py-1 text-xs font-bold">Lower tax</span>}</div>
             <p className="mt-3 text-3xl font-black tracking-tight">{inr.format(result.older.total)}</p>
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div>Taxable income <strong className="block">{inr.format(result.older.taxable)}</strong></div><div>Monthly equivalent <strong className="block">{inr.format(result.older.total / 12)}</strong></div></div>
           </div>
           <div className="rounded-lg bg-[#171717] p-5 text-white"><p className="text-xs font-bold uppercase tracking-[0.14em] text-white/50">Estimated savings</p><p className="mt-2 text-2xl font-black">{inr.format(Math.abs(result.newer.total - result.older.total))}</p><p className="mt-1 text-sm text-white/60">The {result.best === "new" ? "new" : "old"} regime is lower with these inputs.</p></div>
         </div>
       </div>
-      <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/50">Estimate for FY 2026–27 / AY 2027–28 using normal slab-rate income. It includes 4% health & education cess and compares the new and old regimes. It does not model capital gains or other special-rate income, HRA, home-loan-specific rules, or every possible deduction. For filing, verify against your Form 16 and the Income Tax Department.</p>
+      <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/50">Estimate for FY 2026-27 / AY 2027-28 using normal slab-rate income. It includes 4% health & education cess and compares the new and old regimes. It does not model capital gains or other special-rate income, HRA, home-loan-specific rules, or every possible deduction. For filing, verify against your Form 16 and the Income Tax Department.</p>
     </div>
   );
 }
