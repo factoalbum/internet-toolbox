@@ -71,31 +71,31 @@ export default function UnitConverter() {
     setTo(second);
   }
 
-  function swap() {
-    setFrom(to);
-    setTo(from);
-  }
-
   const options = units[category];
 
   return (
     <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-8">
       <label className="block text-sm font-bold">What do you want to convert?</label>
       <div className="mt-2 grid grid-cols-2 gap-1 border border-[#d8d4c9] bg-[#e8e4d9] p-1 sm:grid-cols-4">
-        {(["length", "weight", "temperature", "volume"] as Category[]).map((item) => (
-          <button key={item} type="button" onClick={() => changeCategory(item)} className={`min-h-11 rounded-md px-3 text-sm font-bold capitalize ${category === item ? "bg-[#171717] text-white" : "text-black/50 hover:text-black"}`}>{item}</button>
+        {["length", "weight", "temperature", "volume"].map((item) => (
+          <button key={item} type="button" onClick={() => changeCategory(item as Category)} className={`min-h-11 rounded-md px-3 text-sm font-bold capitalize ${category === item ? "bg-[#171717] text-white" : "text-black/50 hover:text-black"}`}>{item}</button>
         ))}
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-end">
+      <div className="mt-6 grid gap-4 md:grid-cols-3">
         <div>
           <label htmlFor="unit-value" className="block text-sm font-bold">Value</label>
-          <input id="unit-value" value={value} onChange={(event) => setValue(event.target.value)} inputMode="decimal" className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-4 text-base outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
+          <input id="unit-value" value={value} onChange={(event) => setValue(event.target.value)} inputMode="decimal" placeholder="1" className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-4 text-base outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
         </div>
-        <button type="button" onClick={swap} className="min-h-11 rounded-md border border-[#bcb8ae] px-4 text-sm font-bold hover:border-[#171717]" aria-label="Swap units">Swap</button>
         <div>
           <label htmlFor="unit-from" className="block text-sm font-bold">From</label>
           <select id="unit-from" value={from} onChange={(event) => setFrom(event.target.value)} className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-4 text-sm outline-none focus:border-[#171717]">
+            {options.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="unit-to" className="block text-sm font-bold">Convert to</label>
+          <select id="unit-to" value={to} onChange={(event) => setTo(event.target.value)} className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-4 text-sm outline-none focus:border-[#171717]">
             {options.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}
           </select>
         </div>
@@ -103,15 +103,9 @@ export default function UnitConverter() {
 
       <div className="mt-5 border border-[#171717] bg-[#c8f169] p-5" aria-live="polite">
         <p className="text-xs font-bold uppercase tracking-[0.12em] text-black/50">Result</p>
-        <p className="mt-2 break-all text-3xl font-black">{result === null ? "—" : formatNumber(result)}</p>
+        <p className="mt-2 break-all text-3xl font-black">{result === null ? "Enter a value" : formatNumber(result)}</p>
       </div>
 
-      <div className="mt-5">
-        <label htmlFor="unit-to" className="block text-sm font-bold">Convert to</label>
-        <select id="unit-to" value={to} onChange={(event) => setTo(event.target.value)} className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-4 text-sm outline-none focus:border-[#171717]">
-          {options.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}
-        </select>
-      </div>
       <p className="mt-6 text-xs leading-5 text-black/45">Conversions use standard measurement relationships. Results are rounded for readability.</p>
     </div>
   );
