@@ -25,11 +25,8 @@ export default function EmiCalculator() {
 
   return <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-8">
     <div className="mb-5 flex items-center justify-between gap-4">
-      <div>
-        <p className="font-bold">Estimate your monthly EMI</p>
-        <p className="mt-1 text-sm text-black/50">Try common loan amounts and tenures, then fine-tune the numbers.</p>
-      </div>
-      <button onClick={reset} type="button" className="flex min-h-11 items-center gap-2 rounded-lg border border-[#d8d4c9] px-3 text-sm font-bold text-black/55 transition hover:bg-black/5 hover:text-black" aria-label="Reset EMI calculator"><RotateCcw size={16} /><span className="hidden sm:inline">Reset</span></button>
+      <div><p className="font-bold">Estimate your monthly EMI</p><p className="mt-1 text-sm text-black/50">Enter the loan details to see the monthly payment and total interest.</p></div>
+      <button onClick={reset} type="button" className="flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[#d8d4c9] px-3 text-sm font-bold text-black/55 transition hover:bg-black/5 hover:text-black" aria-label="Reset EMI calculator"><RotateCcw size={16} /><span className="hidden sm:inline">Reset</span></button>
     </div>
 
     <div className="grid gap-5 md:grid-cols-3">
@@ -43,7 +40,7 @@ export default function EmiCalculator() {
       <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Tenure</p><div className="mt-2 flex flex-wrap gap-2">{tenureOptions.map(option => <button key={option} type="button" onClick={() => setYears(String(option))} aria-pressed={years === String(option)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold transition ${years === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717]"}`}>{option} years</button>)}</div></div>
     </div>
 
-    {result ? <div className="mt-7 grid gap-3 sm:grid-cols-3" aria-live="polite"><div className="border border-[#171717] bg-[#c8f169] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/50">Monthly EMI</p><p className="mt-2 text-3xl font-black">{money.format(result.emi)}</p></div><div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Total interest</p><p className="mt-2 text-2xl font-black">{money.format(result.interest)}</p></div><div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Total payment</p><p className="mt-2 text-2xl font-black">{money.format(result.total)}</p></div></div> : <p className="mt-6 text-sm text-black/50" role="alert">Enter a loan amount above 0, a valid interest rate, and a tenure of 1–100 years.</p>}
-    <p className="mt-5 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Calculated using monthly reducing-balance interest. Estimate only; lender fees, taxes, insurance, prepayments and repayment rules can change your actual payment.</p>
+    {result ? <div className="mt-7 grid gap-3 sm:grid-cols-3" aria-live="polite"><div className="border border-[#171717] bg-[#c8f169] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/50">Monthly EMI</p><p className="mt-2 text-3xl font-black">{money.format(result.emi)}</p></div><div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Total interest</p><p className="mt-2 text-2xl font-black">{money.format(result.interest)}</p></div><div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Total payment</p><p className="mt-2 text-2xl font-black">{money.format(result.total)}</p></div></div> : <p className="mt-6 text-sm text-black/50" role="alert">Enter a loan amount above 0, a valid interest rate, and a tenure from 1 to 100 years.</p>}
+    <p className="mt-5 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Calculated using monthly reducing-balance interest. Estimate only. Lender fees, taxes, insurance, prepayments and repayment rules can change your actual payment.</p>
   </div>;
 }
