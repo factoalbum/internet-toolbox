@@ -71,7 +71,7 @@ export default function Home() {
             <Link href="/tools" className="inline-flex items-center gap-2 text-sm font-bold">See every tool<ArrowRight size={15} /></Link>
           </div>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((tool) => { const Icon = tool.icon; return <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group min-w-0 border border-[#d8d4c9] bg-[#fffdf8] p-5 transition hover:border-[#171717] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[#c8f169]}>
+            {featured.map((tool) => { const Icon = tool.icon; return <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group min-w-0 border border-[#d8d4c9] bg-[#fffdf8] p-5 transition hover:border-[#171717] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[#c8f169]">
               <div className="flex items-start justify-between gap-3"><span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#edf7d5]"><Icon size={18} aria-hidden="true" /></span><ArrowRight size={15} className="text-black/25 transition group-hover:translate-x-1 group-hover:text-black" /></div>
               <h3 className="mt-7 break-words text-base font-bold tracking-tight">{tool.name}</h3>
               <p className="mt-1.5 line-clamp-2 text-sm leading-5 text-black/50">{tool.description}</p>
