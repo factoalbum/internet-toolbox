@@ -30,8 +30,8 @@ export default function GstCalculator() {
 
   return <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-8">
     <div className="mb-5 flex items-center justify-between gap-4">
-      <div><p className="font-bold">Add or remove GST instantly</p><p className="mt-1 text-sm text-black/50">Useful for checking an invoice price before you pay or quote it.</p></div>
-      <button type="button" onClick={reset} className="flex min-h-11 items-center gap-2 rounded-lg border border-[#d8d4c9] px-3 text-sm font-bold text-black/55 transition hover:bg-black/5 hover:text-black focus:outline-none focus:ring-2 focus:ring-[#c8f169]" aria-label="Reset GST calculator"><RotateCcw size={16} /><span className="hidden sm:inline">Reset</span></button>
+      <div><p className="font-bold">Add or remove GST</p><p className="mt-1 text-sm text-black/50">Check an invoice price before you pay or quote it.</p></div>
+      <button type="button" onClick={reset} className="flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[#d8d4c9] px-3 text-sm font-bold text-black/55 transition hover:bg-black/5 hover:text-black focus:outline-none focus:ring-2 focus:ring-[#c8f169]" aria-label="Reset GST calculator"><RotateCcw size={16} /><span className="hidden sm:inline">Reset</span></button>
     </div>
 
     <div className="flex gap-1 border border-[#d8d4c9] bg-[#e8e4d9] p-1" role="tablist" aria-label="GST operation">
@@ -51,6 +51,6 @@ export default function GstCalculator() {
 
     {result ? <div className="mt-7 grid gap-3 sm:grid-cols-3" aria-live="polite"><div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Base amount</p><p className="mt-2 text-2xl font-black">{money.format(result.base)}</p></div><div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">GST</p><p className="mt-2 text-2xl font-black">{money.format(result.gst)}</p></div><div className="border border-[#171717] bg-[#c8f169] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/50">Total</p><p className="mt-2 text-2xl font-black">{money.format(result.total)}</p></div></div> : <p className="mt-6 text-sm text-black/50" role="alert">Enter a valid amount and GST rate.</p>}
 
-    <p className="mt-5 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">This is a simple GST estimate. Actual tax treatment can depend on the supply, place of supply, applicable rate and other GST rules. This calculator does not determine whether a transaction is taxable.</p>
+    <p className="mt-5 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">This is a simple GST estimate. Actual tax treatment can depend on the transaction, place of supply, applicable rate and other GST rules. This calculator does not determine whether a transaction is taxable.</p>
   </div>;
 }
