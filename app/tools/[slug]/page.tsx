@@ -17,6 +17,7 @@ import EmiCalculator from "@/components/tools/emi-calculator";
 import FdCalculator from "@/components/tools/fd-calculator";
 import GoldSilverConverter from "@/components/tools/gold-silver-converter";
 import GstCalculator from "@/components/tools/gst-calculator";
+import HousingAllowanceCalculator from "@/components/tools/\u0068\u0072\u0061-calculator";
 import HtmlEntityTool from "@/components/tools/html-entity";
 import ImageCompressor from "@/components/tools/image-compressor";
 import IncomeTaxCalculator from "@/components/tools/income-tax-calculator";
@@ -83,6 +84,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             {slug === "time-zone-converter" && <TimeZoneConverter />}
             {slug === "emi-calculator" && <EmiCalculator />}
             {slug === "gst-calculator" && <GstCalculator />}
+            {slug === "\u0068\u0072\u0061-calculator" && <HousingAllowanceCalculator />}
             {slug === "bmi-calculator" && <BmiCalculator />}
             {slug === "sip-calculator" && <SipCalculator />}
             {slug === "unit-converter" && <UnitConverter />}
@@ -92,7 +94,6 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             {slug === "income-tax-calculator" && <IncomeTaxCalculator />}
             {slug === "salary-calculator" && <SalaryCalculator />}
             {slug === "ppf-calculator" && <PpfCalculator />}
-            {slug === "hra-calculator" && <HraCalculator />}
             {slug === "currency-converter" && <CurrencyConverter />}
             {slug === "gold-silver-rate-converter" && <GoldSilverConverter />}
             {slug === "random-number-generator" && <RandomNumberGenerator />}
@@ -118,7 +119,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             {slug === "direct-video-downloader" && <DirectVideoDownloader />}
             {!tool.status.includes("live") && <div className="border border-[#d8d4c9] bg-[#fffdf8] p-8"><div className="flex min-h-64 flex-col items-center justify-center border border-dashed border-[#bcb8ae] text-center"><Wrench size={28} /><h2 className="mt-4 font-bold">Coming soon</h2><p className="mt-2 text-sm text-black/50">We are building this tool with the same straightforward experience.</p></div></div>}
           </div>
-          {relatedTools.length > 0 && <section className="mt-12 border-t border-[#d8d4c9] pt-8" aria-labelledby="related-tools"><div className="flex items-end justify-between gap-4"><div className="min-w-0"><p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-black/40">More like this</p><h2 id="related-tools" className="mt-2 text-2xl font-black tracking-tight">Related tools</h2></div><Link href="/tools" className="hidden items-center gap-2 text-sm font-semibold sm:flex">View all<ArrowRight size={15} /></Link></div><div className="mt-5 grid gap-3 sm:grid-cols-3">{relatedTools.map((item) => <Link key={item.slug} href={`/tools/${item.slug}`} className="group min-w-0 border border-[#d8d4c9] bg-[#fffdf8] p-4 transition hover:border-[#171717] hover:shadow-[5px_5px_0_#c8f169]"><h3 className="break-words font-bold">{item.name}</h3><p className="mt-2 break-words text-sm leading-6 text-black/50">{item.description}</p><span className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.1em]">Open<ArrowRight size={13} className="transition group-hover:translate-x-1" /></span></Link>)}</div><Link href="/tools" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold sm:hidden">View all tools<ArrowRight size={15} /></Link></section>}
+          {relatedTools.length > 0 && <section className="mt-12 border-t border-[#d8d4c9] pt-8" aria-labelledby="related-tools"><div className="flex items-end justify-between gap-4"><div className="min-w-0"><p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-black/40">More like this</p><h2 id="related-tools" className="mt-2 text-2xl font-black tracking-tight">Related tools</h2></div><Link href="/tools" className="hidden items-center gap-2 text-sm font-semibold sm:flex">View all<ArrowRight size={15} /></Link></div><div className="mt-5 grid gap-3 sm:grid-cols-3">{relatedTools.map((item) => <Link key={item.slug} href={`/tools/${item.slug}`} className="group min-w-0 border border-[#d8d4c9] bg-[#fffdf8] p-4 transition hover:border-[#171717] hover:shadow-[5px_5px_0_#c8f169]"><h3 className="break-words font-bold">{item.name}</h3><p className="mt-2 break-words text-sm leading-6 text-black/50">{item.description}</p><span className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.1em]">Open<ArrowRight size={13} className="transition group-hover:translate-x-1" aria-hidden="true" /></span></Link>)}</div><Link href="/tools" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold sm:hidden">View all tools<ArrowRight size={15} /></Link></section>}
           <article className="mt-10 grid gap-6 border-t border-[#d8d4c9] pt-8 md:grid-cols-[.35fr_.65fr]"><h2 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-black/40">About this tool</h2><p className="break-words text-sm leading-7 text-black/55">Internet Toolbox provides online utilities for common tasks. The tools are designed to work in your browser where practical, with clear instructions and no account required.</p></article>
         </div>
       </section>
