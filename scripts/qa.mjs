@@ -81,7 +81,7 @@ test("tax and salary calculators contain current-rule safeguards", () => {
 });
 
 test("simple calculators expose numeric validation", () => {
-  assertContains("percentage-calculator", [/Number\.isFinite/, /value < 0/, /rate < 0/, /value\.trim\(\)/, /aria-invalid/]);
+  assertContains("percentage-calculator", [/Number\.isFinite/, /number < 0/, /rate < 0/, /value\.trim\(\)/, /aria-invalid/]);
   assertContains("discount-calculator", [/Number\.isFinite/, /original < 0/, /rate < 0/, /rate > 100/]);
   assertContains("bmi-calculator", [/Number\(/, /Number\.isFinite/]);
 });
