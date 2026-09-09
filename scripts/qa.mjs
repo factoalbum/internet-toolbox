@@ -10,10 +10,12 @@ const headerSource = fs.readFileSync(path.join(root, "components", "site-header.
 const sidebarSource = fs.readFileSync(path.join(root, "components", "category-sidebar.tsx"), "utf8");
 const currencySource = fs.readFileSync(path.join(root, "components", "tools", "currency-converter.tsx"), "utf8");
 const metalsSource = fs.readFileSync(path.join(root, "components", "tools", "gold-silver-converter.tsx"), "utf8");
+const messageWriterSource = fs.readFileSync(path.join(root, "components", "tools", "message-writer.tsx"), "utf8");
+const messageWriterRulesSource = fs.readFileSync(path.join(root, "lib", "message-writer.ts"), "utf8");
 
 const toolMatches = [...toolsSource.matchAll(/slug:\s*"([^"]+)"\s*,\s*name:\s*"([^"]+)"\s*,\s*description:\s*"([^"]+)"\s*,\s*category:\s*"([^"]+)"\s*,\s*icon:[^,]+,\s*status:\s*"([^"]+)"/g)];
 const tools = toolMatches.map(([, slug, name, description, category, status]) => ({ slug, name, description, category, status }));
-const categories = new Set(["calculators", "developer", "text", "files"]);
+const categories = new Set(["calculators", "everyday", "developer", "text", "files"]);
 const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const componentNames = [...routeSource.matchAll(/import\s+([A-Za-z0-9]+)\s+from\s+"@\/components\/tools\/([^"]+)"/g)].map(([, component, file]) => ({ component, file }));
 
@@ -74,7 +76,7 @@ test("core site pages exist and use shared navigation", () => {
   assert.match(headerSource, /CategorySidebar/);
   for (const page of ["app/page.tsx", "app/tools/page.tsx", "app/about/page.tsx", "app/privacy/page.tsx", "app/support/page.tsx", "app/categories/[slug]/page.tsx", "app/tools/[slug]/page.tsx"]) {
     const content = fs.readFileSync(path.join(root, page), "utf8");
-    assert.match(content, /SiteHeader/ , `${page} does not use the shared SiteHeader`);
+    assert.match(content, /SiteHeader/, `${page} does not use the shared SiteHeader`);
   }
 });
 
@@ -122,6 +124,20 @@ test("tool descriptions stay short and human-readable", () => {
     assert.ok(tool.description.length <= 100, `${tool.slug} description is too long`);
     assert.doesNotMatch(tool.description, /\b(instantly|effortlessly|seamlessly|powerful|robust|comprehensive)\b/i, `${tool.slug} uses marketing-heavy wording`);
   }
+});
+
+test("message writer keeps the local fallback factual and context-driven", () => {
+  assert.match(messageWriterSource, /hasEnoughContext/);
+  assert.match(messageWriterSource, /type MessageKind/);
+  assert.match(messageWriterSource, /type MessageTone/);
+  assert.match(messageWriterSource, /type MessageLength/);
+  assert.match(messageWriterSource, /return "Add a little context first/);
+  assert.doesNotMatch(messageWriterSource, /your recent update/);
+  assert.doesNotMatch(messageWriterSource, /your support/);
+  assert.doesNotMatch(messageWriterSource, /an important update/);
+  assert.match(messageWriterRulesSource, /Use only facts provided in the user's context/);
+  assert.match(messageWriterRulesSource, /Do not invent names, dates, achievements, numbers, companies, relationships or events/);
+  assert.match(messageWriterRulesSource, /Do not add hashtags unless the user asks for them/);
 });
 
 test("financial calculators guard invalid inputs and expose estimates", () => {
