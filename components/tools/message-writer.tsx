@@ -15,36 +15,36 @@ const options = [
 ] as const;
 
 type Kind = (typeof options)[number]["value"];
-
 type Tone = "professional" | "friendly" | "warm" | "confident" | "simple";
+type Length = "short" | "medium" | "long";
 
-function buildMessage(kind: Kind, context: string, tone: Tone, length: "short" | "medium" | "long") {
+function buildMessage(kind: Kind, context: string, tone: Tone, length: Length) {
   const clean = context.trim().replace(/\s+/g, " ");
-  const detail = clean || "this update";
+  const detail = clean || "your recent update";
   const signoff = tone === "warm" ? "Thank you for being part of this." : tone === "friendly" ? "Really appreciate it." : "Thank you.";
 
   if (kind === "linkedin") {
     const lead = tone === "confident" ? "Proud to share an update." : tone === "friendly" ? "Excited to share a small update." : "I am happy to share an update.";
     const body = length === "short"
-      ? `${lead}\n\n${detail}\n\nLooking forward to what comes next.`
+      ? `${lead}\n\n${detail}`
       : length === "long"
         ? `${lead}\n\n${detail}\n\nThis experience has been a valuable reminder that progress comes from staying consistent, learning from the process and continuing to improve.\n\nGrateful for everyone who supported me along the way. Looking forward to the next chapter.`
         : `${lead}\n\n${detail}\n\nIt has been a great learning experience, and I am looking forward to building on this progress.`;
-    return `${body}\n\n#Growth #Learning #Career`;
+    return body;
   }
 
   if (kind === "birthday") {
     return length === "short"
       ? `Happy Birthday! Wishing you a wonderful day filled with happiness and good memories. ${signoff}`
-      : `Happy Birthday!\n\nWishing you a beautiful year ahead filled with happiness, good health and plenty of reasons to smile. ${detail ? `I hope ${detail} makes your day even more special.` : "Enjoy your special day."}\n\n${signoff}`;
+      : `Happy Birthday!\n\nWishing you a beautiful year ahead filled with happiness, good health and plenty of reasons to smile. ${clean ? `I hope ${clean} makes your day even more special.` : "Enjoy your special day."}\n\n${signoff}`;
   }
 
   if (kind === "leave") {
-    return `Subject: Leave Request\n\nHi,\n\nI would like to request leave regarding ${detail}. I would appreciate your approval for the required leave period.\n\nI will make sure any important work is completed or handed over before my leave.\n\nThank you for your consideration.`;
+    return `Hi,\n\nI would like to request leave regarding ${detail}. I would appreciate your approval for the required leave period.\n\nI will make sure any important work is completed or handed over before my leave.\n\nThank you for your consideration.`;
   }
 
   if (kind === "congratulations") {
-    return `Congratulations on ${detail}!\n\nThis is a well-deserved achievement. Wishing you continued success and many more milestones ahead. Keep going and keep growing!`;
+    return `Congratulations on ${detail}!\n\nThis is a well-deserved achievement. Wishing you continued success and many more milestones ahead.`;
   }
 
   if (kind === "thank-you") {
@@ -57,8 +57,8 @@ function buildMessage(kind: Kind, context: string, tone: Tone, length: "short" |
 
   if (kind === "instagram") {
     return length === "short"
-      ? `${detail} ✨\n\nOne step at a time.`
-      : `${detail} ✨\n\nA moment worth remembering. Grateful for the journey, the lessons and the people who make it meaningful.\n\n#Life #Growth #GoodTimes`;
+      ? `${detail}\n\nOne step at a time.`
+      : `${detail}\n\nA moment worth remembering. Grateful for the journey, the lessons and the people who make it meaningful.`;
   }
 
   return `Hi,\n\nI am writing regarding ${detail}.\n\nI wanted to share the details and request your guidance on the next steps. Please let me know if you need any additional information from my side.\n\nThank you.\n\nBest regards`;
@@ -67,7 +67,7 @@ function buildMessage(kind: Kind, context: string, tone: Tone, length: "short" |
 export default function MessageWriter() {
   const [kind, setKind] = useState<Kind>("linkedin");
   const [tone, setTone] = useState<Tone>("professional");
-  const [length, setLength] = useState<"short" | "medium" | "long">("medium");
+  const [length, setLength] = useState<Length>("medium");
   const [context, setContext] = useState("");
   const [copied, setCopied] = useState(false);
   const [result, setResult] = useState("");
@@ -81,9 +81,13 @@ export default function MessageWriter() {
 
   async function copyResult() {
     if (!result) return;
-    await navigator.clipboard.writeText(result);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1600);
+    try {
+      await navigator.clipboard.writeText(result);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopied(false);
+    }
   }
 
   function reset() {
@@ -100,7 +104,7 @@ export default function MessageWriter() {
       <section className="border border-[#d8d4c9] bg-[#fffdf8] p-5 sm:p-6" aria-labelledby="writer-input-heading">
         <div className="flex items-start gap-3">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#c8f169]"><Sparkles size={19} aria-hidden="true" /></span>
-          <div><h2 id="writer-input-heading" className="font-bold">Give a little context</h2><p className="mt-1 text-sm leading-5 text-black/50">Write a few words. The tool will turn them into a ready-to-use message.</p></div>
+          <div><h2 id="writer-input-heading" className="font-bold">Give a little context</h2><p className="mt-1 text-sm leading-5 text-black/50">A few useful details are enough. Keep it rough and the tool will shape the message.</p></div>
         </div>
 
         <label className="mt-6 block text-sm font-semibold" htmlFor="message-type">What are you writing?</label>
@@ -114,7 +118,7 @@ export default function MessageWriter() {
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div><label className="text-sm font-semibold" htmlFor="message-tone">Tone</label><select id="message-tone" value={tone} onChange={(event) => setTone(event.target.value as Tone)} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="professional">Professional</option><option value="friendly">Friendly</option><option value="warm">Warm</option><option value="confident">Confident</option><option value="simple">Simple</option></select></div>
-          <div><label className="text-sm font-semibold" htmlFor="message-length">Length</label><select id="message-length" value={length} onChange={(event) => setLength(event.target.value as typeof length)} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="short">Short</option><option value="medium">Medium</option><option value="long">Long</option></select></div>
+          <div><label className="text-sm font-semibold" htmlFor="message-length">Length</label><select id="message-length" value={length} onChange={(event) => setLength(event.target.value as Length)} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="short">Short</option><option value="medium">Medium</option><option value="long">Long</option></select></div>
         </div>
 
         <div className="mt-5 flex flex-wrap gap-2"><button type="button" onClick={generate} className="min-h-11 flex-1 rounded-lg bg-[#171717] px-5 text-sm font-bold text-white transition hover:bg-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Create message</button><button type="button" onClick={reset} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[#bcb8ae] bg-white px-4 text-sm font-semibold hover:border-[#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><RotateCcw size={15} aria-hidden="true" />Reset</button></div>
