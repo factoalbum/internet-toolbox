@@ -51,6 +51,6 @@ export default function GstCalculator() {
 
     {result ? <div className="mt-7 grid gap-3 sm:grid-cols-3" aria-live="polite"><div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Base amount</p><p className="mt-2 text-2xl font-black">{money.format(result.base)}</p></div><div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">GST</p><p className="mt-2 text-2xl font-black">{money.format(result.gst)}</p></div><div className="border border-[#171717] bg-[#c8f169] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/50">Total</p><p className="mt-2 text-2xl font-black">{money.format(result.total)}</p></div></div> : <p className="mt-6 text-sm text-black/50" role="alert">Enter a valid amount and GST rate.</p>}
 
-    <p className="mt-5 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Simple GST estimate. Actual tax treatment can depend on the supply, place of supply, applicable rate and other GST rules. This calculator does not determine whether a transaction is taxable.</p>
+    <p className="mt-5 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">This is a simple GST estimate. Actual tax treatment can depend on the supply, place of supply, applicable rate and other GST rules. This calculator does not determine whether a transaction is taxable.</p>
   </div>;
 }
