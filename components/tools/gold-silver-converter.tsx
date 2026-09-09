@@ -48,7 +48,10 @@ export default function GoldSilverConverter() {
     finally { setLoading(false); }
   }
 
-  useEffect(() => { void loadRates(); }, []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void loadRates(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const pureGoldPerGram = goldUsd !== null && usdInr !== null ? goldUsd * usdInr / OUNCE_TO_GRAMS : null;
   const silverPerGram = silverUsd !== null && usdInr !== null ? silverUsd * usdInr / OUNCE_TO_GRAMS : null;
@@ -89,6 +92,6 @@ export default function GoldSilverConverter() {
 
     <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-black/45"><p>Live international spot prices converted to INR.</p><button type="button" onClick={() => void loadRates()} disabled={loading} className="font-bold underline disabled:opacity-40">Refresh rates</button></div>
     {updated && <p className="mt-2 text-xs text-black/40">Latest source update: {updated}.</p>}
-    <p className="mt-2 text-xs leading-5 text-black/40">This is a live international spot-price estimate, not a jeweller's, MCX or city bullion-board final selling price. Indian prices can include GST, import duties, making charges, wastage, local premiums and dealer spreads. Gold API supplies the metal spot prices; INR conversion uses ExchangeRate-API data.</p>
+    <p className="mt-2 text-xs leading-5 text-black/40">This is a live international spot-price estimate, not a jeweller&apos;s, MCX or city bullion-board final selling price. Indian prices can include GST, import duties, making charges, wastage, local premiums and dealer spreads. Gold API supplies the metal spot prices; INR conversion uses ExchangeRate-API data.</p>
   </div>;
 }
