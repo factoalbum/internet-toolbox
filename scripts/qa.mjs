@@ -37,7 +37,6 @@ function sourceFiles() {
   return files;
 }
 
-
 test("tool registry is structurally valid", () => {
   assert.ok(tools.length >= 20, `Expected at least 20 tools, found ${tools.length}`);
   assert.equal(new Set(tools.map((tool) => tool.slug)).size, tools.length, "Duplicate tool slugs found");
@@ -81,8 +80,11 @@ test("core site pages exist and use shared navigation", () => {
 
 test("category sidebar is safe for SSR and scroll locking", () => {
   assert.match(sidebarSource, /useState\(false\)/);
-  assert.match(sidebarSource, /const \[mounted, setMounted\] = useState\(false\)/);
-  assert.match(sidebarSource, /useEffect\(\(\) => setMounted\(true\), \[\]\)/);
+  assert.match(sidebarSource, /useSyncExternalStore/);
+  assert.match(sidebarSource, /getClientSnapshot/);
+  assert.match(sidebarSource, /getServerSnapshot/);
+  assert.doesNotMatch(sidebarSource, /const \[mounted, setMounted\] = useState\(false\)/);
+  assert.doesNotMatch(sidebarSource, /useEffect\(\(\) => setMounted\(true\), \[\]\)/);
   assert.match(sidebarSource, /mounted && open/);
   assert.match(sidebarSource, /document\.body\.style\.overflow/);
   assert.match(sidebarSource, /h-dvh/);
