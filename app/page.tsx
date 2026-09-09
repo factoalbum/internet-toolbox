@@ -35,7 +35,7 @@ export default function Home() {
           <div className="mx-auto max-w-4xl text-center">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[#5f7429]">Simple online tools for real-life tasks</p>
             <h1 className="text-5xl font-black leading-[0.96] tracking-[-0.055em] md:text-7xl">What do you need<br className="hidden sm:block" /> to get done?</h1>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-black/55 md:text-lg">Calculate, convert, check, clean and create without figuring out the tool first.</p>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-black/55 md:text-lg">Calculate, convert, check, clean and create without figuring out how the tool works first.</p>
           </div>
 
           <div className="mx-auto mt-9 max-w-3xl border border-[#171717] bg-[#f3f0e8] p-3 shadow-[6px_6px_0_#171717] sm:p-4">
