@@ -32,6 +32,7 @@ import SipCalculator from "@/components/tools/sip-calculator";
 import SlugGenerator from "@/components/tools/slug-generator";
 import TextCleaner from "@/components/tools/text-cleaner";
 import TimeConverter from "@/components/tools/time-converter";
+import TimeZoneConverter from "@/components/tools/time-zone-converter";
 import TimestampConverter from "@/components/tools/timestamp-converter";
 import UnitConverter from "@/components/tools/unit-converter";
 import UrlEncoder from "@/components/tools/url-encoder";
@@ -79,6 +80,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             {slug === "age-calculator" && <AgeCalculator />}
             {slug === "discount-calculator" && <DiscountCalculator />}
             {slug === "time-converter" && <TimeConverter />}
+            {slug === "time-zone-converter" && <TimeZoneConverter />}
             {slug === "emi-calculator" && <EmiCalculator />}
             {slug === "gst-calculator" && <GstCalculator />}
             {slug === "bmi-calculator" && <BmiCalculator />}
