@@ -5,14 +5,12 @@ import { useEffect, useMemo, useState } from "react";
 type RatesResponse = { result: string; base_code?: string; rates?: Record<string, number>; time_last_update_utc?: string; time_next_update_utc?: string };
 
 const currencies = [
-  ["INR", "Indian Rupee", "₹"], ["USD", "US Dollar", "$"], ["EUR", "Euro", "€"], ["GBP", "British Pound", "£"],
-  ["AED", "UAE Dirham", "د.إ"], ["SAR", "Saudi Riyal", "﷼"], ["CAD", "Canadian Dollar", "C$"], ["AUD", "Australian Dollar", "A$"],
-  ["SGD", "Singapore Dollar", "S$"], ["JPY", "Japanese Yen", "¥"], ["CNY", "Chinese Yuan", "¥"], ["CHF", "Swiss Franc", "CHF"],
-  ["NZD", "New Zealand Dollar", "NZ$"], ["HKD", "Hong Kong Dollar", "HK$"], ["QAR", "Qatari Riyal", "﷼"], ["KWD", "Kuwaiti Dinar", "د.ك"],
-  ["MYR", "Malaysian Ringgit", "RM"], ["THB", "Thai Baht", "฿"], ["ZAR", "South African Rand", "R"], ["NPR", "Nepalese Rupee", "रू"],
+  ["INR", "Indian Rupee"], ["USD", "US Dollar"], ["EUR", "Euro"], ["GBP", "British Pound"],
+  ["AED", "UAE Dirham"], ["SAR", "Saudi Riyal"], ["CAD", "Canadian Dollar"], ["AUD", "Australian Dollar"],
+  ["SGD", "Singapore Dollar"], ["JPY", "Japanese Yen"], ["CNY", "Chinese Yuan"], ["CHF", "Swiss Franc"],
+  ["NZD", "New Zealand Dollar"], ["HKD", "Hong Kong Dollar"], ["QAR", "Qatari Riyal"], ["KWD", "Kuwaiti Dinar"],
+  ["MYR", "Malaysian Ringgit"], ["THB", "Thai Baht"], ["ZAR", "South African Rand"], ["NPR", "Nepalese Rupee"],
 ] as const;
-
-const symbols = Object.fromEntries(currencies.map(([code, name, symbol]) => [code, { name, symbol }]));
 
 function format(value: number, code: string) {
   return new Intl.NumberFormat(undefined, { style: "currency", currency: code, maximumFractionDigits: code === "JPY" ? 0 : 2 }).format(value);
