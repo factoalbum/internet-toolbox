@@ -4,6 +4,7 @@ import { ArrowRight, Wrench } from "lucide-react";
 import SiteHeader from "@/components/site-header";
 import AgeCalculator from "@/components/tools/age-calculator";
 import Base64Tool from "@/components/tools/base64";
+import BillSplitter from "@/components/tools/bill-splitter";
 import BmiCalculator from "@/components/tools/bmi-calculator";
 import CaseConverter from "@/components/tools/case-converter";
 import CharacterCounter from "@/components/tools/character-counter";
@@ -94,6 +95,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             {slug === "gold-silver-rate-converter" && <GoldSilverConverter />}
             {slug === "random-number-generator" && <RandomNumberGenerator />}
             {slug === "tip-calculator" && <TipCalculator />}
+            {slug === "bill-splitter" && <BillSplitter />}
             {slug === "url-shortener" && <UrlShortener />}
             {slug === "message-writer" && <MessageWriter />}
             {slug === "json-formatter" && <JsonFormatter />}
