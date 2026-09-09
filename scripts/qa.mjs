@@ -86,6 +86,20 @@ test("simple calculators expose numeric validation", () => {
   assertContains("bmi-calculator", [/Number\(/, /Number\.isFinite/]);
 });
 
+test("local generators use browser randomness without modulo bias", () => {
+  const passwordSource = source("password-generator");
+  const randomSource = source("random-number-generator");
+  for (const content of [passwordSource, randomSource]) {
+    assert.match(content, /crypto\.getRandomValues/);
+    assert.match(content, /do \{/);
+    assert.match(content, /values\[0\] >= limit/);
+    assert.doesNotMatch(content, /Math\.random/);
+  }
+  assert.match(randomSource, /Number\.isInteger/);
+  assert.match(randomSource, /unique/);
+  assert.match(randomSource, /1_000_000_000/);
+});
+
 test("live market tools use explicit external rate sources", () => {
   assert.match(currencySource, /https:\/\/api\.exchangerate\.fun\/latest\?base=USD/);
   assert.match(currencySource, /https:\/\/open\.er-api\.com\/v6\/latest\/USD/);
