@@ -24,15 +24,15 @@ export default function SupportPage() {
 
       <section className="container py-14 md:py-20">
         <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
-          <a href={`${issueUrl}?template=bug_report.md`} target="_blank" rel="noreferrer" className="border border-[#d8d4c9] bg-[#fffdf8] p-6 transition hover:-translate-y-1 hover:border-[#171717] hover:shadow-[6px_6px_0_#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">
+          <a href={issueUrl} target="_blank" rel="noreferrer" className="border border-[#d8d4c9] bg-[#fffdf8] p-6 transition hover:-translate-y-1 hover:border-[#171717] hover:shadow-[6px_6px_0_#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">
             <Bug size={22} aria-hidden="true" />
             <h2 className="mt-8 text-xl font-black">Report a problem</h2>
-            <p className="mt-2 text-sm leading-6 text-black/55">Something is broken, inaccurate or difficult to use? Tell us what happened.</p>
+            <p className="mt-2 text-sm leading-6 text-black/55">Something is broken, inaccurate or difficult to use? Open an issue and describe what happened.</p>
           </a>
-          <a href={`${issueUrl}?template=feature_request.md`} target="_blank" rel="noreferrer" className="border border-[#d8d4c9] bg-[#fffdf8] p-6 transition hover:-translate-y-1 hover:border-[#171717] hover:shadow-[6px_6px_0_#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">
+          <a href={issueUrl} target="_blank" rel="noreferrer" className="border border-[#d8d4c9] bg-[#fffdf8] p-6 transition hover:-translate-y-1 hover:border-[#171717] hover:shadow-[6px_6px_0_#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">
             <Lightbulb size={22} aria-hidden="true" />
             <h2 className="mt-8 text-xl font-black">Suggest a tool</h2>
-            <p className="mt-2 text-sm leading-6 text-black/55">Have a repetitive task that should take seconds? Suggest a useful utility.</p>
+            <p className="mt-2 text-sm leading-6 text-black/55">Have a repetitive task that should take seconds? Open an issue and describe the utility you would like.</p>
           </a>
           <a href="https://github.com/factoalbum/internet-toolbox/issues" target="_blank" rel="noreferrer" className="border border-[#d8d4c9] bg-[#fffdf8] p-6 transition hover:-translate-y-1 hover:border-[#171717] hover:shadow-[6px_6px_0_#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">
             <MessageCircle size={22} aria-hidden="true" />
