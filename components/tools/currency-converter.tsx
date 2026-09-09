@@ -86,7 +86,7 @@ export default function CurrencyConverter() {
     {error && <p role="alert" className="mt-4 border border-red-700/30 bg-red-50 p-3 text-sm font-semibold text-red-800">{error} <button type="button" onClick={() => void loadRates()} className="ml-1 underline">Retry</button></p>}
 
     <section className="mt-6 border-t border-[#d8d4c9] pt-5" aria-labelledby="popular-currency-rates">
-      <div className="flex items-end justify-between gap-3"><div><p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-black/40">Today's reference</p><h2 id="popular-currency-rates" className="mt-1 text-lg font-black">Popular rates in INR</h2></div><span className="text-xs text-black/40">1 unit</span></div>
+      <div className="flex items-end justify-between gap-3"><div><p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-black/40">Today&apos;s reference</p><h2 id="popular-currency-rates" className="mt-1 text-lg font-black">Popular rates in INR</h2></div><span className="text-xs text-black/40">1 unit</span></div>
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">{popularRates.map(code => <div key={code} className="border border-[#d8d4c9] bg-[#f8f5ed] p-3"><p className="text-xs font-bold text-black/45">{code}</p><p className="mt-1 font-bold">{loading ? "Not available" : rateToInr(code) === null ? "Not available" : formatInr(rateToInr(code)!)}</p></div>)}</div>
     </section>
 
