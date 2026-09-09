@@ -87,10 +87,12 @@ test("simple calculators expose numeric validation", () => {
 });
 
 test("live market tools use explicit external rate sources", () => {
+  assert.match(currencySource, /https:\/\/api\.exchangerate\.fun\/latest\?base=USD/);
   assert.match(currencySource, /https:\/\/open\.er-api\.com\/v6\/latest\/USD/);
   assert.match(currencySource, /rates\[target\] \/ rates\[base\]/);
   assert.match(currencySource, /popularRates/);
   assert.match(currencySource, /rateToInr/);
+  assert.match(metalsSource, /https:\/\/api\.exchangerate\.fun\/latest\?base=USD/);
   assert.match(metalsSource, /https:\/\/api\.gold-api\.com\/price\/XAU/);
   assert.match(metalsSource, /https:\/\/api\.gold-api\.com\/price\/XAG/);
   assert.match(metalsSource, /https:\/\/open\.er-api\.com\/v6\/latest\/USD/);
@@ -108,10 +110,10 @@ test("live market tools use explicit external rate sources", () => {
 });
 
 test("market tools handle failed rate requests", () => {
-  assert.match(currencySource, /(?:currency|fx)?Response\.ok|response\.ok/i);
+  assert.match(currencySource, /response\.ok/);
   assert.match(currencySource, /role=\"alert\"/);
   assert.match(currencySource, /Retry/);
-  assert.match(metalsSource, /(?:gold|silver|fx)Response\.ok|response\.ok/i);
+  assert.match(metalsSource, /response\.ok/);
   assert.match(metalsSource, /role=\"alert\"/);
   assert.match(metalsSource, /Retry/);
 });
