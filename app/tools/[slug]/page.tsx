@@ -21,6 +21,7 @@ import HtmlEntityTool from "@/components/tools/html-entity";
 import ImageCompressor from "@/components/tools/image-compressor";
 import IncomeTaxCalculator from "@/components/tools/income-tax-calculator";
 import JsonFormatter from "@/components/tools/json-formatter";
+import MessageWriter from "@/components/tools/message-writer";
 import PasswordGenerator from "@/components/tools/password-generator";
 import PercentageCalculator from "@/components/tools/percentage-calculator";
 import PpfCalculator from "@/components/tools/ppf-calculator";
@@ -94,6 +95,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             {slug === "random-number-generator" && <RandomNumberGenerator />}
             {slug === "tip-calculator" && <TipCalculator />}
             {slug === "url-shortener" && <UrlShortener />}
+            {slug === "message-writer" && <MessageWriter />}
             {slug === "json-formatter" && <JsonFormatter />}
             {slug === "uuid-generator" && <UuidGenerator />}
             {slug === "password-generator" && <PasswordGenerator />}
