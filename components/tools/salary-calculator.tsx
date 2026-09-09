@@ -15,12 +15,21 @@ function slabTax(income: number) {
     tax += (Math.min(income, limit) - previous) * rate;
     previous = limit;
   }
-  return income <= 1200000 ? 0 : tax;
+  return tax;
 }
 
 function incomeTax(gross: number) {
   const taxable = Math.max(0, gross - 75000);
-  const tax = slabTax(taxable);
+  let tax = slabTax(taxable);
+
+  // Section 87A rebate and marginal relief around the ₹12 lakh threshold.
+  if (taxable <= 1200000) {
+    tax = 0;
+  } else {
+    tax = Math.max(0, tax - 60000);
+    tax = Math.min(tax, taxable - 1200000);
+  }
+
   return { taxable, total: tax * 1.04 };
 }
 
@@ -95,7 +104,7 @@ export default function SalaryCalculator() {
           </div>
         </div>
       </div>
-      <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/50">Estimate for FY 2026–27 using a simplified salary structure. PF is estimated at 12% of the selected PF wage basis; gratuity provision uses 15 days of wages for each completed year (annualised here as 15/26/12 of basic). Actual payroll can differ based on your employer’s PF arrangement, wage definition, benefits, bonus, professional tax and other deductions. This is not a payslip or tax-filing calculation.</p>
+      <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/50">Estimate for FY 2026–27 using a simplified salary structure. PF is estimated at 12% of the selected PF wage basis; gratuity provision uses 15 days of wages for each completed year (annualised here as 15/26/12 of basic). Income tax uses the new-regime ₹75,000 standard deduction, ₹60,000 Section 87A rebate up to ₹12 lakh taxable income, and marginal relief just above that threshold. Actual payroll can differ based on your employer’s PF arrangement, wage definition, benefits, bonus, professional tax and other deductions. This is not a payslip or tax-filing calculation.</p>
     </div>
   );
 }
