@@ -31,6 +31,7 @@ export const tools: Tool[] = [
   { slug: "gold-silver-rate-converter", name: "Gold & Silver Rate Converter", description: "Check gold and silver reference values in INR by weight and purity.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "random-number-generator", name: "Random Number Generator", description: "Generate random integers in your browser.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "tip-calculator", name: "Tip Calculator", description: "Calculate a tip, final bill and each person's share.", category: "calculators", icon: Calculator, status: "live" },
+  { slug: "bill-splitter", name: "Bill Splitter", description: "Split a bill between people with an optional tip.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "url-shortener", name: "URL Shortener", description: "Create a shorter, shareable link from a long URL.", category: "text", icon: Link2, status: "live" },
   { slug: "message-writer", name: "Caption & Message Writer", description: "Turn a few words into a ready-to-use caption, message or request.", category: "text", icon: Sparkles, status: "live" },
   { slug: "json-formatter", name: "JSON Formatter", description: "Format and inspect JSON with readable indentation.", category: "developer", icon: Code2, status: "live" },
