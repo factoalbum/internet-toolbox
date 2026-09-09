@@ -81,9 +81,14 @@ test("tax and salary calculators contain current-rule safeguards", () => {
 });
 
 test("simple calculators expose numeric validation", () => {
-  assertContains("percentage-calculator", [/Number\(/, /Number\.isFinite/]);
-  assertContains("discount-calculator", [/Number\(/, /Number\.isFinite/]);
+  assertContains("percentage-calculator", [/Number\.isFinite/, /value < 0/, /rate < 0/, /value\.trim\(\)/, /aria-invalid/]);
+  assertContains("discount-calculator", [/Number\.isFinite/, /original < 0/, /rate < 0/, /rate > 100/]);
   assertContains("bmi-calculator", [/Number\(/, /Number\.isFinite/]);
+});
+
+test("date and age calculators use calendar-safe date math", () => {
+  assertContains("age-calculator", [/Date\.UTC/, /calendar dates/, /max=\{end\}/]);
+  assertContains("date-calculator", [/T00:00:00/, /setDate/, /wholeDaysBetween/]);
 });
 
 test("local generators use browser randomness without modulo bias", () => {
