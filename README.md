@@ -13,7 +13,7 @@ Simple tools for everyday digital tasks.
 
 ## Tool categories
 
-Alongside calculators, everyday, developer, text and file tools, the toolbox now includes **Compare & Inspect** for document and image QA: PDF differences, visual comparison, layout checks, extraction, metadata, page analysis, merging, splitting, conversion, compression, image comparison and screenshot checks.
+Alongside calculators, everyday, developer and text tools, the toolbox now includes **File & Image Tools** for PDFs, documents, images and common file tasks: comparison, visual checks, layout checks, extraction, metadata, page analysis, merging, splitting, conversion, compression and dimension checks.
 
 ## Engineering loop
 
