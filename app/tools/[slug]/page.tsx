@@ -11,6 +11,13 @@ import { getToolContent } from "@/lib/tool-content";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
 export function generateStaticParams() { return tools.filter((tool) => tool.status === "live").map((tool) => ({ slug: tool.slug })); }
 function getCategory(slug: string) { return categories.find((category) => category.slug === slug); }
+function getWorkspaceHint(category: string) {
+  if (category === "calculators") return "Enter the values you want to calculate, then review the estimate below.";
+  if (category === "file-image-tools") return "Choose your file or image, set any options, then create your result.";
+  if (category === "developer-tools") return "Paste or enter the data you want to process, then run the tool.";
+  if (category === "text-tools") return "Enter the text you want to work with, then review and copy the result.";
+  return "Enter the details the tool needs, then review the result before using it.";
+}
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const tool = tools.find((item) => item.slug === slug);
@@ -32,6 +39,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const relatedTools = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug && item.status === "live").slice(0, 3);
   const toolUrl = `${siteUrl}/tools/${tool.slug}/`;
   const categoryUrl = `${siteUrl}/categories/${category.slug}/`;
+  const workspaceHint = getWorkspaceHint(tool.category);
   const advisory = tool.category === "calculators"
     ? "Calculator results are estimates. Check important financial, tax or market figures against the relevant current official source or professional advice."
     : tool.slug === "bmi-calculator"
@@ -51,7 +59,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       <nav aria-label="Breadcrumb" className="mb-7 flex items-center gap-2 overflow-x-auto whitespace-nowrap text-xs font-semibold text-black/45"><Link href="/tools" className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-[#dedbd3] bg-white px-3.5 transition hover:border-[#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><ArrowLeft size={13} />All tools</Link><span aria-hidden="true">/</span><Link href={`/categories/${category.slug}`} className="shrink-0 hover:text-black">{category.name}</Link><span aria-hidden="true">/</span><span className="truncate text-black">{tool.name}</span></nav>
       <header className="max-w-3xl"><div className="flex items-center gap-3"><span className="flex size-11 items-center justify-center rounded-2xl bg-[#e8f4c9] text-[#435816]" aria-hidden="true"><Icon size={22} /></span><div><p className="text-[11px] font-black uppercase tracking-[.15em] text-[#6d8e25]">{category.name}</p><p className="mt-0.5 text-xs font-medium text-black/40">Free browser tool</p></div></div><h1 className="mt-5 text-4xl font-black leading-[1] tracking-[-.055em] sm:text-5xl md:text-6xl">{tool.name}</h1><p className="mt-4 max-w-2xl text-base leading-7 text-black/55 md:text-lg">{content.overview}</p></header>
       <div className="mt-6 flex items-start gap-3 rounded-2xl border border-[#dfe7c8] bg-[#f3f8e7] p-4 text-sm leading-6 text-[#4d5e25]"><Info size={18} className="mt-0.5 shrink-0" aria-hidden="true" /><p>{advisory}</p></div>
-      <section data-tool-workspace className="mt-8 overflow-hidden rounded-3xl border border-[#dedbd3] bg-white shadow-[0_10px_30px_rgba(23,23,23,.045)] md:mt-10" aria-labelledby="workspace-title"><div className="flex flex-col gap-3 border-b border-[#e8e5dd] px-5 py-4 sm:flex-row sm:items-center sm:justify-between md:px-6"><div className="min-w-0"><h2 id="workspace-title" className="text-sm font-black">Use the tool</h2><p className="mt-0.5 text-xs text-black/40">Enter your details below to get your result.</p></div><span className="inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full bg-[#f2f6e8] px-3 py-1.5 text-[11px] font-bold text-[#52691f]"><LockKeyhole size={12} /> Runs in your browser</span></div><div className="min-w-0 overflow-hidden"><ToolRouter slug={slug} /></div></section>
+      <section data-tool-workspace className="mt-8 overflow-hidden rounded-3xl border border-[#dedbd3] bg-white shadow-[0_10px_30px_rgba(23,23,23,.045)] md:mt-10" aria-labelledby="workspace-title"><div className="flex flex-col gap-3 border-b border-[#e8e5dd] px-5 py-4 sm:flex-row sm:items-center sm:justify-between md:px-6"><div className="min-w-0"><h2 id="workspace-title" className="text-sm font-black">Use {tool.name}</h2><p className="mt-0.5 text-xs leading-5 text-black/40">{workspaceHint}</p></div><span className="inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full bg-[#f2f6e8] px-3 py-1.5 text-[11px] font-bold text-[#52691f]"><LockKeyhole size={12} /> Runs in your browser</span></div><div className="min-w-0 overflow-hidden"><ToolRouter slug={slug} /></div></section>
       <article className="mt-10 grid gap-6 md:grid-cols-3" aria-label="Tool guide">
         <section className="rounded-2xl border border-[#e0ddd5] bg-white p-5"><p className="text-[10px] font-black uppercase tracking-[.15em] text-[#6d8e25]">Best for</p><p className="mt-3 text-sm leading-6 text-black/60">{content.bestFor}</p></section>
         <section className="rounded-2xl border border-[#e0ddd5] bg-white p-5"><p className="text-[10px] font-black uppercase tracking-[.15em] text-[#6d8e25]">Helpful tip</p><p className="mt-3 text-sm leading-6 text-black/60">{content.tip}</p></section>
