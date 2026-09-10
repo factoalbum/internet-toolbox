@@ -21,11 +21,13 @@ export const metadata: Metadata = {
     title: "Internet Toolbox | Free online tools for everyday tasks",
     description: "Free online calculators, converters, text tools and file utilities for everyday tasks. Fast, clear and no account required.",
     url: siteUrl,
+    images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "Internet Toolbox: free online tools for everyday tasks" }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Internet Toolbox | Free online tools for everyday tasks",
     description: "Free online calculators, converters, text tools and file utilities for everyday tasks.",
+    images: ["/og-image.svg"],
   },
 };
 
