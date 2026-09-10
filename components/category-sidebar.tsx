@@ -9,25 +9,61 @@ import { categories } from "@/lib/tools";
 const emptySubscribe = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
+const drawerId = "tool-category-drawer";
 
 export default function CategorySidebar() {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const wasOpenRef = useRef(false);
   const mounted = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
   useEffect(() => {
     if (!open) {
-      triggerRef.current?.focus();
+      if (wasOpenRef.current) triggerRef.current?.focus();
+      wasOpenRef.current = false;
       return;
     }
 
+    wasOpenRef.current = true;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     closeRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const drawer = document.getElementById(drawerId);
+      if (!drawer) return;
+
+      const focusable = Array.from(
+        drawer.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => element.getClientRects().length > 0);
+
+      if (focusable.length === 0) {
+        event.preventDefault();
+        closeRef.current?.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     document.addEventListener("keydown", onKeyDown);
@@ -39,7 +75,7 @@ export default function CategorySidebar() {
 
   const drawer = mounted && open
     ? createPortal(
-        <div className="fixed inset-0 z-[100]" role="dialog" aria-modal="true" aria-label="Tool categories">
+        <div className="fixed inset-0 z-[100]" role="dialog" aria-modal="true" aria-labelledby={`${drawerId}-title`}>
           <button
             type="button"
             aria-label="Close categories"
@@ -47,11 +83,14 @@ export default function CategorySidebar() {
             className="absolute inset-0 h-full w-full bg-black/40"
           />
 
-          <aside className="absolute right-0 top-0 flex h-dvh w-[min(92vw,400px)] max-w-full flex-col overflow-hidden border-l border-[#d8d4c9] bg-[#fffdf8] text-[#171717] shadow-[-16px_0_48px_rgba(0,0,0,.16)]">
+          <aside
+            id={drawerId}
+            className="absolute right-0 top-0 flex h-dvh w-[min(92vw,400px)] max-w-full flex-col overflow-hidden border-l border-[#d8d4c9] bg-[#fffdf8] text-[#171717] shadow-[-16px_0_48px_rgba(0,0,0,.16)]"
+          >
             <div className="flex shrink-0 items-center justify-between border-b border-[#d8d4c9] px-4 py-4 sm:px-6">
               <div className="min-w-0">
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-black/35">Internet Toolbox</p>
-                <h2 className="mt-1 text-xl font-black tracking-tight">Browse categories</h2>
+                <h2 id={`${drawerId}-title`} className="mt-1 text-xl font-black tracking-tight">Browse categories</h2>
               </div>
               <button
                 ref={closeRef}
@@ -119,6 +158,7 @@ export default function CategorySidebar() {
         onClick={() => setOpen(true)}
         aria-label="Open categories"
         aria-expanded={open}
+        aria-controls={drawerId}
         className="flex size-10 shrink-0 items-center justify-center rounded-md border border-[#d8d4c9] bg-[#fffdf8] text-[#171717] transition hover:border-[#171717] hover:bg-[#c8f169] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"
       >
         <Menu size={21} aria-hidden="true" />
