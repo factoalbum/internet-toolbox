@@ -43,6 +43,9 @@ async function loadPdf(file: File): Promise<Analysis> {
   if (file.size > MAX_FILE_BYTES) throw new Error("Each PDF must be 12 MB or smaller.");
 
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  if (!pdfjs.GlobalWorkerOptions.workerSrc) {
+    pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.mjs", import.meta.url).toString();
+  }
   const bytes = new Uint8Array(await file.arrayBuffer());
   const document = await pdfjs.getDocument({ data: bytes }).promise;
   if (document.numPages > MAX_PAGES) throw new Error(`This tool supports up to ${MAX_PAGES} pages per PDF.`);
@@ -84,8 +87,9 @@ async function loadPdf(file: File): Promise<Analysis> {
     }
   }
 
+  const pages = document.numPages;
   await document.cleanup();
-  return { pages: document.numPages, text: textParts.join("\n"), tokens: tokenize(textParts.join("\n")), blocks, pageSizes, renders };
+  return { pages, text: textParts.join("\n"), tokens: tokenize(textParts.join("\n")), blocks, pageSizes, renders };
 }
 
 function layoutScore(a: Analysis, b: Analysis) {
