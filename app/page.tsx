@@ -1,46 +1,71 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Code2, FileText, Heart, Image as ImageIcon, Menu, Search, ShieldCheck, Sparkles, Type, Users, Zap } from "lucide-react";
 import ToolSearch from "@/components/tool-search";
 import SiteHeader from "@/components/site-header";
+import HomeIllustration from "@/components/home-illustration";
 import { categories, tools } from "@/lib/tools";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
 export const metadata: Metadata = { title: "Internet Toolbox | Simple Free Online Tools", description: "Simple free online calculators, converters, text tools, developer utilities and file tools. Find a tool, use it, done.", alternates: { canonical: `${siteUrl}/` }, openGraph: { type: "website", title: "Internet Toolbox | Simple Free Online Tools", description: "Simple free online calculators, converters, text tools, developer utilities and file tools.", url: `${siteUrl}/` }, twitter: { card: "summary_large_image", title: "Internet Toolbox | Simple Free Online Tools", description: "Simple free online calculators, converters, text tools, developer utilities and file tools." } };
+
 const categoryOrder = ["calculators", "everyday", "text", "developer", "files"];
 const categoryCopy: Record<string, string> = { calculators: "Money, tax, loans and investments", everyday: "Dates, time, units and quick conversions", text: "Count, clean, change and compare text", developer: "Small helpers for code and data", files: "Compress and work with files in your browser" };
+const categoryIcons = [Code2, Type, ImageIcon, ShieldCheck, Zap];
 
 export default function Home() {
   const liveTools = tools.filter((tool) => tool.status === "live");
-  const popularSlugs = ["percentage-calculator", "age-calculator", "emi-calculator", "gst-calculator", "word-counter", "json-formatter", "password-generator", "image-compressor"];
+  const popularSlugs = ["developer-file-viewer", "json-formatter", "image-compressor", "word-counter", "unit-converter", "password-generator", "url-encoder-decoder", "percentage-calculator"];
   const popular = popularSlugs.map((slug) => liveTools.find((tool) => tool.slug === slug)).filter(Boolean);
-  return <main className="min-h-screen bg-[#faf9f6] text-[#171717]">
-    <SiteHeader sticky />
-    <section className="bg-[#faf9f6]">
-      <div className="container py-14 text-center md:py-20 lg:py-24">
-        <div className="mx-auto max-w-4xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#dedbd3] bg-white px-4 py-2 text-xs font-semibold text-black/55"><Sparkles size={14} className="text-[#6d8e25]" aria-hidden="true" />{liveTools.length}+ free tools</div>
-          <h1 className="mt-7 text-5xl font-black tracking-[-0.055em] md:text-7xl md:leading-[1.02]">Find a tool.<br className="hidden sm:block" /> Get it done.</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-black/55 md:text-lg">Calculators, converters, text tools, developer helpers and file utilities, all in one simple place.</p>
-          <div className="mx-auto mt-8 max-w-2xl text-left"><label htmlFor="tool-search" className="mb-2 block px-1 text-xs font-bold text-black/40">What do you need?</label><ToolSearch /></div>
-          <p className="mt-3 text-xs text-black/35">Try “loan”, “tax”, “JSON”, “image”, “password” or “time zone”.</p>
+  return (
+    <main className="min-h-screen overflow-hidden bg-[#faf9f6] text-[#101522]">
+      <SiteHeader sticky />
+
+      <section className="relative bg-[#faf9f6]">
+        <div className="container pt-8 md:pt-12 lg:pt-14">
+          <div className="grid items-center gap-8 lg:grid-cols-[1.03fr_.97fr] lg:gap-4">
+            <div className="order-2 lg:order-1">
+              <HomeIllustration />
+            </div>
+            <div className="order-1 lg:order-2 pb-3 lg:pb-8">
+              <p className="text-xs font-bold uppercase tracking-[.12em] text-[#66758f]">Simple tools for a faster internet</p>
+              <h1 className="mt-4 max-w-3xl text-[clamp(2.7rem,6vw,5.4rem)] font-black leading-[.98] tracking-[-.065em]">Every online tool<br />you need, <span className="relative inline-block px-1"><span className="absolute inset-x-0 bottom-[7%] -z-0 h-[42%] rounded-sm bg-[#c8f169]" /><span className="relative">in one place.</span></span></h1>
+              <p className="mt-6 max-w-xl text-base leading-7 text-[#58657b] md:text-lg">Free, fast and easy-to-use tools for developers, creators, students and everyone. No sign up. No limits. Just tools.</p>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <Link href="/tools" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#101522] px-6 text-sm font-bold text-white shadow-[0_10px_24px_rgba(16,21,34,.16)] transition hover:-translate-y-0.5 hover:bg-[#1c2434] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><Search size={18} />Browse all tools<ArrowRight size={16} /></Link>
+                <Link href="/categories/developer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#dedbd3] bg-white px-6 text-sm font-bold transition hover:-translate-y-0.5 hover:border-[#101522] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><Menu size={18} />Explore categories</Link>
+              </div>
+              <div className="mt-8 grid max-w-2xl grid-cols-3 gap-4">
+                <div className="flex items-start gap-2"><Zap className="mt-0.5 shrink-0 text-[#f3b51b]" size={25} /><div><p className="text-sm font-black">{liveTools.length}+</p><p className="text-xs text-[#66758f]">Free tools</p></div></div>
+                <div className="flex items-start gap-2"><Users className="mt-0.5 shrink-0 text-[#6555ee]" size={25} /><div><p className="text-sm font-black">No sign up</p><p className="text-xs text-[#66758f]">Use instantly</p></div></div>
+                <div className="flex items-start gap-2"><Heart className="mt-0.5 shrink-0 text-[#ef476f]" size={25} /><div><p className="text-sm font-black">Built for everyone</p><p className="text-xs text-[#66758f]">Developers, creators & more</p></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative z-10 mx-auto mt-2 max-w-6xl translate-y-5 md:mt-0">
+            <div className="rounded-2xl border border-[#ddd9d0] bg-white p-2 shadow-[0_16px_40px_rgba(23,23,23,.08)]">
+              <div className="flex items-center gap-3 rounded-xl px-3 py-1 sm:px-4"><Search size={21} className="shrink-0 text-[#101522]" /><div className="min-w-0 flex-1"><label htmlFor="tool-search" className="sr-only">Search tools</label><ToolSearch /></div><span className="hidden rounded-lg border border-[#e0ddd5] bg-[#f6f4ef] px-2.5 py-1 text-xs font-semibold text-[#758096] sm:inline">⌘ K</span><Link href="/tools" className="hidden min-h-11 items-center rounded-xl bg-[#101522] px-7 text-sm font-bold text-white sm:inline-flex">Search</Link></div>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section className="border-y border-[#e4e1d9] bg-white" aria-labelledby="categories-heading">
-      <div className="container py-10 md:py-14">
-        <div className="flex items-center justify-between gap-4"><div><p className="text-xs font-bold text-[#6d8e25]">BROWSE</p><h2 id="categories-heading" className="mt-1 text-2xl font-black md:text-3xl">Choose a category</h2></div><Link href="/tools" className="inline-flex items-center gap-2 text-sm font-bold">All tools <ArrowRight size={15} /></Link></div>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{categoryOrder.map((slug) => { const category = categories.find((item) => item.slug === slug); if (!category) return null; const Icon = category.icon; const count = liveTools.filter((tool) => tool.category === slug).length; return <Link key={slug} href={`/categories/${slug}`} className="group rounded-2xl border border-[#e1ded6] bg-[#faf9f6] p-5 transition hover:-translate-y-0.5 hover:border-[#171717] hover:shadow-[0_8px_24px_rgba(23,23,23,.08)] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><span className="flex size-11 items-center justify-center rounded-xl bg-[#e9f4cf] text-[#425515]"><Icon size={20} aria-hidden="true" /></span><h3 className="mt-5 font-extrabold">{category.name}</h3><p className="mt-1.5 text-xs leading-5 text-black/50">{categoryCopy[slug]}</p><span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#6d8e25]">{count} tools <ArrowRight size={12} /></span></Link>; })}</div>
-      </div>
-    </section>
+      <section className="container pb-4 pt-14 md:pt-16" aria-labelledby="category-heading">
+        <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.12em] text-[#71809a]">Browse</p><h2 id="category-heading" className="mt-1 text-2xl font-black md:text-3xl">Find the right tool</h2></div><Link href="/tools" className="hidden items-center gap-2 text-sm font-bold sm:inline-flex">View all tools <ArrowRight size={15} /></Link></div>
+        <div className="mt-5 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+          <Link href="/tools" className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#101522] px-5 py-3 text-sm font-bold text-white">All</Link>
+          {categoryOrder.map((slug, index) => { const category = categories.find((item) => item.slug === slug); if (!category) return null; const Icon = categoryIcons[index]; return <Link key={slug} href={`/categories/${slug}`} className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#dedbd3] bg-white px-5 py-3 text-sm font-bold text-[#293247] transition hover:border-[#101522] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><Icon size={16} />{category.name}</Link>; })}
+        </div>
+      </section>
 
-    <section className="container py-12 md:py-16" aria-labelledby="popular-heading">
-      <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold text-[#6d8e25]">POPULAR</p><h2 id="popular-heading" className="mt-1 text-2xl font-black md:text-3xl">Popular tools</h2><p className="mt-2 text-sm text-black/45">Jump straight into something useful.</p></div><Link href="/tools" className="hidden items-center gap-2 text-sm font-bold sm:inline-flex">View all <ArrowRight size={15} /></Link></div>
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{popular.map((tool) => { if (!tool) return null; const Icon = tool.icon; return <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group flex min-h-36 flex-col rounded-2xl border border-[#e1ded6] bg-white p-5 transition hover:-translate-y-0.5 hover:border-[#171717] hover:shadow-[0_10px_28px_rgba(23,23,23,.08)] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><div className="flex items-center justify-between"><span className="flex size-10 items-center justify-center rounded-xl bg-[#f0eee8]"><Icon size={19} aria-hidden="true" /></span><ArrowRight size={15} className="text-black/20 transition group-hover:translate-x-1 group-hover:text-black" aria-hidden="true" /></div><h3 className="mt-auto pt-5 text-sm font-extrabold">{tool.name}</h3><p className="mt-1 text-xs text-black/45 line-clamp-1">{tool.description}</p></Link>; })}</div>
-    </section>
+      <section className="container py-8 md:py-12" aria-labelledby="popular-heading">
+        <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.12em] text-[#71809a]">Popular tools</p><h2 id="popular-heading" className="mt-1 text-2xl font-black md:text-3xl">The tools people use most</h2></div><Link href="/tools" className="inline-flex items-center gap-2 text-sm font-bold">View all tools <ArrowRight size={15} /></Link></div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{popular.map((tool) => { if (!tool) return null; const Icon = tool.icon; return <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group flex min-h-[118px] items-center gap-4 rounded-2xl border border-[#dedbd3] bg-white p-4 shadow-[0_3px_12px_rgba(23,23,23,.025)] transition hover:-translate-y-0.5 hover:border-[#bdb9af] hover:shadow-[0_12px_28px_rgba(23,23,23,.07)] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><span className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-[#eef7d8] text-[#4e6b18]"><Icon size={24} /></span><span className="min-w-0 flex-1"><span className="block text-sm font-black">{tool.name}</span><span className="mt-1 block line-clamp-2 text-xs leading-5 text-[#66758f]">{tool.description}</span></span><ArrowRight size={17} className="shrink-0 text-[#7d8799] transition group-hover:translate-x-1 group-hover:text-[#101522]" /></Link>; })}</div>
+      </section>
 
-    <section className="border-y border-[#e4e1d9] bg-[#f2f0ea]" aria-labelledby="simple-heading"><div className="container py-12 md:py-16"><div className="mx-auto max-w-3xl text-center"><p className="text-xs font-bold text-[#6d8e25]">MADE TO BE EASY</p><h2 id="simple-heading" className="mt-2 text-3xl font-black">Open. Do the thing. Done.</h2><p className="mt-3 text-sm leading-6 text-black/50">No account, no dashboard and no confusing setup. Pick a tool, follow the obvious inputs and get your answer.</p></div></div></section>
-    <footer className="bg-[#171717] text-white"><div className="container flex flex-col gap-5 py-9 text-sm sm:flex-row sm:items-center sm:justify-between"><div><p className="font-bold">Internet Toolbox</p><p className="mt-1 text-xs text-white/35">Small tools. Less hassle.</p></div><div className="flex flex-wrap gap-x-5 gap-y-2 text-white/50"><Link href="/about" className="hover:text-white">About</Link><Link href="/privacy" className="hover:text-white">Privacy</Link><Link href="/terms" className="hover:text-white">Terms</Link><Link href="/faq" className="hover:text-white">FAQ</Link><Link href="/support" className="hover:text-white">Support</Link><Link href="/tools" className="hover:text-white">All tools</Link></div></div></footer>
-  </main>;
+      <section className="border-y border-[#e3e0d8] bg-[#f2f0ea]" aria-labelledby="easy-heading"><div className="container py-12 md:py-16"><div className="mx-auto max-w-3xl text-center"><span className="inline-flex items-center gap-2 rounded-full border border-[#ddd9d0] bg-white px-3 py-1.5 text-xs font-bold text-[#58657b]"><Check size={14} className="text-[#5c7b1d]" />Everything runs in your browser</span><h2 id="easy-heading" className="mt-4 text-3xl font-black md:text-4xl">Small tools. Big possibilities.</h2><p className="mt-3 text-sm leading-6 text-[#667085]">Pick a tool, do the tiny task you came for, and move on. No account, no complicated setup.</p></div></div></section>
+      <footer className="bg-[#101522] text-white"><div className="container flex flex-col gap-5 py-9 text-sm sm:flex-row sm:items-center sm:justify-between"><div><p className="font-bold">Internet Toolbox</p><p className="mt-1 text-xs text-white/40">Small tools. Less hassle.</p></div><div className="flex flex-wrap gap-x-5 gap-y-2 text-white/50"><Link href="/about" className="hover:text-white">About</Link><Link href="/privacy" className="hover:text-white">Privacy</Link><Link href="/terms" className="hover:text-white">Terms</Link><Link href="/faq" className="hover:text-white">FAQ</Link><Link href="/support" className="hover:text-white">Support</Link><Link href="/tools" className="hover:text-white">All tools</Link></div></div></footer>
+    </main>
+  );
 }
