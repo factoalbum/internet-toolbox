@@ -27,6 +27,7 @@ import PasswordGenerator from "@/components/tools/password-generator";
 import PercentageCalculator from "@/components/tools/percentage-calculator";
 import PpfCalculator from "@/components/tools/ppf-calculator";
 import RandomNumberGenerator from "@/components/tools/random-number-generator";
+import RegexTester from "@/components/tools/regex-tester";
 import RemoveDuplicateLines from "@/components/tools/remove-duplicate-lines";
 import SalaryCalculator from "@/components/tools/salary-calculator";
 import SipCalculator from "@/components/tools/sip-calculator";
@@ -86,25 +87,12 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const categoryUrl = `${siteUrl}/categories/${tool.category}/`;
   const categoryName = tool.category === "calculators" ? "Money & Calculators" : tool.category === "everyday" ? "Everyday Tools" : tool.category === "developer" ? "Developer Tools" : tool.category === "text" ? "Text Tools" : "File & Image Tools";
   const structuredData = [
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      name: tool.name,
-      description: tool.description,
-      url: toolUrl,
-      applicationCategory: "UtilitiesApplication",
-      operatingSystem: "Any",
-      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
-        { "@type": "ListItem", position: 2, name: categoryName, item: categoryUrl },
-        { "@type": "ListItem", position: 3, name: tool.name, item: toolUrl },
-      ],
-    },
+    { "@context": "https://schema.org", "@type": "WebApplication", name: tool.name, description: tool.description, url: toolUrl, applicationCategory: "UtilitiesApplication", operatingSystem: "Any", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+      { "@type": "ListItem", position: 2, name: categoryName, item: categoryUrl },
+      { "@type": "ListItem", position: 3, name: tool.name, item: toolUrl },
+    ] },
   ];
 
   return (
@@ -115,10 +103,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         <div className="mx-auto max-w-5xl min-w-0">
           <nav aria-label="Breadcrumb" className="mb-6 overflow-x-auto whitespace-nowrap text-sm text-black/50">
             <ol className="flex min-w-max items-center gap-2">
-              <li><Link href="/" className="rounded-sm underline-offset-4 hover:text-[#171717] hover:underline">Home</Link></li>
-              <li aria-hidden="true">/</li>
-              <li><Link href={`/categories/${tool.category}`} className="rounded-sm underline-offset-4 hover:text-[#171717] hover:underline">{categoryName}</Link></li>
-              <li aria-hidden="true">/</li>
+              <li><Link href="/" className="rounded-sm underline-offset-4 hover:text-[#171717] hover:underline">Home</Link></li><li aria-hidden="true">/</li>
+              <li><Link href={`/categories/${tool.category}`} className="rounded-sm underline-offset-4 hover:text-[#171717] hover:underline">{categoryName}</Link></li><li aria-hidden="true">/</li>
               <li aria-current="page" className="font-semibold text-[#171717]">{tool.name}</li>
             </ol>
           </nav>
@@ -127,46 +113,17 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             <div className="hidden size-14 shrink-0 items-center justify-center rounded-xl bg-[#c8f169] md:flex"><Icon size={25} /></div>
           </div>
           <div className="mt-8 min-w-0">
-            {slug === "percentage-calculator" && <PercentageCalculator />}
-            {slug === "age-calculator" && <AgeCalculator />}
-            {slug === "discount-calculator" && <DiscountCalculator />}
-            {slug === "time-converter" && <TimeConverter />}
-            {slug === "time-zone-converter" && <TimeZoneConverter />}
-            {slug === "emi-calculator" && <EmiCalculator />}
-            {slug === "gst-calculator" && <GstCalculator />}
-            {slug === "hra-calculator" && <HousingAllowanceCalculator />}
-            {slug === "bmi-calculator" && <BmiCalculator />}
-            {slug === "sip-calculator" && <SipCalculator />}
-            {slug === "unit-converter" && <UnitConverter />}
-            {slug === "date-calculator" && <DateCalculator />}
-            {slug === "fd-calculator" && <FdCalculator />}
-            {slug === "compound-interest-calculator" && <CompoundInterestCalculator />}
-            {slug === "income-tax-calculator" && <IncomeTaxCalculator />}
-            {slug === "salary-calculator" && <SalaryCalculator />}
-            {slug === "ppf-calculator" && <PpfCalculator />}
-            {slug === "currency-converter" && <CurrencyConverter />}
-            {slug === "gold-silver-rate-converter" && <GoldSilverConverter />}
-            {slug === "random-number-generator" && <RandomNumberGenerator />}
-            {slug === "tip-calculator" && <TipCalculator />}
-            {slug === "bill-splitter" && <BillSplitter />}
-            {slug === "url-shortener" && <UrlShortener />}
-            {slug === "message-writer" && <MessageWriter />}
-            {slug === "json-formatter" && <JsonFormatter />}
-            {slug === "uuid-generator" && <UuidGenerator />}
-            {slug === "password-generator" && <PasswordGenerator />}
-            {slug === "url-encoder-decoder" && <UrlEncoder />}
-            {slug === "base64-encoder-decoder" && <Base64Tool />}
-            {slug === "timestamp-converter" && <TimestampConverter />}
-            {slug === "color-converter" && <ColorConverter />}
-            {slug === "html-entity-encoder-decoder" && <HtmlEntityTool />}
-            {slug === "word-counter" && <WordCounter />}
-            {slug === "character-counter" && <CharacterCounter />}
-            {slug === "case-converter" && <CaseConverter />}
-            {slug === "text-cleaner" && <TextCleaner />}
-            {slug === "remove-duplicate-lines" && <RemoveDuplicateLines />}
-            {slug === "url-slug-generator" && <SlugGenerator />}
-            {slug === "image-compressor" && <ImageCompressor />}
-            {slug === "direct-video-downloader" && <DirectVideoDownloader />}
+            {slug === "percentage-calculator" && <PercentageCalculator />}{slug === "age-calculator" && <AgeCalculator />}{slug === "discount-calculator" && <DiscountCalculator />}
+            {slug === "time-converter" && <TimeConverter />}{slug === "time-zone-converter" && <TimeZoneConverter />}{slug === "emi-calculator" && <EmiCalculator />}{slug === "gst-calculator" && <GstCalculator />}
+            {slug === "hra-calculator" && <HousingAllowanceCalculator />}{slug === "bmi-calculator" && <BmiCalculator />}{slug === "sip-calculator" && <SipCalculator />}{slug === "unit-converter" && <UnitConverter />}
+            {slug === "date-calculator" && <DateCalculator />}{slug === "fd-calculator" && <FdCalculator />}{slug === "compound-interest-calculator" && <CompoundInterestCalculator />}{slug === "income-tax-calculator" && <IncomeTaxCalculator />}
+            {slug === "salary-calculator" && <SalaryCalculator />}{slug === "ppf-calculator" && <PpfCalculator />}{slug === "currency-converter" && <CurrencyConverter />}{slug === "gold-silver-rate-converter" && <GoldSilverConverter />}
+            {slug === "random-number-generator" && <RandomNumberGenerator />}{slug === "tip-calculator" && <TipCalculator />}{slug === "bill-splitter" && <BillSplitter />}{slug === "url-shortener" && <UrlShortener />}
+            {slug === "message-writer" && <MessageWriter />}{slug === "json-formatter" && <JsonFormatter />}{slug === "uuid-generator" && <UuidGenerator />}{slug === "password-generator" && <PasswordGenerator />}
+            {slug === "url-encoder-decoder" && <UrlEncoder />}{slug === "base64-encoder-decoder" && <Base64Tool />}{slug === "timestamp-converter" && <TimestampConverter />}{slug === "color-converter" && <ColorConverter />}
+            {slug === "html-entity-encoder-decoder" && <HtmlEntityTool />}{slug === "regex-tester" && <RegexTester />}{slug === "word-counter" && <WordCounter />}{slug === "character-counter" && <CharacterCounter />}
+            {slug === "case-converter" && <CaseConverter />}{slug === "text-cleaner" && <TextCleaner />}{slug === "remove-duplicate-lines" && <RemoveDuplicateLines />}{slug === "url-slug-generator" && <SlugGenerator />}
+            {slug === "image-compressor" && <ImageCompressor />}{slug === "direct-video-downloader" && <DirectVideoDownloader />}
             {!tool.status.includes("live") && <div className="border border-[#d8d4c9] bg-[#fffdf8] p-8"><div className="flex min-h-64 flex-col items-center justify-center border border-dashed border-[#bcb8ae] text-center"><Wrench size={28} /><h2 className="mt-4 font-bold">Coming soon</h2><p className="mt-2 text-sm text-black/50">We are building this tool with the same straightforward experience.</p></div></div>}
           </div>
           {relatedTools.length > 0 && <section className="mt-12 border-t border-[#d8d4c9] pt-8" aria-labelledby="related-tools"><div className="flex items-end justify-between gap-4"><div className="min-w-0"><p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-black/40">More like this</p><h2 id="related-tools" className="mt-2 text-2xl font-black tracking-tight">Related tools</h2></div><Link href="/tools" className="hidden items-center gap-2 text-sm font-semibold sm:flex">View all<ArrowRight size={15} /></Link></div><div className="mt-5 grid gap-3 sm:grid-cols-3">{relatedTools.map((item) => <Link key={item.slug} href={`/tools/${item.slug}`} className="group min-w-0 border border-[#d8d4c9] bg-[#fffdf8] p-4 transition hover:border-[#171717] hover:shadow-[5px_5px_0_#c8f169]"><h3 className="break-words font-bold">{item.name}</h3><p className="mt-2 break-words text-sm leading-6 text-black/50">{item.description}</p><span className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.1em]">Open<ArrowRight size={13} className="transition group-hover:translate-x-1" aria-hidden="true" /></span></Link>)}</div><Link href="/tools" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold sm:hidden">View all tools<ArrowRight size={15} /></Link></section>}
