@@ -47,6 +47,7 @@ export const tools: Tool[] = [
   { slug: "html-entity-encoder-decoder", name: "HTML Entity Encoder / Decoder", description: "Convert HTML special characters to and from entities.", category: "developer", icon: Code2, status: "live" },
   { slug: "regex-tester", name: "Regex Tester", description: "Test regular expressions against text and inspect matches and capture groups.", category: "developer", icon: Code2, status: "live" },
   { slug: "jwt-decoder", name: "JWT Decoder", description: "Decode JWT headers and payloads locally without verifying the signature.", category: "developer", icon: ShieldCheck, status: "live" },
+  { slug: "developer-file-viewer", name: "Developer File Viewer", description: "Open Markdown, HTML, CSS, JS, TS, JSON, YAML and XML files in your browser.", category: "developer", icon: Code2, status: "live" },
   { slug: "word-counter", name: "Word Counter", description: "Count words, characters and reading time.", category: "text", icon: FileText, status: "live" },
   { slug: "character-counter", name: "Character Counter", description: "Count characters with and without spaces.", category: "text", icon: FileText, status: "live" },
   { slug: "case-converter", name: "Case Converter", description: "Change text between common letter cases.", category: "text", icon: Type, status: "live" },
