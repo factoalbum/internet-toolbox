@@ -5,11 +5,14 @@ import SiteHeader from "@/components/site-header";
 import { categories, tools } from "@/lib/tools";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
+const pageUrl = `${siteUrl}/categories/`;
 
 export const metadata: Metadata = {
   title: "Tool Categories | Internet Toolbox",
   description: "Browse Internet Toolbox by category: calculators, everyday tools, developer tools, text tools, and file tools.",
-  alternates: { canonical: `${siteUrl}/categories` },
+  alternates: { canonical: pageUrl },
+  openGraph: { title: "Tool Categories | Internet Toolbox", description: "Browse Internet Toolbox by category: calculators, everyday tools, developer tools, text tools, and file tools.", url: pageUrl, type: "website" },
+  twitter: { card: "summary", title: "Tool Categories | Internet Toolbox", description: "Browse Internet Toolbox by category: calculators, everyday tools, developer tools, text tools, and file tools." },
 };
 
 export default function CategoriesPage() {
