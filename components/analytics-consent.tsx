@@ -31,10 +31,10 @@ export default function AnalyticsConsent() {
         </>
       )}
       {gaId && consent === null && (
-        <aside className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-3xl border border-[#171717] bg-[#fffdf8] p-4 shadow-[6px_6px_0_#171717]" aria-label="Analytics consent">
+        <aside className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-3xl rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] p-4 shadow-[0_18px_45px_rgba(23,23,23,.14)]" aria-label="Analytics consent" aria-describedby="analytics-consent-description">
           <div className="sm:flex sm:items-center sm:justify-between sm:gap-6">
-            <div><p className="text-sm font-bold">Help us improve Internet Toolbox</p><p className="mt-1 text-xs leading-5 text-black/55">Optional analytics help us understand which tools are useful. No analytics loads unless you allow it. See our <a href="/privacy" className="font-semibold underline">privacy policy</a>.</p></div>
-            <div className="mt-3 flex shrink-0 gap-2 sm:mt-0"><button type="button" onClick={() => choose("denied")} className="min-h-10 rounded-lg border border-[#bcb8ae] px-4 text-xs font-bold">No thanks</button><button type="button" onClick={() => choose("granted")} className="min-h-10 rounded-lg bg-[#171717] px-4 text-xs font-bold text-white focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Allow analytics</button></div>
+            <div className="min-w-0"><p className="text-sm font-bold">Help us improve Internet Toolbox</p><p id="analytics-consent-description" className="mt-1 text-xs leading-5 text-black/55">Optional analytics help us understand which tools are useful. No analytics loads unless you allow it. See our <a href="/privacy" className="font-semibold underline underline-offset-2 focus:outline-none focus:ring-2 focus:ring-[#c8f169]">privacy policy</a>.</p></div>
+            <div className="mt-3 flex shrink-0 gap-2 sm:mt-0"><button type="button" onClick={() => choose("denied")} className="min-h-11 rounded-xl border border-[#bcb8ae] bg-white px-4 text-xs font-bold transition hover:border-[#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">No thanks</button><button type="button" onClick={() => choose("granted")} className="min-h-11 rounded-xl bg-[#171717] px-4 text-xs font-bold text-white transition hover:bg-black/85 focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Allow analytics</button></div>
           </div>
         </aside>
       )}
