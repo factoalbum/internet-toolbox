@@ -16,7 +16,7 @@ const quickTools = [
 
 const taskCards = [
   { label: "Money", title: "Work out money", text: "EMI, GST, salary, tax, discounts and investments.", href: "/categories/calculators", icon: Calculator },
-  { label: "Everyday", title: "Convert or calculate", text: "Percentages, age, dates, time, units and more.", href: "/categories/calculators", icon: FileText },
+  { label: "Everyday", title: "Convert or calculate", text: "Percentages, age, dates, time, units and more.", href: "/categories/everyday", icon: FileText },
   { label: "Writing", title: "Write something", text: "Turn a few words into a LinkedIn post, message, request or caption.", href: "/tools/message-writer", icon: Sparkles },
   { label: "Work", title: "Get something done", text: "Clean text, shorten URLs and prepare content.", href: "/categories/text", icon: FileText },
   { label: "Tech", title: "Solve a developer task", text: "Format JSON, generate UUIDs, encode data and check values.", href: "/categories/developer", icon: Code2 },
