@@ -10,9 +10,12 @@ permissions:
   pages: write
   id-token: write
 
+# Keep every main-branch deployment in order. Rapid commits must not cancel
+# a build that may contain important product changes; newer deployments wait
+# for the previous one to finish instead.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
