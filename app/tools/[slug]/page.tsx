@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, LockKeyhole } from "lucide-react";
+import { ArrowLeft, ArrowRight, LockKeyhole } from "lucide-react";
 import SiteHeader from "@/components/site-header";
 import ToolRouter from "@/components/tools/tool-router";
 import { categories, tools } from "@/lib/tools";
