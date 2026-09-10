@@ -34,12 +34,19 @@ test("tool pages expose substantive editorial guidance", () => { assert.match(to
 
 test("policy-sensitive tools carry clear guardrails", () => {
   for (const slug of ["emi-calculator", "income-tax-calculator", "salary-calculator", "ppf-calculator", "hra-calculator", "sip-calculator", "fd-calculator", "gst-calculator"]) {
-    const section = toolContent.slice(Math.max(0, toolContent.indexOf(`${slug}:`)), toolContent.indexOf(`${slug}:`) + 1200);
+    const marker = `\"${slug}\":`;
+    const start = toolContent.indexOf(marker);
+    assert.ok(start >= 0, `${slug} editorial content is missing`);
+    const section = toolContent.slice(start, start + 1200);
     assert.match(section, /estimate|official|professional|verify/i, `${slug} is missing financial guidance`);
   }
-  const bmi = toolContent.slice(Math.max(0, toolContent.indexOf("bmi-calculator:")), toolContent.indexOf("bmi-calculator:") + 1200);
+  const bmiStart = toolContent.indexOf("\"bmi-calculator\":");
+  assert.ok(bmiStart >= 0, "BMI editorial content is missing");
+  const bmi = toolContent.slice(bmiStart, bmiStart + 1200);
   assert.match(bmi, /screening|diagnos|medical advice/i, "BMI is missing health guidance");
-  const downloader = toolContent.slice(Math.max(0, toolContent.indexOf("direct-video-downloader:")), toolContent.indexOf("direct-video-downloader:") + 1200);
+  const downloaderStart = toolContent.indexOf("\"direct-video-downloader\":");
+  assert.ok(downloaderStart >= 0, "Downloader editorial content is missing");
+  const downloader = toolContent.slice(downloaderStart, downloaderStart + 1200);
   assert.match(downloader, /permission|authorized|DRM|access control/i, "Downloader is missing authorization guidance");
 });
 
@@ -50,7 +57,6 @@ test("shared layout prevents horizontal overflow and long text issues", () => { 
 test("tool components do not inject raw HTML", () => { for (const file of fs.readdirSync(toolDir).filter((entry) => entry.endsWith(".tsx"))) { const content = fs.readFileSync(path.join(toolDir, file), "utf8"); assert.doesNotMatch(content, /dangerouslySetInnerHTML/, `Unexpected raw HTML injection in ${file}`); } });
 
 test("site copy avoids AI-style typography artifacts", () => { for (const file of sourceFiles()) { const content = fs.readFileSync(file, "utf8"); assert.doesNotMatch(content, /[—–…]/, `Avoid em dash, en dash and ellipsis in UI/source copy: ${path.relative(root, file)}`); } });
-
 test("tool descriptions stay short and human-readable", () => { for (const tool of toolsSection.matchAll(/description:\s*"([^"]+)"/g)) { assert.ok(tool[1].length <= 100, "Tool description is too long"); assert.doesNotMatch(tool[1], /\b(instantly|effortlessly|seamlessly|powerful|robust|comprehensive)\b/i, "Tool description uses marketing-heavy wording"); } });
 test("message writer stays local and context-driven", () => { const content = readTool("message-writer.tsx"); assert.match(content, /hasEnoughContext/); assert.match(content, /buildMessage/); assert.doesNotMatch(content, /pretend|guarantee|expert/i); });
 test("duplicate line remover preserves order and ignores blank duplicates", () => { const content = readTool("remove-duplicate-lines.tsx"); assert.match(content, /Set/); assert.match(content, /filter/); });
