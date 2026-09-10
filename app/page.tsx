@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Calculator, Code2, FileText, Heart, Image as ImageIcon, Search, ShieldCheck, Type, Users, Zap } from "lucide-react";
+import { ArrowRight, Calculator, Code2, Heart, Image as ImageIcon, Search, ShieldCheck, Type, Users, Zap } from "lucide-react";
 import ToolSearch from "@/components/tool-search";
 import SiteHeader from "@/components/site-header";
 import HomeIllustration from "@/components/home-illustration";
