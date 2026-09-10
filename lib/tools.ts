@@ -77,6 +77,8 @@ export const tools: Tool[] = [
   { slug: "image-cropper", name: "Image Cropper", description: "Crop JPG, PNG and WebP images using exact pixel coordinates.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "image-rotate-flip", name: "Image Rotate & Flip", description: "Rotate images by 90°, 180° or 270° and flip them locally.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "image-format-converter", name: "Image Format Converter", description: "Convert between JPG, PNG and WebP formats in your browser.", category: "files", icon: ImageIcon, status: "live" },
+  { slug: "image-to-base64", name: "Image to Base64", description: "Convert an image into a copyable Base64 data URL locally.", category: "files", icon: ImageIcon, status: "live" },
+  { slug: "base64-to-image", name: "Base64 to Image", description: "Decode a Base64 image string into a preview and downloadable image locally.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
 ];
 
