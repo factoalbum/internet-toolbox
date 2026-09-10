@@ -45,7 +45,7 @@ assert.match(sitemap, /categories/);
 
 const analytics = fs.readFileSync(path.join(root, "components/analytics-consent.tsx"), "utf8");
 assert.match(analytics, /NEXT_PUBLIC_GA_ID/);
-assert.match(analytics, /localStorage/);
+assert.match(analytics, /document\.cookie/);
 assert.match(analytics, /gtag/);
 
 const nextConfig = fs.readFileSync(path.join(root, "next.config.ts"), "utf8");
