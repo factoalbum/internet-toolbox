@@ -1,11 +1,9 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ArrowRight, Check } from "lucide-react";
 import SiteHeader from "@/components/site-header";
 import { categories, tools, type ToolCategory } from "@/lib/tools";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
-
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -27,49 +25,41 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category: slug } = await params;
   const category = categories.find((item) => item.slug === slug);
-  if (!category) notFound();
-
+  if (!category) return null;
   const categoryTools = tools.filter((tool) => tool.category === (slug as ToolCategory) && tool.status === "live");
   const Icon = category.icon;
   const listJsonLd = { "@context": "https://schema.org", "@type": "ItemList", name: `${category.name} - Internet Toolbox`, numberOfItems: categoryTools.length, itemListElement: categoryTools.map((tool, index) => ({ "@type": "ListItem", position: index + 1, name: tool.name, url: `${siteUrl}/tools/${tool.slug}/` })) };
 
-  return (
-    <main className="min-h-screen bg-[#faf9f6] text-[#171717]">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listJsonLd) }} />
-      <SiteHeader />
-      <section className="border-b border-[#dedbd3] bg-white">
-        <div className="container py-8 md:py-11">
-          <nav aria-label="Breadcrumb" className="text-xs text-black/40">
-            <Link href="/" className="hover:text-black hover:underline">Home</Link><span className="mx-2">/</span><Link href="/tools" className="hover:text-black hover:underline">All tools</Link><span className="mx-2">/</span><span className="font-semibold text-black/70">{category.name}</span>
-          </nav>
-          <div className="mt-7 flex items-start gap-4">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#c8f169]"><Icon size={21} aria-hidden="true" /></span>
-            <div className="min-w-0 max-w-3xl">
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#66812b]">Tool collection</p>
-              <h1 className="mt-1 break-words text-3xl font-black tracking-[-0.04em] md:text-5xl">{category.name}</h1>
-              <p className="mt-3 text-sm leading-6 text-black/50 md:text-base">{category.description} Pick a tool below and get straight to the task.</p>
-            </div>
+  return <main className="min-h-screen bg-[#faf9f6] text-[#171717]">
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listJsonLd) }} />
+    <SiteHeader />
+    <section className="bg-white">
+      <div className="container py-7 md:py-12">
+        <nav aria-label="Breadcrumb" className="text-xs font-medium text-black/40"><Link href="/" className="hover:text-black">Home</Link><span className="mx-2">/</span><Link href="/tools" className="hover:text-black">All tools</Link><span className="mx-2">/</span><span className="text-black/70">{category.name}</span></nav>
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="max-w-3xl">
+            <div className="flex size-14 items-center justify-center rounded-2xl bg-[#e8f7c8] text-[#4d6815]"><Icon size={25} aria-hidden="true" /></div>
+            <p className="mt-7 text-xs font-bold uppercase tracking-[0.18em] text-[#6d8e25]">Tool collection</p>
+            <h1 className="mt-2 text-4xl font-black tracking-[-0.05em] md:text-6xl">{category.name}</h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-black/55 md:text-lg">{category.description} Pick a tool and get straight to the task — no account, no complicated setup.</p>
           </div>
+          <div className="rounded-2xl border border-[#e1ded6] bg-[#faf9f6] px-5 py-4 lg:min-w-44"><p className="text-2xl font-black">{categoryTools.length}</p><p className="mt-1 text-xs font-semibold text-black/45">free tools available</p></div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section className="container py-8 md:py-12" aria-labelledby="category-tools-heading">
-        <div className="flex items-end justify-between gap-4">
-          <div><p className="text-[11px] font-bold uppercase tracking-[0.18em] text-black/35">Available now</p><h2 id="category-tools-heading" className="mt-1 text-xl font-black md:text-2xl">Choose a tool</h2></div>
-          <span className="hidden text-xs font-semibold text-black/35 sm:block">{categoryTools.length} tools</span>
-        </div>
-        <div className="mt-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-          {categoryTools.map((tool) => {
-            const ToolIcon = tool.icon;
-            return <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group min-w-0 rounded-xl border border-[#dedbd3] bg-white p-4 transition hover:border-[#171717] hover:shadow-[0_8px_24px_rgba(23,23,23,.07)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]">
-              <div className="flex items-center gap-3"><span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#f0f4e8]"><ToolIcon size={17} aria-hidden="true" /></span><div className="min-w-0"><h3 className="truncate text-sm font-extrabold">{tool.name}</h3><p className="mt-0.5 truncate text-[11px] text-black/40">{tool.description}</p></div></div>
-              <div className="mt-4 flex items-center justify-between border-t border-[#eeeae3] pt-3"><span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#66812b]"><Check size={12} aria-hidden="true" /> Free</span><span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.12em] text-black/35 transition group-hover:text-black">Open <ArrowRight size={12} /></span></div>
-            </Link>;
-          })}
-        </div>
-        <div className="mt-8 rounded-xl border border-[#dedbd3] bg-white p-4 text-sm text-black/45 md:p-5"><p className="font-semibold text-black/70">Simple by design.</p><p className="mt-1">Open a tool, do the task, and get your result. No account required for browser-based tools.</p></div>
-      </section>
-      <footer className="border-t border-[#dedbd3] bg-white"><div className="container flex flex-col gap-4 py-7 text-sm sm:flex-row sm:items-center sm:justify-between"><p className="font-semibold">Internet Toolbox</p><div className="flex flex-wrap gap-5 text-black/45"><Link href="/about" className="hover:text-black">About</Link><Link href="/privacy" className="hover:text-black">Privacy</Link><Link href="/terms" className="hover:text-black">Terms</Link><Link href="/faq" className="hover:text-black">FAQ</Link><Link href="/support" className="hover:text-black">Support</Link></div></div></footer>
-    </main>
-  );
+    <section className="container py-10 md:py-14" aria-labelledby="category-tools-heading">
+      <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6d8e25]">Available now</p><h2 id="category-tools-heading" className="mt-1 text-2xl font-black md:text-3xl">Choose a tool</h2></div><Link href="/tools" className="inline-flex items-center gap-2 text-sm font-bold">All tools <ArrowRight size={15} /></Link></div>
+      <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {categoryTools.map((tool) => { const ToolIcon = tool.icon; return <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group flex min-h-44 min-w-0 flex-col rounded-2xl border border-[#e0ddd5] bg-white p-5 transition hover:-translate-y-1 hover:border-[#171717] hover:shadow-[0_14px_32px_rgba(23,23,23,.08)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]">
+          <div className="flex items-start justify-between gap-3"><span className="flex size-11 items-center justify-center rounded-xl bg-[#edf6d9] text-[#4d6815]"><ToolIcon size={19} aria-hidden="true" /></span><ArrowRight size={17} className="mt-1 text-black/20 transition group-hover:translate-x-1 group-hover:text-black" aria-hidden="true" /></div>
+          <h3 className="mt-auto pt-7 text-sm font-extrabold leading-5">{tool.name}</h3><p className="mt-1.5 line-clamp-2 text-xs leading-5 text-black/45">{tool.description}</p>
+          <span className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#66812b]"><Check size={12} aria-hidden="true" /> Free to use</span>
+        </Link>; })}
+      </div>
+    </section>
+
+    <section className="border-y border-[#e4e1d9] bg-[#f2f0ea]"><div className="container py-10 md:py-14"><div className="mx-auto max-w-2xl text-center"><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6d8e25]">Simple by design</p><h2 className="mt-2 text-2xl font-black md:text-3xl">Open. Do the thing. Done.</h2><p className="mt-3 text-sm leading-6 text-black/50">Every tool is designed to get you from question to result with as little friction as possible.</p></div></div></section>
+    <footer className="bg-[#171717] text-white"><div className="container flex flex-col gap-5 py-9 text-sm sm:flex-row sm:items-center sm:justify-between"><div><p className="font-bold">Internet Toolbox</p><p className="mt-1 text-xs text-white/35">Small tools. Less hassle.</p></div><div className="flex flex-wrap gap-x-5 gap-y-2 text-white/50"><Link href="/about" className="hover:text-white">About</Link><Link href="/privacy" className="hover:text-white">Privacy</Link><Link href="/terms" className="hover:text-white">Terms</Link><Link href="/faq" className="hover:text-white">FAQ</Link><Link href="/support" className="hover:text-white">Support</Link></div></div></footer>
+  </main>;
 }
