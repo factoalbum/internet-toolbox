@@ -11,6 +11,10 @@ Simple tools for everyday digital tasks.
 - Search-friendly: clear information architecture, metadata and useful supporting content.
 - Privacy-conscious: prefer browser-side processing when practical.
 
+## Tool categories
+
+Alongside calculators, everyday, developer, text and file tools, the toolbox now includes **Compare & Inspect** for document and image QA: PDF differences, visual comparison, layout checks, extraction, metadata, page analysis, merging, splitting, conversion, compression, image comparison and screenshot checks.
+
 ## Engineering loop
 
 Each feature follows:
