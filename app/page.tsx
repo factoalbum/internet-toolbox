@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Search, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import ToolSearch from "@/components/tool-search";
 import SiteHeader from "@/components/site-header";
 import { categories, tools } from "@/lib/tools";
@@ -21,7 +21,7 @@ export default function Home() {
         <div className="mx-auto max-w-4xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#dedbd3] bg-white px-4 py-2 text-xs font-semibold text-black/55"><Sparkles size={14} className="text-[#6d8e25]" aria-hidden="true" />{liveTools.length}+ free tools</div>
           <h1 className="mt-7 text-5xl font-black tracking-[-0.055em] md:text-7xl md:leading-[1.02]">Find a tool.<br className="hidden sm:block" /> Get it done.</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-black/55 md:text-lg">Calculators, converters, text tools, developer helpers and file utilities — all in one simple place.</p>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-black/55 md:text-lg">Calculators, converters, text tools, developer helpers and file utilities, all in one simple place.</p>
           <div className="mx-auto mt-8 max-w-2xl text-left"><label htmlFor="tool-search" className="mb-2 block px-1 text-xs font-bold text-black/40">What do you need?</label><ToolSearch /></div>
           <p className="mt-3 text-xs text-black/35">Try “loan”, “tax”, “JSON”, “image”, “password” or “time zone”.</p>
         </div>
