@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, Code2, FileText, Heart, Image as ImageIcon, Menu, Search, ShieldCheck, Sparkles, Type, Users, Zap } from "lucide-react";
+import { ArrowRight, Check, Code2, Heart, Image as ImageIcon, Menu, Search, ShieldCheck, Type, Users, Zap } from "lucide-react";
 import ToolSearch from "@/components/tool-search";
 import SiteHeader from "@/components/site-header";
 import HomeIllustration from "@/components/home-illustration";
@@ -10,7 +10,6 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.i
 export const metadata: Metadata = { title: "Internet Toolbox | Simple Free Online Tools", description: "Simple free online calculators, converters, text tools, developer utilities and file tools. Find a tool, use it, done.", alternates: { canonical: `${siteUrl}/` }, openGraph: { type: "website", title: "Internet Toolbox | Simple Free Online Tools", description: "Simple free online calculators, converters, text tools, developer utilities and file tools.", url: `${siteUrl}/` }, twitter: { card: "summary_large_image", title: "Internet Toolbox | Simple Free Online Tools", description: "Simple free online calculators, converters, text tools, developer utilities and file tools." } };
 
 const categoryOrder = ["calculators", "everyday", "text", "developer", "files"];
-const categoryCopy: Record<string, string> = { calculators: "Money, tax, loans and investments", everyday: "Dates, time, units and quick conversions", text: "Count, clean, change and compare text", developer: "Small helpers for code and data", files: "Compress and work with files in your browser" };
 const categoryIcons = [Code2, Type, ImageIcon, ShieldCheck, Zap];
 
 export default function Home() {
@@ -24,10 +23,8 @@ export default function Home() {
       <section className="relative bg-[#faf9f6]">
         <div className="container pt-8 md:pt-12 lg:pt-14">
           <div className="grid items-center gap-8 lg:grid-cols-[1.03fr_.97fr] lg:gap-4">
-            <div className="order-2 lg:order-1">
-              <HomeIllustration />
-            </div>
-            <div className="order-1 lg:order-2 pb-3 lg:pb-8">
+            <div className="order-2 lg:order-1"><HomeIllustration /></div>
+            <div className="order-1 pb-3 lg:order-2 lg:pb-8">
               <p className="text-xs font-bold uppercase tracking-[.12em] text-[#66758f]">Simple tools for a faster internet</p>
               <h1 className="mt-4 max-w-3xl text-[clamp(2.7rem,6vw,5.4rem)] font-black leading-[.98] tracking-[-.065em]">Every online tool<br />you need, <span className="relative inline-block px-1"><span className="absolute inset-x-0 bottom-[7%] -z-0 h-[42%] rounded-sm bg-[#c8f169]" /><span className="relative">in one place.</span></span></h1>
               <p className="mt-6 max-w-xl text-base leading-7 text-[#58657b] md:text-lg">Free, fast and easy-to-use tools for developers, creators, students and everyone. No sign up. No limits. Just tools.</p>
