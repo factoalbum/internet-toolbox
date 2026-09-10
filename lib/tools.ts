@@ -1,13 +1,13 @@
-import { Calculator, Code2, FileText, ImageIcon, Link2, Palette, ShieldCheck, Sparkles, Type } from "lucide-react";
+import { Calculator, Code2, FileText, ImageIcon, Link2, Palette, ShieldCheck, Sparkles, Type, Zap } from "lucide-react";
 
 export type ToolCategory = "calculators" | "everyday" | "developer" | "text" | "files";
 export type Tool = { slug: string; name: string; description: string; category: ToolCategory; icon: typeof Calculator; status: "live" | "coming-soon" };
 
 export const categories = [
   { slug: "calculators", name: "Money & Calculators", description: "Work out money, taxes, loans and returns.", icon: Calculator },
-  { slug: "everyday", name: "Everyday Tools", description: "Handle dates, time, units and everyday tasks.", icon: Calculator },
+  { slug: "everyday", name: "Everyday Tools", description: "Handle dates, time, units and everyday tasks.", icon: Zap },
   { slug: "developer", name: "Developer Tools", description: "Handle common coding and data tasks.", icon: Code2 },
-  { slug: "text", name: "Text Tools", description: "Clean, count, write and change text.", icon: FileText },
+  { slug: "text", name: "Text Tools", description: "Clean, count, write and change text.", icon: Type },
   { slug: "files", name: "File & Image Tools", description: "Handle common image and file tasks in your browser.", icon: ImageIcon },
 ] as const;
 
@@ -60,5 +60,5 @@ export const tools: Tool[] = [
   { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
 ];
 
-export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[35], tools[36], tools[23], tools[8], tools[13], tools[17], tools[18], tools[9]];
+export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[35], tools[36], tools[37], tools[23], tools[8], tools[13], tools[17], tools[18]];
 export const brandIcon = Sparkles;
