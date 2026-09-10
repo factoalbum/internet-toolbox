@@ -21,29 +21,29 @@ export default function Home() {
       <SiteHeader sticky />
 
       <section className="relative bg-[#faf9f6]">
-        <div className="container pt-8 md:pt-12 lg:pt-14">
-          <div className="grid items-center gap-8 lg:grid-cols-[1.03fr_.97fr] lg:gap-4">
+        <div className="container pt-7 sm:pt-9 md:pt-12 lg:pt-14">
+          <div className="grid items-center gap-5 sm:gap-8 lg:grid-cols-[1.03fr_.97fr] lg:gap-4">
             <div className="order-2 lg:order-1"><HomeIllustration /></div>
-            <div className="order-1 pb-3 lg:order-2 lg:pb-8">
-              <p className="text-xs font-bold uppercase tracking-[.12em] text-[#66758f]">Simple tools for a faster internet</p>
-              <h1 className="mt-4 max-w-3xl text-[clamp(2.7rem,6vw,5.4rem)] font-black leading-[.98] tracking-[-.065em]">Every online tool<br />you need, <span className="relative inline-block px-1"><span className="absolute inset-x-0 bottom-[7%] -z-0 h-[42%] rounded-sm bg-[#c8f169]" /><span className="relative">in one place.</span></span></h1>
-              <p className="mt-6 max-w-xl text-base leading-7 text-[#58657b] md:text-lg">Free, fast and easy-to-use tools for developers, creators, students and everyone. No sign up. No limits. Just tools.</p>
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Link href="/tools" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#101522] px-6 text-sm font-bold text-white shadow-[0_10px_24px_rgba(16,21,34,.16)] transition hover:-translate-y-0.5 hover:bg-[#1c2434] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><Search size={18} />Browse all tools<ArrowRight size={16} /></Link>
-                <Link href="/categories/developer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#dedbd3] bg-white px-6 text-sm font-bold transition hover:-translate-y-0.5 hover:border-[#101522] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><Menu size={18} />Explore categories</Link>
+            <div className="order-1 pb-1 lg:order-2 lg:pb-8">
+              <p className="text-[11px] font-bold uppercase tracking-[.14em] text-[#66758f] sm:text-xs">Simple tools for a faster internet</p>
+              <h1 className="display-heading mt-3 max-w-3xl text-[clamp(2.55rem,11vw,5.4rem)] leading-[.98] sm:mt-4">Every online tool<br />you need, <span className="relative inline-block px-1"><span className="absolute inset-x-0 bottom-[7%] -z-0 h-[42%] rounded-sm bg-[#c8f169]" /><span className="relative">in one place.</span></span></h1>
+              <p className="mt-5 max-w-xl text-[15px] leading-6 text-[#58657b] sm:mt-6 sm:text-base sm:leading-7 md:text-lg">Free, fast and easy-to-use tools for developers, creators, students and everyone. No sign up. No limits. Just tools.</p>
+              <div className="mt-6 flex flex-col gap-2.5 min-[480px]:flex-row sm:mt-7">
+                <Link href="/tools" className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#101522] px-5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(16,21,34,.16)] transition hover:-translate-y-0.5 hover:bg-[#1c2434] focus:outline-none focus:ring-4 focus:ring-[#c8f169] min-[480px]:flex-none"><Search size={18} />Browse all tools<ArrowRight size={16} /></Link>
+                <Link href="/categories/developer" className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#dedbd3] bg-white px-5 text-sm font-bold transition hover:-translate-y-0.5 hover:border-[#101522] focus:outline-none focus:ring-4 focus:ring-[#c8f169] min-[480px]:flex-none"><Menu size={18} />Explore categories</Link>
               </div>
-              <div className="mt-8 grid max-w-2xl grid-cols-3 gap-4">
-                <div className="flex items-start gap-2"><Zap className="mt-0.5 shrink-0 text-[#f3b51b]" size={25} /><div><p className="text-sm font-black">{liveTools.length}+</p><p className="text-xs text-[#66758f]">Free tools</p></div></div>
-                <div className="flex items-start gap-2"><Users className="mt-0.5 shrink-0 text-[#6555ee]" size={25} /><div><p className="text-sm font-black">No sign up</p><p className="text-xs text-[#66758f]">Use instantly</p></div></div>
-                <div className="flex items-start gap-2"><Heart className="mt-0.5 shrink-0 text-[#ef476f]" size={25} /><div><p className="text-sm font-black">Built for everyone</p><p className="text-xs text-[#66758f]">Developers, creators & more</p></div></div>
+              <div className="mt-7 grid grid-cols-3 gap-2 sm:mt-8 sm:max-w-2xl sm:gap-4">
+                <div className="flex items-start gap-1.5 sm:gap-2"><Zap className="mt-0.5 shrink-0 text-[#f3b51b]" size={21} /><div><p className="text-xs font-black sm:text-sm">{liveTools.length}+</p><p className="text-[10px] leading-4 text-[#66758f] sm:text-xs">Free tools</p></div></div>
+                <div className="flex items-start gap-1.5 sm:gap-2"><Users className="mt-0.5 shrink-0 text-[#6555ee]" size={21} /><div><p className="text-xs font-black sm:text-sm">No sign up</p><p className="text-[10px] leading-4 text-[#66758f] sm:text-xs">Use instantly</p></div></div>
+                <div className="flex items-start gap-1.5 sm:gap-2"><Heart className="mt-0.5 shrink-0 text-[#ef476f]" size={21} /><div><p className="text-xs font-black sm:text-sm">Built for everyone</p><p className="text-[10px] leading-4 text-[#66758f] sm:text-xs">Developers, creators & more</p></div></div>
               </div>
             </div>
           </div>
-          <div className="relative z-10 mx-auto mt-1 max-w-6xl translate-y-5 md:mt-0"><ToolSearch /></div>
+          <div className="relative z-10 mx-auto mt-5 max-w-6xl sm:mt-3 sm:translate-y-5"><ToolSearch /></div>
         </div>
       </section>
 
-      <section className="container pb-4 pt-14 md:pt-16" aria-labelledby="category-heading">
+      <section className="container pb-4 pt-12 md:pt-16" aria-labelledby="category-heading">
         <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.12em] text-[#71809a]">Browse</p><h2 id="category-heading" className="mt-1 text-2xl font-black md:text-3xl">Find the right tool</h2></div><Link href="/tools" className="hidden items-center gap-2 text-sm font-bold sm:inline-flex">View all tools <ArrowRight size={15} /></Link></div>
         <div className="mt-5 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
           <Link href="/tools" className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#101522] px-5 py-3 text-sm font-bold text-white">All</Link>
