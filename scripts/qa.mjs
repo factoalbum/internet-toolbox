@@ -36,6 +36,8 @@ test("every live tool has a component file", () => {
     "base64-encoder-decoder": "base64.tsx",
     "gold-silver-rate-converter": "gold-silver-converter.tsx",
     "url-slug-generator": "slug-generator.tsx",
+    "text-diff-checker": "text-diff.tsx",
+    "html-entity-encoder-decoder": "html-entity.tsx",
   };
   for (const slug of slugs) {
     const expected = path.join(toolDir, `${slug}.tsx`);
