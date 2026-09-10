@@ -1,8 +1,28 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Calculator, Code2, FileImage, FileText, Search, ShieldCheck, Sparkles } from "lucide-react";
 import ToolSearch from "@/components/tool-search";
 import SiteHeader from "@/components/site-header";
 import { categories, featuredTools, tools } from "@/lib/tools";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
+
+export const metadata: Metadata = {
+  title: "Internet Toolbox | Free Online Tools for Everyday Tasks",
+  description: "Free online calculators, converters, text tools, developer utilities and file tools for everyday tasks. Fast, simple and easy to use.",
+  alternates: { canonical: `${siteUrl}/` },
+  openGraph: {
+    type: "website",
+    title: "Internet Toolbox | Free Online Tools for Everyday Tasks",
+    description: "Free online calculators, converters, text tools, developer utilities and file tools for everyday tasks.",
+    url: `${siteUrl}/`,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Internet Toolbox | Free Online Tools for Everyday Tasks",
+    description: "Free online calculators, converters, text tools, developer utilities and file tools for everyday tasks.",
+  },
+};
 
 const quickTools = [
   { slug: "percentage-calculator", label: "Calculate a percentage" },
