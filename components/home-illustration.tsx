@@ -1,60 +1,32 @@
-import { Calculator, Code2, FileText, Image as ImageIcon, Sparkles } from "lucide-react";
+import { Calculator, Code2, FileText } from "lucide-react";
 
 export default function HomeIllustration() {
   return (
-    <div aria-hidden="true" className="relative mx-auto aspect-[1.18/1] w-full max-w-[600px] sm:aspect-[1.28/1] lg:aspect-[1.08/1]">
-      <div className="absolute inset-[8%_4%_5%] rounded-[32px] bg-[#eaf5d3] sm:inset-[7%_4%_4%]" />
-      <div className="absolute left-[7%] top-[18%] size-16 rounded-[20px] bg-[#d9ccff] sm:left-[4%] sm:top-[22%] sm:size-20" />
-      <div className="absolute right-[7%] top-[12%] size-20 rounded-full bg-[#d8ff8a] sm:right-[5%] sm:top-[16%] sm:size-24" />
-
-      <div className="absolute left-[3%] top-[9%] hidden items-center gap-2 rounded-full border border-white bg-white px-3 py-2 text-[11px] font-bold shadow-[0_8px_22px_rgba(23,23,23,.08)] sm:flex">
-        <Sparkles size={13} className="text-[#6555ee]" /> Simple tools, less hassle
+    <div aria-hidden="true" className="mx-auto w-full max-w-[500px] px-2 py-3 sm:px-4 lg:py-0">
+      <div className="relative overflow-hidden rounded-[28px] border border-[#dedbd3] bg-white p-3 shadow-[8px_8px_0_#171717] sm:p-4">
+        <div className="flex items-center gap-1.5 border-b border-[#eeeae3] px-1 pb-3">
+          <span className="size-2.5 rounded-full bg-[#ff8b8b]" />
+          <span className="size-2.5 rounded-full bg-[#ffd45c]" />
+          <span className="size-2.5 rounded-full bg-[#72d89a]" />
+          <span className="ml-2 h-2 max-w-32 flex-1 rounded-full bg-[#f0eee8]" />
+        </div>
+        <div className="grid gap-3 p-3 sm:grid-cols-[1.1fr_.9fr] sm:p-5">
+          <div className="rounded-2xl bg-[#f3f0e8] p-4 sm:p-5">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-[#c8f169]"><Calculator size={21} /></div>
+            <div className="mt-5 h-3 w-3/4 rounded-full bg-[#171717]/15" />
+            <div className="mt-2 h-2 w-1/2 rounded-full bg-[#171717]/10" />
+            <div className="mt-5 grid grid-cols-2 gap-2"><span className="h-9 rounded-lg bg-white" /><span className="h-9 rounded-lg bg-white" /></div>
+          </div>
+          <div className="grid gap-3">
+            <div className="rounded-2xl bg-[#eaf5d3] p-4"><div className="flex size-9 items-center justify-center rounded-lg bg-white"><Code2 size={18} /></div><div className="mt-3 h-2 w-2/3 rounded-full bg-[#171717]/15" /><div className="mt-2 h-2 w-1/2 rounded-full bg-[#171717]/10" /></div>
+            <div className="rounded-2xl bg-[#f0eaff] p-4"><div className="flex size-9 items-center justify-center rounded-lg bg-white"><FileText size={18} /></div><div className="mt-3 h-2 w-3/4 rounded-full bg-[#171717]/15" /><div className="mt-2 h-2 w-2/5 rounded-full bg-[#171717]/10" /></div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#171717] px-4 py-3 text-white sm:px-5">
+          <div><div className="h-2.5 w-24 rounded-full bg-white/30" /><div className="mt-2 h-2 w-16 rounded-full bg-white/15" /></div>
+          <span className="rounded-lg bg-[#c8f169] px-3 py-2 text-[10px] font-black text-[#171717]">OPEN TOOL</span>
+        </div>
       </div>
-      <div className="absolute right-[3%] bottom-[12%] hidden items-center gap-2 rounded-full border border-white bg-white px-3 py-2 text-[11px] font-bold shadow-[0_8px_22px_rgba(23,23,23,.08)] sm:flex">
-        <span className="size-2 rounded-full bg-[#6bbf58]" /> Runs in your browser
-      </div>
-
-      <svg viewBox="0 0 620 480" className="absolute inset-x-[2%] bottom-0 h-[92%] w-[96%] overflow-visible" role="presentation">
-        <rect x="74" y="66" width="472" height="332" rx="24" fill="#171b2b" opacity=".08" transform="translate(7 9)" />
-        <rect x="74" y="58" width="472" height="332" rx="24" fill="#fffdf8" stroke="#171b2b" strokeWidth="4" />
-        <path d="M74 112h472" stroke="#dedbd3" strokeWidth="3" />
-        <circle cx="103" cy="85" r="7" fill="#ff8b8b" />
-        <circle cx="126" cy="85" r="7" fill="#ffd45c" />
-        <circle cx="149" cy="85" r="7" fill="#72d89a" />
-
-        <rect x="104" y="139" width="412" height="64" rx="14" fill="#f3f0e8" />
-        <circle cx="132" cy="171" r="16" fill="#c8f169" />
-        <path d="M126 171h12M132 165v12" stroke="#171b2b" strokeWidth="3" strokeLinecap="round" />
-        <rect x="159" y="161" width="154" height="8" rx="4" fill="#171b2b" opacity=".82" />
-        <rect x="159" y="177" width="104" height="6" rx="3" fill="#171b2b" opacity=".18" />
-        <rect x="422" y="158" width="66" height="27" rx="13.5" fill="#fff" stroke="#dedbd3" strokeWidth="2" />
-        <circle cx="438" cy="171.5" r="5" fill="#6555ee" />
-        <rect x="448" y="167" width="27" height="7" rx="3.5" fill="#171b2b" opacity=".2" />
-
-        <rect x="104" y="223" width="126" height="126" rx="18" fill="#eef7d8" stroke="#d8d4c9" strokeWidth="2" />
-        <circle cx="167" cy="264" r="23" fill="#c8f169" />
-        <Calculator x="151" y="248" width="32" height="32" strokeWidth="2.4" color="#171b2b" />
-        <rect x="128" y="303" width="78" height="7" rx="3.5" fill="#171b2b" opacity=".18" />
-        <rect x="141" y="319" width="52" height="6" rx="3" fill="#171b2b" opacity=".1" />
-
-        <rect x="247" y="223" width="126" height="126" rx="18" fill="#f0eaff" stroke="#d8d4c9" strokeWidth="2" />
-        <circle cx="310" cy="264" r="23" fill="#6555ee" />
-        <Code2 x="294" y="248" width="32" height="32" strokeWidth="2.4" color="#fff" />
-        <rect x="271" y="303" width="78" height="7" rx="3.5" fill="#171b2b" opacity=".18" />
-        <rect x="284" y="319" width="52" height="6" rx="3" fill="#171b2b" opacity=".1" />
-
-        <rect x="390" y="223" width="126" height="126" rx="18" fill="#fff4d9" stroke="#d8d4c9" strokeWidth="2" />
-        <circle cx="453" cy="264" r="23" fill="#f5c14b" />
-        <ImageIcon x="437" y="248" width="32" height="32" strokeWidth="2.4" color="#171b2b" />
-        <rect x="414" y="303" width="78" height="7" rx="3.5" fill="#171b2b" opacity=".18" />
-        <rect x="427" y="319" width="52" height="6" rx="3" fill="#171b2b" opacity=".1" />
-
-        <path d="M184 414h252" stroke="#171b2b" strokeWidth="4" strokeLinecap="round" />
-        <path d="M245 414l-18 20h166l-18-20" fill="#fffdf8" stroke="#171b2b" strokeWidth="3" strokeLinejoin="round" />
-        <rect x="259" y="429" width="102" height="8" rx="4" fill="#171b2b" opacity=".14" />
-        <path d="M452 398c13 0 23 10 23 23" fill="none" stroke="#6555ee" strokeWidth="5" strokeLinecap="round" />
-        <path d="M475 421l12 11" stroke="#6555ee" strokeWidth="5" strokeLinecap="round" />
-      </svg>
     </div>
   );
 }
