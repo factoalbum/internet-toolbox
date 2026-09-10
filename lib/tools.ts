@@ -37,6 +37,7 @@ export const tools: Tool[] = [
   { slug: "url-shortener", name: "URL Shortener", description: "Create a shorter, shareable link from a long URL.", category: "text", icon: Link2, status: "live" },
   { slug: "message-writer", name: "Caption & Message Writer", description: "Turn a few words into a ready-to-use caption, message or request.", category: "text", icon: Sparkles, status: "live" },
   { slug: "json-formatter", name: "JSON Formatter", description: "Format and inspect JSON with readable indentation.", category: "developer", icon: Code2, status: "live" },
+  { slug: "json-to-csv", name: "JSON to CSV Converter", description: "Convert a JSON array of objects into downloadable CSV data in your browser.", category: "developer", icon: Code2, status: "live" },
   { slug: "uuid-generator", name: "UUID Generator", description: "Generate UUIDs in your browser.", category: "developer", icon: Code2, status: "live" },
   { slug: "password-generator", name: "Password Generator", description: "Generate strong passwords locally in your browser.", category: "developer", icon: ShieldCheck, status: "live" },
   { slug: "url-encoder-decoder", name: "URL Encoder / Decoder", description: "Encode or decode URL text in your browser.", category: "developer", icon: Code2, status: "live" },
