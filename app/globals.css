@@ -3,7 +3,7 @@
 :root { --background: #faf9f6; --foreground: #171717; --muted: #6b6a63; --border: #dedbd3; --card: #ffffff; --accent: #c8f169; --accent-strong: #91c63f; --accent-soft: #e9f4cf; --ink: #171717; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; overflow-x: clip; background: var(--background); color: var(--foreground); font-family: Arial, Helvetica, sans-serif; }
+body { margin: 0; overflow-x: clip; background: var(--background); color: var(--foreground); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 img, svg, video, canvas { max-width: 100%; }
 button, input, select, textarea { font: inherit; }
 input, select, textarea { min-width: 0; }
@@ -11,6 +11,9 @@ input, select, textarea { min-width: 0; }
 ::selection { background: var(--accent); color: var(--ink); }
 .container { width: min(1160px, calc(100% - 32px)); margin-inline: auto; }
 @media (min-width: 768px) { .container { width: min(1160px, calc(100% - 56px)); } }
+
+/* Display typography for the homepage and major section headings. */
+.display-heading { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-weight: 850; letter-spacing: -0.055em; }
 
 /* Shared tool polish: every workspace gets the same calm control language without changing tool logic. */
 [data-tool-workspace] { min-width: 0; }
@@ -52,6 +55,7 @@ main > section.container > div.mx-auto.max-w-4xl > div.mt-8.rounded-2xl.border t
 main > section.container > div.mx-auto.max-w-4xl > div.mt-8.rounded-2xl.border button { border-radius: 10px; }
 
 @media (max-width: 639px) {
+  .container { width: min(100% - 28px, 1160px); }
   [data-tool-workspace] { border-radius: 20px; box-shadow: 5px 5px 0 #171717; }
   [data-tool-workspace] > div:first-child { border-radius: 14px; }
   [data-tool-workspace] > div:last-child { border-radius: 16px; }
