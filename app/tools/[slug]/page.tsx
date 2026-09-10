@@ -44,6 +44,8 @@ import WordCounter from "@/components/tools/word-counter";
 import TipCalculator from "@/components/tools/tip-calculator";
 import { tools } from "@/lib/tools";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
+
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
 }
@@ -51,9 +53,25 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   return params.then(({ slug }) => {
     const tool = tools.find((item) => item.slug === slug);
-    return tool
-      ? { title: tool.name, description: `${tool.description} Free to use.`, alternates: { canonical: `/tools/${tool.slug}` }, openGraph: { type: "website", title: tool.name, description: tool.description } }
-      : {};
+    if (!tool) return {};
+
+    const toolUrl = `${siteUrl}/tools/${tool.slug}`;
+    return {
+      title: tool.name,
+      description: `${tool.description} Free to use.`,
+      alternates: { canonical: toolUrl },
+      openGraph: {
+        type: "website",
+        title: `${tool.name} | Internet Toolbox`,
+        description: tool.description,
+        url: toolUrl,
+      },
+      twitter: {
+        card: "summary",
+        title: `${tool.name} | Internet Toolbox`,
+        description: tool.description,
+      },
+    };
   });
 }
 
@@ -64,7 +82,6 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
   const Icon = tool.icon;
   const relatedTools = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug && item.status === "live").slice(0, 3);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
   const toolUrl = `${siteUrl}/tools/${tool.slug}/`;
   const categoryUrl = `${siteUrl}/categories/${tool.category}/`;
   const categoryName = tool.category === "calculators" ? "Money & Calculators" : tool.category === "everyday" ? "Everyday Tools" : tool.category === "developer" ? "Developer Tools" : tool.category === "text" ? "Text Tools" : "File & Image Tools";
