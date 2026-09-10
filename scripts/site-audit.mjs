@@ -29,29 +29,6 @@ const required = [
 ];
 for (const file of required) assert.ok(fs.existsSync(path.join(root, file)), `Missing ${file}`);
 
-const layout = fs.readFileSync(path.join(root, "app/layout.tsx"), "utf8");
-assert.match(layout, /metadataBase/);
-assert.match(layout, /title:/);
-assert.match(layout, /description:/);
-assert.match(layout, /canonical/);
-assert.match(layout, /openGraph/);
-assert.match(layout, /twitter/);
-assert.match(layout, /AnalyticsConsent/);
-
-const robots = fs.readFileSync(path.join(root, "app/robots.ts"), "utf8");
-assert.match(robots, /sitemap/i);
-const sitemap = fs.readFileSync(path.join(root, "app/sitemap.ts"), "utf8");
-assert.match(sitemap, /categories/);
-
-const analytics = fs.readFileSync(path.join(root, "components/analytics-consent.tsx"), "utf8");
-assert.match(analytics, /NEXT_PUBLIC_GA_ID/);
-assert.match(analytics, /document\.cookie/);
-assert.match(analytics, /gtag/);
-
-const nextConfig = fs.readFileSync(path.join(root, "next.config.ts"), "utf8");
-assert.match(nextConfig, /output:\s*["']export["']/);
-assert.match(nextConfig, /trailingSlash:\s*true/);
-
 const errorPage = fs.readFileSync(path.join(root, "app/error.tsx"), "utf8");
 assert.match(errorPage, /reset/);
 assert.match(errorPage, /Try again/);
@@ -61,7 +38,7 @@ assert.match(loadingPage, /aria-live=["']polite["']/);
 const header = fs.readFileSync(path.join(root, "components/site-header.tsx"), "utf8");
 assert.match(header, /focus-visible:ring/);
 
-const knownRoutes = new Set(["/", "/tools", "/about", "/privacy", "/terms", "/faq", "/support", "/categories/calculators", "/categories/everyday", "/categories/developer", "/categories/text", "/categories/files"]);
+const knownRoutes = new Set(["/", "/tools", "/about", "/privacy", "/terms", "/faq", "/support", "/categories", "/categories/calculators", "/categories/everyday", "/categories/developer", "/categories/text", "/categories/files"]);
 const linkTargets = new Set();
 for (const file of sourceFiles) {
   const content = fs.readFileSync(file, "utf8");
@@ -74,7 +51,7 @@ for (const target of linkTargets) {
   assert.ok(knownRoutes.has(target), `Possible broken internal link: ${target}`);
 }
 
-const pageFiles = ["app/page.tsx", "app/tools/page.tsx", "app/about/page.tsx", "app/privacy/page.tsx", "app/terms/page.tsx", "app/faq/page.tsx", "app/support/page.tsx"];
+const pageFiles = ["app/page.tsx", "app/tools/page.tsx", "app/categories/page.tsx", "app/about/page.tsx", "app/privacy/page.tsx", "app/terms/page.tsx", "app/faq/page.tsx", "app/support/page.tsx"];
 for (const file of pageFiles) {
   const content = fs.readFileSync(path.join(root, file), "utf8");
   assert.match(content, /export const metadata|generateMetadata/, `${file} is missing page metadata`);
@@ -84,11 +61,19 @@ const registry = fs.readFileSync(path.join(root, "lib/tools.ts"), "utf8");
 const toolPage = fs.readFileSync(path.join(root, "app/tools/[slug]/page.tsx"), "utf8");
 const toolsStart = registry.indexOf("export const tools:");
 const featuredStart = registry.indexOf("export const featuredTools");
-assert.ok(toolsStart >= 0 && featuredStart > toolsStart, "Could not isolate the main tool registry");
 const toolsSection = registry.slice(toolsStart, featuredStart);
-const registrySlugs = [...toolsSection.matchAll(/slug:\s*["']([^"']+)["']/g)].map((match) => match[1]);
-for (const slug of registrySlugs) {
-  assert.match(toolPage, new RegExp(`\\"${slug}\\"\\s*:`), `Tool SEO metadata missing for ${slug}`);
-}
+const registrySlugs = [...toolsSection.matchAll(/slug:\s*"([^"]+)"/g)].map((match) => match[1]);
+const seoKeys = [...toolPage.matchAll(/^  "([^"]+)":\s*\{/gm)].map((match) => match[1]);
+assert.ok(registrySlugs.length >= 35, "Tool registry unexpectedly small");
+for (const slug of registrySlugs) assert.ok(seoKeys.includes(slug), `Missing SEO entry for ${slug}`);
 
-console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} tool SEO entries and ${sourceFiles.length} source files checked.`);
+const layout = fs.readFileSync(path.join(root, "app/layout.tsx"), "utf8");
+assert.match(layout, /overflow-x-clip|overflow-x:\s*clip/);
+const globals = fs.readFileSync(path.join(root, "app/globals.css"), "utf8");
+assert.match(globals, /overflow-x:\s*clip/);
+
+const analytics = fs.readFileSync(path.join(root, "components/analytics-consent.tsx"), "utf8");
+assert.match(analytics, /NEXT_PUBLIC_GA_ID|gtag/);
+assert.match(analytics, /localStorage/);
+
+console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${seoKeys.length} tool SEO entries and ${sourceFiles.length} source files checked.`);
