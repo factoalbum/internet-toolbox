@@ -10,7 +10,7 @@ export default function HomeIllustration() {
         <p className="text-sm font-black leading-tight text-[#272040] sm:text-base">Small<br />Tools<br />Big<br />Impact</p>
       </div>
       <div className="absolute left-[20%] top-[5%] hidden w-40 rounded-xl border border-[#ddd9f0] bg-white p-3 shadow-[0_14px_35px_rgba(23,23,23,.08)] sm:block sm:w-48">
-        <div className="mb-3 flex gap-1"><i className="size-2 rounded-full bg-[#ff8b8b] /><i className="size-2 rounded-full bg-[#ffd45c] /><i className="size-2 rounded-full bg-[#72d89a] /></div>
+        <div className="mb-3 flex gap-1"><i className="size-2 rounded-full bg-[#ff8b8b]" /><i className="size-2 rounded-full bg-[#ffd45c]" /><i className="size-2 rounded-full bg-[#72d89a]" /></div>
         <div className="flex gap-2"><span className="flex size-8 items-center justify-center rounded-md bg-[#6555ee] text-white"><FileText size={16} /></span><div className="flex-1 space-y-1.5 pt-1"><span className="block h-1.5 w-4/5 rounded bg-[#d7d3ee]" /><span className="block h-1.5 w-3/5 rounded bg-[#e6e3f2]" /><span className="block h-1.5 w-2/3 rounded bg-[#e6e3f2]" /></div></div>
       </div>
       <div className="absolute right-[20%] top-[9%] hidden w-36 rotate-[4deg] rounded-xl bg-white/90 p-3 shadow-[0_12px_28px_rgba(23,23,23,.06)] sm:block sm:w-44">
