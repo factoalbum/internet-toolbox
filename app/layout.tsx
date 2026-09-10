@@ -20,5 +20,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><SiteSchema />{children}<AnalyticsConsent /></body></html>;
+  return <html lang="en"><body className="min-w-0 overflow-x-clip"><SiteSchema />{children}<AnalyticsConsent /></body></html>;
 }
