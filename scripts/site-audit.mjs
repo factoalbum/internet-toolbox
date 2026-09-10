@@ -27,7 +27,7 @@ const errorPage = fs.readFileSync(path.join(root, "app/error.tsx"), "utf8"); ass
 const loadingPage = fs.readFileSync(path.join(root, "app/loading.tsx"), "utf8"); assert.match(loadingPage, /role=["']status["']/); assert.match(loadingPage, /aria-live=["']polite["']/);
 const header = fs.readFileSync(path.join(root, "components/site-header.tsx"), "utf8"); assert.match(header, /focus-visible:ring/);
 
-const knownRoutes = new Set(["/", "/tools", "/about", "/privacy", "/terms", "/faq", "/support", "/categories", "/categories/calculators", "/categories/everyday", "/categories/developer", "/categories/text", "/categories/files", "/categories/compare"]);
+const knownRoutes = new Set(["/", "/tools", "/about", "/privacy", "/terms", "/faq", "/support", "/contact", "/disclaimer", "/categories", "/categories/calculators", "/categories/everyday", "/categories/developer", "/categories/text", "/categories/files", "/categories/compare"]);
 const linkTargets = new Set();
 for (const file of sourceFiles) {
   const content = fs.readFileSync(file, "utf8");
