@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     description: "Free online tools for everyday digital tasks. No signup required.",
     url: siteUrl,
   },
+  twitter: {
+    card: "summary",
+    title: "Internet Toolbox | Free online tools for everyday tasks",
+    description: "Free online tools for everyday digital tasks. No signup required.",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
