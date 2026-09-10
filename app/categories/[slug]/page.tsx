@@ -14,7 +14,7 @@ export function generateMetadata({ params }: { params: Promise<{ slug: string }>
   return params.then(({ slug }) => {
     const category = categories.find((item) => item.slug === slug);
     if (!category) return {};
-    const categoryUrl = `${siteUrl}/categories/${category.slug}`;
+    const categoryUrl = `${siteUrl}/categories/${category.slug}/`;
     return {
       title: category.name,
       description: `${category.description} Browse free online tools from Internet Toolbox.`,
