@@ -5,12 +5,13 @@ import SiteHeader from "@/components/site-header";
 import { categories, tools } from "@/lib/tools";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
+const pageUrl = `${siteUrl}/tools/`;
 
 export const metadata = {
   title: "All Tools | Internet Toolbox",
   description: "Browse simple free calculators, converters, text tools, developer utilities, file tools and comparison tools.",
-  alternates: { canonical: `${siteUrl}/tools` },
-  openGraph: { title: "All Tools | Internet Toolbox", description: "Browse simple free calculators, converters, text tools, developer utilities, file tools and comparison tools.", url: `${siteUrl}/tools`, type: "website" },
+  alternates: { canonical: pageUrl },
+  openGraph: { title: "All Tools | Internet Toolbox", description: "Browse simple free calculators, converters, text tools, developer utilities, file tools and comparison tools.", url: pageUrl, type: "website" },
   twitter: { card: "summary", title: "All Tools | Internet Toolbox", description: "Browse simple free calculators, converters, text tools, developer utilities, file tools and comparison tools." },
 };
 
