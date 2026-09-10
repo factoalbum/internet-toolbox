@@ -1,6 +1,6 @@
-import { Calculator, Code2, FileText, ImageIcon, Link2, Palette, ShieldCheck, Sparkles, Type, Zap } from "lucide-react";
+import { Calculator, Code2, FileText, ImageIcon, Link2, Palette, ShieldCheck, Sparkles, Type, Zap, GitCompare, ScanSearch } from "lucide-react";
 
-export type ToolCategory = "calculators" | "everyday" | "developer" | "text" | "files";
+export type ToolCategory = "calculators" | "everyday" | "developer" | "text" | "files" | "compare";
 export type Tool = { slug: string; name: string; description: string; category: ToolCategory; icon: typeof Calculator; status: "live" | "coming-soon" };
 
 export const categories = [
@@ -9,6 +9,7 @@ export const categories = [
   { slug: "developer", name: "Developer Tools", description: "Handle common coding and data tasks.", icon: Code2 },
   { slug: "text", name: "Text Tools", description: "Clean, count, write and change text.", icon: Type },
   { slug: "files", name: "File & Image Tools", description: "Handle common image and file tasks in your browser.", icon: ImageIcon },
+  { slug: "compare", name: "Compare & Inspect", description: "Compare documents, PDFs, screenshots and images to spot changes quickly.", icon: GitCompare },
 ] as const;
 
 export const tools: Tool[] = [
@@ -48,7 +49,23 @@ export const tools: Tool[] = [
   { slug: "regex-tester", name: "Regex Tester", description: "Test regular expressions against text and inspect matches and capture groups.", category: "developer", icon: Code2, status: "live" },
   { slug: "jwt-decoder", name: "JWT Decoder", description: "Decode JWT headers and payloads locally without verifying the signature.", category: "developer", icon: ShieldCheck, status: "live" },
   { slug: "developer-file-viewer", name: "Developer File Viewer", description: "Open Markdown, HTML, CSS, JS, TS, JSON, YAML and XML files in your browser.", category: "developer", icon: Code2, status: "live" },
-  { slug: "document-similarity-checker", name: "Document Similarity Checker", description: "Compare two PDFs for content, alignment, layout and visual similarity in your browser.", category: "files", icon: FileText, status: "live" },
+  { slug: "document-similarity-checker", name: "Document Similarity Checker", description: "Compare two PDFs for content, alignment, layout and visual similarity in your browser.", category: "compare", icon: FileText, status: "live" },
+  { slug: "pdf-difference-checker", name: "PDF Difference Checker", description: "Find added and removed readable text between two PDF versions.", category: "compare", icon: GitCompare, status: "live" },
+  { slug: "pdf-visual-comparator", name: "PDF Visual Comparator", description: "Render two PDFs and inspect matching pages visually side by side.", category: "compare", icon: ScanSearch, status: "live" },
+  { slug: "pdf-layout-checker", name: "PDF Layout Checker", description: "Compare PDF page sizes and text placement to spot layout shifts.", category: "compare", icon: ScanSearch, status: "live" },
+  { slug: "pdf-text-extractor", name: "PDF Text Extractor", description: "Extract readable text from a PDF locally in your browser.", category: "compare", icon: FileText, status: "live" },
+  { slug: "pdf-metadata-viewer", name: "PDF Metadata Viewer", description: "Inspect PDF page count, dimensions and basic document metadata.", category: "compare", icon: FileText, status: "live" },
+  { slug: "pdf-page-analyzer", name: "PDF Page Analyzer", description: "Analyze PDF page dimensions, orientation, text density and file size.", category: "compare", icon: ScanSearch, status: "live" },
+  { slug: "pdf-merger", name: "PDF Merger", description: "Combine multiple PDFs into one file locally.", category: "compare", icon: FileText, status: "live" },
+  { slug: "pdf-splitter", name: "PDF Splitter", description: "Extract selected pages from a PDF into a new file.", category: "compare", icon: FileText, status: "live" },
+  { slug: "pdf-to-images", name: "PDF to Images", description: "Render PDF pages as downloadable images in your browser.", category: "compare", icon: ImageIcon, status: "live" },
+  { slug: "images-to-pdf", name: "Images to PDF", description: "Combine JPG and PNG images into a single PDF locally.", category: "compare", icon: ImageIcon, status: "live" },
+  { slug: "pdf-compressor", name: "PDF Compressor", description: "Create a smaller, re-rendered PDF for sharing and storage.", category: "compare", icon: FileText, status: "live" },
+  { slug: "image-similarity-checker", name: "Image Similarity Checker", description: "Compare two images for visual similarity and dimensions.", category: "compare", icon: ImageIcon, status: "live" },
+  { slug: "screenshot-difference-checker", name: "Screenshot Difference Checker", description: "Compare two screenshots and highlight how closely they match.", category: "compare", icon: ScanSearch, status: "live" },
+  { slug: "image-metadata-viewer", name: "Image Metadata Viewer", description: "Inspect image format, size, dimensions, aspect ratio and orientation.", category: "compare", icon: ImageIcon, status: "live" },
+  { slug: "image-dimension-checker", name: "Image Dimension Checker", description: "Check exact image dimensions, aspect ratio, orientation and megapixels.", category: "compare", icon: ImageIcon, status: "live" },
+  { slug: "document-compare", name: "Document Compare", description: "Compare two supported text documents for content changes.", category: "compare", icon: GitCompare, status: "live" },
   { slug: "word-counter", name: "Word Counter", description: "Count words, characters and reading time.", category: "text", icon: FileText, status: "live" },
   { slug: "character-counter", name: "Character Counter", description: "Count characters with and without spaces.", category: "text", icon: FileText, status: "live" },
   { slug: "case-converter", name: "Case Converter", description: "Change text between common letter cases.", category: "text", icon: Type, status: "live" },
@@ -60,5 +77,5 @@ export const tools: Tool[] = [
   { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
 ];
 
-export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[35], tools[36], tools[37], tools[23], tools[8], tools[13], tools[17], tools[18]];
+export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[35], tools[36], tools[37], tools[38], tools[23], tools[8], tools[13], tools[17]];
 export const brandIcon = Sparkles;
