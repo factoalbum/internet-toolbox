@@ -8,6 +8,8 @@ const required = [
   "app/terms/page.tsx",
   "app/faq/page.tsx",
   "app/not-found.tsx",
+  "app/error.tsx",
+  "app/loading.tsx",
   "app/robots.ts",
   "app/sitemap.ts",
   "app/icon.svg",
@@ -22,6 +24,9 @@ const sitemap = fs.readFileSync(path.join(root, "app/sitemap.ts"), "utf8");
 const consent = fs.readFileSync(path.join(root, "components/analytics-consent.tsx"), "utf8");
 const manifest = fs.readFileSync(path.join(root, "app/manifest.ts"), "utf8");
 const nextConfig = fs.readFileSync(path.join(root, "next.config.ts"), "utf8");
+const errorPage = fs.readFileSync(path.join(root, "app/error.tsx"), "utf8");
+const loadingPage = fs.readFileSync(path.join(root, "app/loading.tsx"), "utf8");
+const header = fs.readFileSync(path.join(root, "components/site-header.tsx"), "utf8");
 
 assert.match(layout, /metadataBase/);
 assert.match(layout, /title:/);
@@ -45,6 +50,11 @@ assert.match(manifest, /dynamic\s*=\s*["']force-static["']/);
 assert.match(manifest, /start_url:\s*["']\.[/]["']/);
 assert.match(nextConfig, /output:\s*"export"/);
 assert.match(nextConfig, /trailingSlash:\s*true/);
+assert.match(errorPage, /reset/);
+assert.match(errorPage, /Try again/);
+assert.match(loadingPage, /role="status"/);
+assert.match(loadingPage, /aria-live="polite"/);
+assert.match(header, /focus:ring-4/);
 
 const sourceRoots = [path.join(root, "app"), path.join(root, "components")];
 const sourceFiles = [];
@@ -78,7 +88,10 @@ for (const file of pageFiles) {
 
 const registry = fs.readFileSync(path.join(root, "lib/tools.ts"), "utf8");
 const toolPage = fs.readFileSync(path.join(root, "app/tools/[slug]/page.tsx"), "utf8");
-const toolsSection = registry.slice(registry.indexOf("export const tools:"), registry.indexOf("export const featuredTools:"));
+const toolsStart = registry.indexOf("export const tools:");
+const featuredStart = registry.indexOf("export const featuredTools:");
+assert.ok(toolsStart >= 0 && featuredStart > toolsStart, "Could not isolate the main tool registry");
+const toolsSection = registry.slice(toolsStart, featuredStart);
 const registrySlugs = [...toolsSection.matchAll(/slug:\s*["']([^"']+)["']/g)].map((match) => match[1]);
 for (const slug of registrySlugs) {
   assert.match(toolPage, new RegExp(`\\"${slug}\\"\\s*:`), `Tool SEO metadata missing for ${slug}`);
