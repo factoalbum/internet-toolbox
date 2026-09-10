@@ -19,7 +19,7 @@ export default function SiteHeader({ sticky = false }: SiteHeaderProps) {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
-          <Link href="/tools" aria-label="Search and browse all tools" className="flex size-10 items-center justify-center rounded-md border border-[#dedbd3] bg-white text-black/55 transition hover:border-[#171717] hover:text-[#171717] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]"><Search size={17} aria-hidden="true" /></Link>
+          <Link href="/tools" aria-label="Browse all tools" title="Browse all tools" className="flex size-10 items-center justify-center rounded-md border border-[#dedbd3] bg-white text-black/55 transition hover:border-[#171717] hover:text-[#171717] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]"><Search size={17} aria-hidden="true" /></Link>
           <Link href="/tools" className="hidden rounded-md bg-[#171717] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-black/80 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] sm:inline-flex">All tools</Link>
           <CategorySidebar />
         </div>
