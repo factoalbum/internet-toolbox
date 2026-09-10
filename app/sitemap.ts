@@ -9,9 +9,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${baseUrl}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${baseUrl}/tools/`, changeFrequency: "weekly", priority: 0.95 },
+    { url: `${baseUrl}/faq/`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${baseUrl}/about/`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${baseUrl}/privacy/`, changeFrequency: "yearly", priority: 0.4 },
     { url: `${baseUrl}/support/`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/privacy/`, changeFrequency: "yearly", priority: 0.4 },
+    { url: `${baseUrl}/terms/`, changeFrequency: "yearly", priority: 0.4 },
     ...categories.map((category) => ({ url: `${baseUrl}/categories/${category.slug}/`, changeFrequency: "weekly" as const, priority: 0.8 })),
     ...tools.map((tool) => ({ url: `${baseUrl}/tools/${tool.slug}/`, changeFrequency: "monthly" as const, priority: 0.7 })),
   ];
