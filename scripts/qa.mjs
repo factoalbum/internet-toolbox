@@ -38,6 +38,7 @@ test("every live tool has a component file", () => {
     "url-slug-generator": "slug-generator.tsx",
     "text-diff-checker": "text-diff.tsx",
     "html-entity-encoder-decoder": "html-entity.tsx",
+    "document-similarity-checker": "document-similarity.tsx",
   };
   for (const slug of slugs) {
     const expected = path.join(toolDir, `${slug}.tsx`);
