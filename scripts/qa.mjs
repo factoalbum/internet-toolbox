@@ -8,6 +8,7 @@ const toolsSource = fs.readFileSync(path.join(root, "lib", "tools.ts"), "utf8");
 const toolPage = fs.readFileSync(path.join(root, "app", "tools", "[slug]", "page.tsx"), "utf8");
 const toolRouter = fs.readFileSync(path.join(root, "components", "tools", "tool-router.tsx"), "utf8");
 const routeSource = fs.readFileSync(path.join(root, "app", "layout.tsx"), "utf8");
+const toolContent = fs.readFileSync(path.join(root, "lib", "tool-content.ts"), "utf8");
 const toolDir = path.join(root, "components", "tools");
 const sourceFiles = () => [path.join(root, "app", "page.tsx"), path.join(root, "app", "globals.css"), path.join(root, "components", "site-header.tsx"), ...fs.readdirSync(toolDir).filter((entry) => entry.endsWith(".tsx")).map((entry) => path.join(toolDir, entry))];
 const toolsSection = toolsSource.match(/export const tools: Tool\[\] = \[(.*?)\];\n\nexport const featuredTools/s)?.[1] ?? "";
@@ -25,7 +26,13 @@ test("every live tool has a component file", () => {
 
 test("static tool routing is configured", () => { assert.match(toolPage, /generateStaticParams/); assert.match(toolPage, /params:\s*Promise<\{\s*slug:\s*string\s*\}>/); assert.match(toolPage, /notFound\(\)/); assert.match(toolPage, /ToolRouter/); });
 
-test("core site pages exist and use shared navigation", () => { for (const file of ["about", "privacy", "terms", "faq", "support"]) assert.ok(fs.existsSync(path.join(root, "app", file, "page.tsx")), `Missing /${file}`); assert.ok(fs.existsSync(path.join(root, "app", "not-found.tsx"))); assert.ok(fs.existsSync(path.join(root, "app", "error.tsx"))); assert.match(fs.readFileSync(path.join(root, "app", "about", "page.tsx"), "utf8"), /SiteHeader/); });
+test("AdSense trust and transparency pages exist", () => { for (const file of ["about", "privacy", "terms", "faq", "support", "contact", "disclaimer"]) assert.ok(fs.existsSync(path.join(root, "app", file, "page.tsx")), `Missing /${file}`); assert.ok(fs.existsSync(path.join(root, "app", "not-found.tsx"))); assert.ok(fs.existsSync(path.join(root, "app", "error.tsx"))); assert.match(fs.readFileSync(path.join(root, "app", "about", "page.tsx"), "utf8"), /SiteHeader/); });
+
+test("sitemap includes trust pages and only live tools", () => { const sitemap = fs.readFileSync(path.join(root, "app", "sitemap.ts"), "utf8"); assert.match(sitemap, /contact/); assert.match(sitemap, /disclaimer/); assert.match(sitemap, /status === \"live\"/); });
+
+test("tool pages expose substantive editorial guidance", () => { assert.match(toolPage, /Best for/); assert.match(toolPage, /Helpful tip/); assert.match(toolPage, /Limitation/); assert.match(toolPage, /FAQ/); assert.match(toolPage, /getToolContent/); assert.match(toolContent, /getToolContent/); assert.match(toolContent, /direct-video-downloader/); });
+
+test("policy-sensitive tools carry clear guardrails", () => { assert.match(toolContent, /professional advice/); assert.match(toolContent, /BMI/); assert.match(toolContent, /permission to save/); });
 
 test("category sidebar is safe for SSR and scroll locking", () => { const files = fs.readdirSync(path.join(root, "components")).filter((entry) => /sidebar/i.test(entry)); for (const file of files) { const content = fs.readFileSync(path.join(root, "components", file), "utf8"); assert.doesNotMatch(content, /document\.body\.style\.overflow\s*=\s*[^\n]*outside useEffect/); } });
 
