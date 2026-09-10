@@ -41,8 +41,8 @@ export default function AllToolsBrowser() {
       <div className="flex min-w-0 items-center gap-2" aria-label="Filter tools by category">
         <SlidersHorizontal size={15} className="ml-1 shrink-0 text-black/35" aria-hidden="true" />
         <div className="scrollbar-none flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1 pt-1">
-          <button type="button" onClick={() => setCategory("all")} aria-pressed={category === "all"} className={`min-h-10 shrink-0 rounded-full border px-4 text-xs font-bold transition ${category === "all" ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#fffdf8] hover:border-[#171717]"}`}>All tools</button>
-          {categories.map((item) => <button key={item.slug} type="button" onClick={() => setCategory(item.slug)} aria-pressed={category === item.slug} className={`min-h-10 shrink-0 rounded-full border px-4 text-xs font-bold transition ${category === item.slug ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#fffdf8] hover:border-[#171717]"}`}>{item.name}</button>)}
+          <button type="button" onClick={() => setCategory("all")} aria-pressed={category === "all"} className={`min-h-10 shrink-0 rounded-full border px-4 text-xs font-bold transition ${category === "all" ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#fffdf8] hover:border-[#171717]"} focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]`}>All tools</button>
+          {categories.map((item) => <button key={item.slug} type="button" onClick={() => setCategory(item.slug)} aria-pressed={category === item.slug} className={`min-h-10 shrink-0 rounded-full border px-4 text-xs font-bold transition ${category === item.slug ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#fffdf8] hover:border-[#171717]"} focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]`}>{item.name}</button>)}
         </div>
       </div>
     </div>
