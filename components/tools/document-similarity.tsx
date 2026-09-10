@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { CheckCircle2, FileText, LoaderCircle, ScanSearch, ShieldCheck, Upload, XCircle } from "lucide-react";
+import { FileText, LoaderCircle, ScanSearch, ShieldCheck, Upload, XCircle } from "lucide-react";
 
 type Analysis = {
   pages: number;
@@ -70,7 +70,7 @@ async function loadPdf(file: File): Promise<Analysis> {
     }
     textParts.push(pageText.join(" "));
 
-    if (pageNumber <= MAX_RENDER_PAGES && typeof document !== "undefined") {
+    if (pageNumber <= MAX_RENDER_PAGES && typeof window !== "undefined") {
       const scale = Math.min(0.42, 700 / viewport.width);
       const renderViewport = page.getViewport({ scale });
       const canvas = window.document.createElement("canvas");
@@ -84,8 +84,7 @@ async function loadPdf(file: File): Promise<Analysis> {
     }
   }
 
-  const text = textParts.join("\n");
-  return { pages: document.numPages, text, tokens: tokenize(text), blocks, pageSizes, renders };
+  return { pages: document.numPages, text: textParts.join("\n"), tokens: tokenize(textParts.join("\n")), blocks, pageSizes, renders };
 }
 
 function layoutScore(a: Analysis, b: Analysis) {
@@ -97,9 +96,7 @@ function layoutScore(a: Analysis, b: Analysis) {
     const ah = a.pageSizes[i].height;
     const bw = b.pageSizes[i].width;
     const bh = b.pageSizes[i].height;
-    const widthRatio = Math.min(aw, bw) / Math.max(aw, bw);
-    const heightRatio = Math.min(ah, bh) / Math.max(ah, bh);
-    sizeScore += (widthRatio + heightRatio) / 2;
+    sizeScore += (Math.min(aw, bw) / Math.max(aw, bw) + Math.min(ah, bh) / Math.max(ah, bh)) / 2;
   }
   sizeScore = sizeCount ? sizeScore / sizeCount : 0;
   const blockCountRatio = Math.min(a.blocks.length, b.blocks.length) / Math.max(1, Math.max(a.blocks.length, b.blocks.length));
@@ -108,11 +105,10 @@ function layoutScore(a: Analysis, b: Analysis) {
   for (let i = 0; i < positionCount; i += 1) {
     const first = a.blocks[i];
     const second = b.blocks[i];
-    const distance = Math.min(1, Math.hypot(first.x - second.x, first.y - second.y) * 2.4);
-    positionScore += 1 - distance;
+    positionScore += 1 - Math.min(1, Math.hypot(first.x - second.x, first.y - second.y) * 2.4);
   }
   positionScore = positionCount ? positionScore / positionCount : 0;
-  return clampScore((pageRatio * 30 + sizeScore * 20 + blockCountRatio * 20 + positionScore * 30));
+  return clampScore(pageRatio * 30 + sizeScore * 20 + blockCountRatio * 20 + positionScore * 30);
 }
 
 function visualScore(a: Analysis, b: Analysis) {
@@ -185,7 +181,7 @@ export default function DocumentSimilarity() {
         <div className="flex items-start gap-3"><span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#c8f169]" aria-hidden="true"><ScanSearch size={20} /></span><div><p className="font-bold">Compare two PDFs</p><p className="mt-1 text-sm leading-5 text-black/50">Check whether two documents are similar in content, alignment and visual style.</p></div></div>
       </div>
       <div className="grid gap-4 p-5 md:grid-cols-2 md:p-7">
-        {([['First PDF', first, setFirst], ['Second PDF', second, setSecond]] as const).map(([label, file, setter], index) => (
+        {([['First PDF', first, setFirst], ['Second PDF', second, setSecond]] as const).map(([label, file, setter]) => (
           <label key={label} className="group block cursor-pointer rounded-2xl border-2 border-dashed border-[#c9c5bb] bg-[#f8f5ed] p-5 transition hover:border-[#171717] hover:bg-white focus-within:border-[#171717]">
             <input type="file" accept="application/pdf,.pdf" className="sr-only" onChange={(event) => choose(setter, event.target.files?.[0])} />
             <span className="flex items-center gap-3"><span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#c62828] shadow-sm"><FileText size={20} /></span><span className="min-w-0"><span className="block text-xs font-bold uppercase tracking-[0.12em] text-black/40">{label}</span><span className="mt-1 block truncate text-sm font-bold">{file?.name ?? "Choose a PDF"}</span></span></span>
