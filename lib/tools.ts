@@ -34,6 +34,7 @@ export const tools: Tool[] = [
   { slug: "random-number-generator", name: "Random Number Generator", description: "Generate random integers in your browser.", category: "everyday", icon: Calculator, status: "live" },
   { slug: "tip-calculator", name: "Tip Calculator", description: "Calculate a tip, final bill and each person's share.", category: "everyday", icon: Calculator, status: "live" },
   { slug: "bill-splitter", name: "Bill Splitter", description: "Split a bill between people with an optional tip.", category: "everyday", icon: Calculator, status: "live" },
+  { slug: "qr-code-generator", name: "QR Code Generator", description: "Create a downloadable QR code from text or a URL in your browser.", category: "everyday", icon: ScanSearch, status: "live" },
   { slug: "url-shortener", name: "URL Shortener", description: "Create a shorter, shareable link from a long URL.", category: "text", icon: Link2, status: "live" },
   { slug: "message-writer", name: "Caption & Message Writer", description: "Turn a few words into a ready-to-use caption, message or request.", category: "text", icon: Sparkles, status: "live" },
   { slug: "json-formatter", name: "JSON Formatter", description: "Format and inspect JSON with readable indentation.", category: "developer", icon: Code2, status: "live" },
