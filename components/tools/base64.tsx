@@ -31,9 +31,13 @@ export default function Base64Tool() {
 
   async function copy() {
     if (!result.value) return;
-    await navigator.clipboard.writeText(result.value);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1400);
+    try {
+      await navigator.clipboard.writeText(result.value);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
+    }
   }
 
   function useResult() {
@@ -43,23 +47,32 @@ export default function Base64Tool() {
     setCopied(false);
   }
 
+  function reset() {
+    setInput("");
+    setMode("encode");
+    setCopied(false);
+  }
+
   return (
     <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-7">
-      <div className="flex flex-wrap gap-2 border-b border-[#d8d4c9] pb-5">
-        <button type="button" onClick={() => setMode("encode")} className={`min-h-11 rounded-md px-4 text-sm font-semibold ${mode === "encode" ? "bg-[#171717] text-white" : "bg-black/5 text-black/60"}`}>Encode</button>
-        <button type="button" onClick={() => setMode("decode")} className={`min-h-11 rounded-md px-4 text-sm font-semibold ${mode === "decode" ? "bg-[#171717] text-white" : "bg-black/5 text-black/60"}`}>Decode</button>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#d8d4c9] pb-5">
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={() => { setMode("encode"); setCopied(false); }} aria-pressed={mode === "encode"} className={`min-h-11 rounded-md px-4 text-sm font-semibold ${mode === "encode" ? "bg-[#171717] text-white" : "bg-black/5 text-black/60"}`}>Encode</button>
+          <button type="button" onClick={() => { setMode("decode"); setCopied(false); }} aria-pressed={mode === "decode"} className={`min-h-11 rounded-md px-4 text-sm font-semibold ${mode === "decode" ? "bg-[#171717] text-white" : "bg-black/5 text-black/60"}`}>Decode</button>
+        </div>
+        <button type="button" onClick={reset} className="min-h-11 rounded-md border border-[#d8d4c9] px-4 text-sm font-semibold hover:bg-black/5">Reset</button>
       </div>
       <div className="grid gap-5 pt-6 md:grid-cols-2">
         <div>
           <label htmlFor="base64-input" className="block text-sm font-semibold">Input</label>
-          <textarea id="base64-input" value={input} onChange={(event) => setInput(event.target.value)} spellCheck={false} placeholder={mode === "encode" ? "Hello, world!" : "SGVsbG8sIHdvcmxkIQ=="} className="mt-2 min-h-52 w-full resize-y rounded-md border border-[#c9c5ba] bg-white p-4 font-mono text-sm leading-6 outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
+          <textarea id="base64-input" value={input} onChange={(event) => { setInput(event.target.value); setCopied(false); }} spellCheck={false} placeholder={mode === "encode" ? "Hello, world!" : "SGVsbG8sIHdvcmxkIQ=="} className="mt-2 min-h-52 w-full resize-y rounded-md border border-[#c9c5ba] bg-white p-4 font-mono text-sm leading-6 outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
         </div>
         <div>
           <div className="flex items-center justify-between gap-3"><label htmlFor="base64-output" className="text-sm font-semibold">Result</label><button type="button" onClick={copy} disabled={!result.value} className="min-h-9 rounded-md border border-[#bcb8ae] px-3 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-35">{copied ? "Copied" : "Copy"}</button></div>
-          <textarea id="base64-output" readOnly value={result.value} spellCheck={false} placeholder="Your result will appear here" className="mt-2 min-h-52 w-full resize-y rounded-md border border-[#d8d4c9] bg-[#f3f0e8] p-4 font-mono text-sm leading-6 outline-none" />
+          <textarea id="base64-output" readOnly value={result.value} spellCheck={false} placeholder="Your result will appear here" className="mt-2 min-h-52 w-full resize-y rounded-md border border-[#d8d4c9] bg-[#f3f0e8] p-4 font-mono text-sm leading-6 outline-none" aria-describedby="base64-status" />
         </div>
       </div>
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#d8d4c9] pt-5"><p className={`text-xs ${result.error ? "font-semibold text-red-700" : "text-black/45"}`} role={result.error ? "alert" : undefined}>{result.error || "Processed locally in your browser. Nothing is uploaded."}</p><button type="button" onClick={useResult} disabled={!result.value || !!result.error} className="min-h-11 rounded-md border border-[#171717] px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-35">Use result as input</button></div>
+      <div id="base64-status" className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#d8d4c9] pt-5"><p className={`text-xs ${result.error ? "font-semibold text-red-700" : "text-black/45"}`} role={result.error ? "alert" : undefined}>{result.error || "Processed locally in your browser. Nothing is uploaded."}</p><button type="button" onClick={useResult} disabled={!result.value || !!result.error} className="min-h-11 rounded-md border border-[#171717] px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-35">Use result as input</button></div>
     </div>
   );
 }
