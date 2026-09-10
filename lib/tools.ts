@@ -73,6 +73,10 @@ export const tools: Tool[] = [
   { slug: "url-slug-generator", name: "URL Slug Generator", description: "Turn page titles into clean URL slugs.", category: "text", icon: Type, status: "live" },
   { slug: "text-diff-checker", name: "Text Diff Checker", description: "Compare two texts and highlight added and removed lines.", category: "text", icon: Type, status: "live" },
   { slug: "image-compressor", name: "Image Compressor", description: "Compress JPG, PNG and WebP images in your browser.", category: "files", icon: ImageIcon, status: "live" },
+  { slug: "image-resizer", name: "Image Resizer", description: "Resize JPG, PNG and WebP images to exact dimensions in your browser.", category: "files", icon: ImageIcon, status: "live" },
+  { slug: "image-cropper", name: "Image Cropper", description: "Crop JPG, PNG and WebP images using exact pixel coordinates.", category: "files", icon: ImageIcon, status: "live" },
+  { slug: "image-rotate-flip", name: "Image Rotate & Flip", description: "Rotate images by 90°, 180° or 270° and flip them locally.", category: "files", icon: ImageIcon, status: "live" },
+  { slug: "image-format-converter", name: "Image Format Converter", description: "Convert between JPG, PNG and WebP formats in your browser.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
 ];
 
