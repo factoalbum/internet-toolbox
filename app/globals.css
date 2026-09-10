@@ -56,7 +56,7 @@ main > section.container > div.mx-auto.max-w-4xl > div.mt-8.rounded-2xl.border b
 
 @media (max-width: 639px) {
   .container { width: min(100% - 28px, 1160px); }
-  [data-tool-workspace] { border-radius: 20px; box-shadow: 5px 5px 0 #171717; }
+  [data-tool-workspace] { border-radius: 20px; }
   [data-tool-workspace] > div:first-child { border-radius: 14px; }
   [data-tool-workspace] > div:last-child { border-radius: 16px; }
 }

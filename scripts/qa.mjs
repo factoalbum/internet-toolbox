@@ -32,7 +32,16 @@ test("sitemap includes trust pages and only live tools", () => { const sitemap =
 
 test("tool pages expose substantive editorial guidance", () => { assert.match(toolPage, /Best for/); assert.match(toolPage, /Helpful tip/); assert.match(toolPage, /Limitation/); assert.match(toolPage, /FAQ/); assert.match(toolPage, /getToolContent/); assert.match(toolContent, /getToolContent/); assert.match(toolContent, /direct-video-downloader/); });
 
-test("policy-sensitive tools carry clear guardrails", () => { assert.match(toolContent, /professional advice/); assert.match(toolContent, /BMI/); assert.match(toolContent, /permission to save/); });
+test("policy-sensitive tools carry clear guardrails", () => {
+  for (const slug of ["emi-calculator", "income-tax-calculator", "salary-calculator", "ppf-calculator", "hra-calculator", "sip-calculator", "fd-calculator", "gst-calculator"]) {
+    const section = toolContent.slice(Math.max(0, toolContent.indexOf(`${slug}:`)), toolContent.indexOf(`${slug}:`) + 1200);
+    assert.match(section, /estimate|official|professional|verify/i, `${slug} is missing financial guidance`);
+  }
+  const bmi = toolContent.slice(Math.max(0, toolContent.indexOf("bmi-calculator:")), toolContent.indexOf("bmi-calculator:") + 1200);
+  assert.match(bmi, /screening|diagnos|medical advice/i, "BMI is missing health guidance");
+  const downloader = toolContent.slice(Math.max(0, toolContent.indexOf("direct-video-downloader:")), toolContent.indexOf("direct-video-downloader:") + 1200);
+  assert.match(downloader, /permission|authorized|DRM|access control/i, "Downloader is missing authorization guidance");
+});
 
 test("category sidebar is safe for SSR and scroll locking", () => { const files = fs.readdirSync(path.join(root, "components")).filter((entry) => /sidebar/i.test(entry)); for (const file of files) { const content = fs.readFileSync(path.join(root, "components", file), "utf8"); assert.doesNotMatch(content, /document\.body\.style\.overflow\s*=\s*[^\n]*outside useEffect/); } });
 
@@ -43,7 +52,6 @@ test("tool components do not inject raw HTML", () => { for (const file of fs.rea
 test("site copy avoids AI-style typography artifacts", () => { for (const file of sourceFiles()) { const content = fs.readFileSync(file, "utf8"); assert.doesNotMatch(content, /[—–…]/, `Avoid em dash, en dash and ellipsis in UI/source copy: ${path.relative(root, file)}`); } });
 
 test("tool descriptions stay short and human-readable", () => { for (const tool of toolsSection.matchAll(/description:\s*"([^"]+)"/g)) { assert.ok(tool[1].length <= 100, "Tool description is too long"); assert.doesNotMatch(tool[1], /\b(instantly|effortlessly|seamlessly|powerful|robust|comprehensive)\b/i, "Tool description uses marketing-heavy wording"); } });
-
 test("message writer stays local and context-driven", () => { const content = readTool("message-writer.tsx"); assert.match(content, /hasEnoughContext/); assert.match(content, /buildMessage/); assert.doesNotMatch(content, /pretend|guarantee|expert/i); });
 test("duplicate line remover preserves order and ignores blank duplicates", () => { const content = readTool("remove-duplicate-lines.tsx"); assert.match(content, /Set/); assert.match(content, /filter/); });
 test("financial calculators guard invalid inputs and expose estimates", () => { for (const file of ["emi-calculator.tsx", "fd-calculator.tsx", "compound-interest-calculator.tsx", "sip-calculator.tsx", "ppf-calculator.tsx", "hra-calculator.tsx"]) { const content = readTool(file); assert.match(content, /Number|parseFloat/); assert.match(content, /if \(|disabled=|Math\.(min|max)/); } });

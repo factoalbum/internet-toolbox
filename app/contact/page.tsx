@@ -29,7 +29,7 @@ export default function ContactPage() {
           <div className="rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] p-6 sm:p-8">
             <h2 className="text-2xl font-black">Before contacting us</h2>
             <ul className="mt-4 space-y-3 text-sm leading-7 text-black/55">
-              <li>• Check the tool's guide and limitations first.</li>
+              <li>• Check the tool&apos;s guide and limitations first.</li>
               <li>• For reference-data differences, include the source and approximate time.</li>
               <li>• For privacy questions, read the <Link href="/privacy" className="font-semibold underline underline-offset-4">Privacy Policy</Link>.</li>
               <li>• For general usage questions, the <Link href="/faq" className="font-semibold underline underline-offset-4">FAQ</Link> may answer them immediately.</li>
