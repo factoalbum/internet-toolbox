@@ -59,5 +59,5 @@ export const tools: Tool[] = [
   { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
 ];
 
-export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[23], tools[8], tools[13], tools[17], tools[18], tools[9]];
+export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[35], tools[23], tools[8], tools[13], tools[17], tools[18], tools[9]];
 export const brandIcon = Sparkles;
