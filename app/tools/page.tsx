@@ -1,12 +1,39 @@
 import Link from "next/link";
 import AllToolsBrowser from "@/components/all-tools-browser";
 import SiteHeader from "@/components/site-header";
+import { tools } from "@/lib/tools";
 
-export const metadata = { title: "All Tools", description: "Browse and search every calculator, developer utility, text tool and file tool in Internet Toolbox." };
+const siteUrl = "https://factoalbum.github.io/internet-toolbox";
+
+export const metadata = {
+  title: "All Tools",
+  description: "Browse and search every calculator, developer utility, text tool and file tool in Internet Toolbox.",
+  alternates: { canonical: `${siteUrl}/tools` },
+  openGraph: {
+    title: "All Tools | Internet Toolbox",
+    description: "Browse and search every calculator, developer utility, text tool and file tool in Internet Toolbox.",
+    url: `${siteUrl}/tools`,
+    type: "website",
+  },
+};
+
+const toolListJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Internet Toolbox — All Tools",
+  numberOfItems: tools.length,
+  itemListElement: tools.map((tool, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: tool.name,
+    url: `${siteUrl}/tools/${tool.slug}`,
+  })),
+};
 
 export default function ToolsPage() {
   return (
     <main className="min-h-screen bg-[#f3f0e8] text-[#171717]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolListJsonLd) }} />
       <SiteHeader />
       <section className="border-b border-[#d8d4c9] bg-[#e8e4d9] py-14 md:py-20">
         <div className="container">
