@@ -39,12 +39,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-          <div className="relative z-10 mx-auto mt-2 max-w-6xl translate-y-5 md:mt-0">
-            <div className="rounded-2xl border border-[#ddd9d0] bg-white p-2 shadow-[0_16px_40px_rgba(23,23,23,.08)]">
-              <div className="flex items-center gap-3 rounded-xl px-3 py-1 sm:px-4"><Search size={21} className="shrink-0 text-[#101522]" /><div className="min-w-0 flex-1"><label htmlFor="tool-search" className="sr-only">Search tools</label><ToolSearch /></div><span className="hidden rounded-lg border border-[#e0ddd5] bg-[#f6f4ef] px-2.5 py-1 text-xs font-semibold text-[#758096] sm:inline">⌘ K</span><Link href="/tools" className="hidden min-h-11 items-center rounded-xl bg-[#101522] px-7 text-sm font-bold text-white sm:inline-flex">Search</Link></div>
-            </div>
-          </div>
+          <div className="relative z-10 mx-auto mt-1 max-w-6xl translate-y-5 md:mt-0"><ToolSearch /></div>
         </div>
       </section>
 
