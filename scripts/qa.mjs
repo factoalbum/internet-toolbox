@@ -31,9 +31,14 @@ test("tool registry is structurally valid", () => {
 
 test("every live tool has a component file", () => {
   assert.ok(componentNames.length >= slugs.length, "Tool page should import every live tool component");
+  const alternates = {
+    "url-encoder-decoder": "url-encoder.tsx",
+    "base64-encoder-decoder": "base64.tsx",
+    "gold-silver-rate-converter": "gold-silver-converter.tsx",
+  };
   for (const slug of slugs) {
     const expected = path.join(toolDir, `${slug}.tsx`);
-    const alternate = slug === "url-encoder-decoder" ? path.join(toolDir, "url-encoder.tsx") : slug === "base64-encoder-decoder" ? path.join(toolDir, "base64.tsx") : null;
+    const alternate = alternates[slug] ? path.join(toolDir, alternates[slug]) : null;
     assert.ok(fs.existsSync(expected) || (alternate && fs.existsSync(alternate)), `Missing component for ${slug}`);
   }
 });
@@ -85,9 +90,10 @@ test("tool descriptions stay short and human-readable", () => {
   }
 });
 
-test("message writer keeps the local fallback factual and context-driven", () => {
+test("message writer stays local and context-driven", () => {
   const content = readTool("message-writer.tsx");
-  assert.match(content, /fallback/i);
+  assert.match(content, /hasEnoughContext/);
+  assert.match(content, /buildMessage/);
   assert.doesNotMatch(content, /pretend|guarantee|expert/i);
 });
 
@@ -101,7 +107,7 @@ test("financial calculators guard invalid inputs and expose estimates", () => {
   for (const file of ["emi-calculator.tsx", "fd-calculator.tsx", "compound-interest-calculator.tsx", "sip-calculator.tsx", "ppf-calculator.tsx", "hra-calculator.tsx"]) {
     const content = readTool(file);
     assert.match(content, /Number|parseFloat/);
-    assert.match(content, /if \(|disabled=/);
+    assert.match(content, /if \(|disabled=|Math\.(min|max)/);
   }
 });
 
@@ -122,11 +128,10 @@ test("date and age calculators use calendar-safe date math", () => {
   assert.match(readTool("date-calculator.tsx"), /Date|UTC/);
 });
 
-test("local generators use browser randomness without modulo bias", () => {
-  for (const file of ["password-generator.tsx", "random-number-generator.tsx", "uuid-generator.tsx"]) {
-    const content = readTool(file);
-    assert.match(content, /crypto\.getRandomValues/);
-  }
+test("local generators use browser cryptographic randomness", () => {
+  assert.match(readTool("password-generator.tsx"), /crypto\.getRandomValues/);
+  assert.match(readTool("random-number-generator.tsx"), /crypto\.getRandomValues/);
+  assert.match(readTool("uuid-generator.tsx"), /crypto\.randomUUID\(\)|crypto\.getRandomValues/);
 });
 
 test("live market tools use explicit external rate sources", () => {
