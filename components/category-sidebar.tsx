@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { categories } from "@/lib/tools";
@@ -12,13 +12,19 @@ const getServerSnapshot = () => false;
 
 export default function CategorySidebar() {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   const mounted = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      triggerRef.current?.focus();
+      return;
+    }
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
@@ -48,6 +54,7 @@ export default function CategorySidebar() {
                 <h2 className="mt-1 text-xl font-black tracking-tight">Browse categories</h2>
               </div>
               <button
+                ref={closeRef}
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close categories"
@@ -107,6 +114,7 @@ export default function CategorySidebar() {
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open categories"
