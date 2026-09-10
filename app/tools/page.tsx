@@ -25,7 +25,7 @@ export const metadata = {
 const toolListJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "Internet Toolbox — All Tools",
+  name: "Internet Toolbox - All Tools",
   description: "Free online calculators, converters, developer utilities, text tools and file tools.",
   numberOfItems: tools.length,
   itemListElement: tools.map((tool, index) => ({
