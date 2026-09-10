@@ -6,7 +6,7 @@ const root = process.cwd();
 const sourceFiles = [];
 function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (["node_modules", ".next", "out", ".git"].includes(entry.name)) continue;
+    if (["node_modules", ".next", "out", ".git", "scripts"].includes(entry.name)) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) walk(full);
     else if (/\.(tsx?|mjs|css)$/.test(entry.name)) sourceFiles.push(full);
