@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 const DocumentCompareSuite = dynamic(() => import("./document-compare-suite"));
 const ImageEditSuite = dynamic(() => import("./image-edit-suite"));
 const ImageBase64Suite = dynamic(() => import("./image-base64-suite"));
+const FileUtilitySuite = dynamic(() => import("./file-utility-suite"));
 const components = {
   "percentage-calculator": dynamic(() => import("./percentage-calculator")), "age-calculator": dynamic(() => import("./age-calculator")), "discount-calculator": dynamic(() => import("./discount-calculator")),
   "time-converter": dynamic(() => import("./time-converter")), "time-zone-converter": dynamic(() => import("./time-zone-converter")), "emi-calculator": dynamic(() => import("./emi-calculator")), "gst-calculator": dynamic(() => import("./gst-calculator")), "hra-calculator": dynamic(() => import("./hra-calculator")), "bmi-calculator": dynamic(() => import("./bmi-calculator")), "sip-calculator": dynamic(() => import("./sip-calculator")),
@@ -14,6 +15,7 @@ const components = {
   "word-counter": dynamic(() => import("./word-counter")), "character-counter": dynamic(() => import("./character-counter")), "case-converter": dynamic(() => import("./case-converter")), "text-cleaner": dynamic(() => import("./text-cleaner")), "remove-duplicate-lines": dynamic(() => import("./remove-duplicate-lines")), "url-slug-generator": dynamic(() => import("./slug-generator")), "text-diff-checker": dynamic(() => import("./text-diff")), "image-compressor": dynamic(() => import("./image-compressor")),
   "image-resizer": () => <ImageEditSuite variant="image-resizer" />, "image-cropper": () => <ImageEditSuite variant="image-cropper" />, "image-rotate-flip": () => <ImageEditSuite variant="image-rotate-flip" />, "image-format-converter": () => <ImageEditSuite variant="image-format-converter" />,
   "image-to-base64": () => <ImageBase64Suite variant="image-to-base64" />, "base64-to-image": () => <ImageBase64Suite variant="base64-to-image" />,
+  "svg-to-png": () => <FileUtilitySuite variant="svg-to-png" />, "pdf-page-organizer": () => <FileUtilitySuite variant="pdf-page-organizer" />, "pdf-page-rotator": () => <FileUtilitySuite variant="pdf-page-rotator" />,
   "direct-video-downloader": dynamic(() => import("./direct-video-downloader")),
 } as const;
 

@@ -79,6 +79,9 @@ export const tools: Tool[] = [
   { slug: "image-format-converter", name: "Image Format Converter", description: "Convert between JPG, PNG and WebP formats in your browser.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "image-to-base64", name: "Image to Base64", description: "Convert an image into a copyable Base64 data URL locally.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "base64-to-image", name: "Base64 to Image", description: "Decode a Base64 image string into a preview and downloadable image locally.", category: "files", icon: ImageIcon, status: "live" },
+  { slug: "svg-to-png", name: "SVG to PNG", description: "Convert SVG markup into a PNG image in your browser.", category: "files", icon: ImageIcon, status: "live" },
+  { slug: "pdf-page-organizer", name: "PDF Page Organizer", description: "Reorder or remove PDF pages and download the new document.", category: "files", icon: FileText, status: "live" },
+  { slug: "pdf-page-rotator", name: "PDF Page Rotator", description: "Rotate an individual PDF page and download the updated document.", category: "files", icon: FileText, status: "live" },
   { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
 ];
 
