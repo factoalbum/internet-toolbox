@@ -78,7 +78,8 @@ for (const file of pageFiles) {
 
 const registry = fs.readFileSync(path.join(root, "lib/tools.ts"), "utf8");
 const toolPage = fs.readFileSync(path.join(root, "app/tools/[slug]/page.tsx"), "utf8");
-const registrySlugs = [...registry.matchAll(/slug:\s*["']([^"']+)["']/g)].map((match) => match[1]);
+const toolsSection = registry.slice(registry.indexOf("export const tools:"), registry.indexOf("export const featuredTools:"));
+const registrySlugs = [...toolsSection.matchAll(/slug:\s*["']([^"']+)["']/g)].map((match) => match[1]);
 for (const slug of registrySlugs) {
   assert.match(toolPage, new RegExp(`\\"${slug}\\"\\s*:`), `Tool SEO metadata missing for ${slug}`);
 }
