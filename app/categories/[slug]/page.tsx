@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/site-header";
 import { categories, tools } from "@/lib/tools";
@@ -19,7 +20,7 @@ export function generateMetadata({ params }: { params: Promise<{ slug: string }>
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const category = categories.find((item) => item.slug === slug);
-  if (!category) return null;
+  if (!category) notFound();
   const categoryTools = tools.filter((tool) => tool.category === category.slug);
   const liveTools = categoryTools.filter((tool) => tool.status === "live");
   const Icon = category.icon;
@@ -42,7 +43,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         </nav>
       </div>
     </section>
-
     <section className="container py-10 md:py-14" aria-labelledby="collection-heading">
       <div className="flex items-end justify-between gap-4"><div><p className="text-[11px] font-bold uppercase tracking-[0.18em] text-black/35">Collection</p><h2 id="collection-heading" className="mt-2 text-2xl font-black tracking-tight">{category.name} tools</h2></div><Link href="/tools" className="hidden items-center gap-2 text-xs font-bold sm:inline-flex">All tools <ArrowRight size={13} /></Link></div>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
