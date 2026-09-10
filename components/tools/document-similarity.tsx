@@ -44,7 +44,7 @@ async function loadPdf(file: File): Promise<Analysis> {
 
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   const bytes = new Uint8Array(await file.arrayBuffer());
-  const document = await pdfjs.getDocument({ data: bytes, disableWorker: true }).promise;
+  const document = await pdfjs.getDocument({ data: bytes }).promise;
   if (document.numPages > MAX_PAGES) throw new Error(`This tool supports up to ${MAX_PAGES} pages per PDF.`);
 
   const blocks: Analysis["blocks"] = [];
@@ -78,12 +78,13 @@ async function loadPdf(file: File): Promise<Analysis> {
       canvas.height = Math.max(1, Math.floor(renderViewport.height));
       const context = canvas.getContext("2d", { willReadFrequently: true });
       if (context) {
-        await page.render({ canvasContext: context, viewport: renderViewport }).promise;
+        await page.render({ canvasContext: context, canvas, viewport: renderViewport }).promise;
         renders.push(context.getImageData(0, 0, canvas.width, canvas.height));
       }
     }
   }
 
+  await document.cleanup();
   return { pages: document.numPages, text: textParts.join("\n"), tokens: tokenize(textParts.join("\n")), blocks, pageSizes, renders };
 }
 
