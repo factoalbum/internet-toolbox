@@ -20,6 +20,7 @@ const layout = fs.readFileSync(path.join(root, "app/layout.tsx"), "utf8");
 const robots = fs.readFileSync(path.join(root, "app/robots.ts"), "utf8");
 const sitemap = fs.readFileSync(path.join(root, "app/sitemap.ts"), "utf8");
 const consent = fs.readFileSync(path.join(root, "components/analytics-consent.tsx"), "utf8");
+const manifest = fs.readFileSync(path.join(root, "app/manifest.ts"), "utf8");
 const nextConfig = fs.readFileSync(path.join(root, "next.config.ts"), "utf8");
 
 assert.match(layout, /metadataBase/);
@@ -40,6 +41,8 @@ assert.match(consent, /consentKey/);
 assert.match(consent, /granted/);
 assert.match(consent, /denied/);
 assert.match(consent, /googletagmanager\.com/);
+assert.match(manifest, /dynamic\s*=\s*["']force-static["']/);
+assert.match(manifest, /start_url:\s*["']\.[/]["']/);
 assert.match(nextConfig, /output:\s*"export"/);
 assert.match(nextConfig, /trailingSlash:\s*true/);
 
@@ -53,6 +56,7 @@ function walk(dir) {
   }
 }
 sourceRoots.forEach(walk);
+
 const knownRoutes = new Set(["/", "/tools", "/about", "/privacy", "/terms", "/faq", "/support", "/categories/calculators", "/categories/everyday", "/categories/developer", "/categories/text", "/categories/files"]);
 const linkTargets = new Set();
 for (const file of sourceFiles) {
@@ -72,4 +76,11 @@ for (const file of pageFiles) {
   assert.match(content, /export const metadata|generateMetadata/, `${file} is missing page metadata`);
 }
 
-console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links and ${sourceFiles.length} source files checked.`);
+const registry = fs.readFileSync(path.join(root, "lib/tools.ts"), "utf8");
+const toolPage = fs.readFileSync(path.join(root, "app/tools/[slug]/page.tsx"), "utf8");
+const registrySlugs = [...registry.matchAll(/slug:\s*["']([^"']+)["']/g)].map((match) => match[1]);
+for (const slug of registrySlugs) {
+  assert.match(toolPage, new RegExp(`\\"${slug}\\"\\s*:`), `Tool SEO metadata missing for ${slug}`);
+}
+
+console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} tool SEO entries and ${sourceFiles.length} source files checked.`);
