@@ -1,61 +1,60 @@
-import { Code2, FileText, Sparkles } from "lucide-react";
+import { Calculator, Code2, FileText, Image as ImageIcon, Sparkles } from "lucide-react";
 
 export default function HomeIllustration() {
   return (
-    <div aria-hidden="true" className="relative mx-auto aspect-[1.45/1] w-full max-w-[620px] sm:aspect-[1.2/1] lg:aspect-[1.08/1]">
-      <div className="absolute left-[4%] top-[8%] hidden h-28 w-28 rotate-[-7deg] rounded-2xl bg-[#d8ff8a] p-4 shadow-[0_12px_30px_rgba(23,23,23,.08)] sm:block sm:h-32 sm:w-32">
-        <p className="text-sm font-black leading-tight text-[#172015] sm:text-base">Tools<br />For<br />A Better<br />You</p>
+    <div aria-hidden="true" className="relative mx-auto aspect-[1.18/1] w-full max-w-[600px] sm:aspect-[1.28/1] lg:aspect-[1.08/1]">
+      <div className="absolute inset-[8%_4%_5%] rounded-[32px] bg-[#eaf5d3] sm:inset-[7%_4%_4%]" />
+      <div className="absolute left-[7%] top-[18%] size-16 rounded-[20px] bg-[#d9ccff] sm:left-[4%] sm:top-[22%] sm:size-20" />
+      <div className="absolute right-[7%] top-[12%] size-20 rounded-full bg-[#d8ff8a] sm:right-[5%] sm:top-[16%] sm:size-24" />
+
+      <div className="absolute left-[3%] top-[9%] hidden items-center gap-2 rounded-full border border-white bg-white px-3 py-2 text-[11px] font-bold shadow-[0_8px_22px_rgba(23,23,23,.08)] sm:flex">
+        <Sparkles size={13} className="text-[#6555ee]" /> Simple tools, less hassle
       </div>
-      <div className="absolute right-[5%] top-[12%] hidden h-28 w-32 rotate-[6deg] rounded-2xl bg-[#eee3ff] p-4 shadow-[0_12px_30px_rgba(23,23,23,.08)] sm:block sm:h-32 sm:w-36">
-        <p className="text-sm font-black leading-tight text-[#272040] sm:text-base">Small<br />Tools<br />Big<br />Impact</p>
-      </div>
-      <div className="absolute left-[20%] top-[5%] hidden w-40 rounded-xl border border-[#ddd9f0] bg-white p-3 shadow-[0_14px_35px_rgba(23,23,23,.08)] sm:block sm:w-48">
-        <div className="mb-3 flex gap-1"><i className="size-2 rounded-full bg-[#ff8b8b]" /><i className="size-2 rounded-full bg-[#ffd45c]" /><i className="size-2 rounded-full bg-[#72d89a]" /></div>
-        <div className="flex gap-2"><span className="flex size-8 items-center justify-center rounded-md bg-[#6555ee] text-white"><FileText size={16} /></span><div className="flex-1 space-y-1.5 pt-1"><span className="block h-1.5 w-4/5 rounded bg-[#d7d3ee]" /><span className="block h-1.5 w-3/5 rounded bg-[#e6e3f2]" /><span className="block h-1.5 w-2/3 rounded bg-[#e6e3f2]" /></div></div>
-      </div>
-      <div className="absolute right-[20%] top-[9%] hidden w-36 rotate-[4deg] rounded-xl bg-white/90 p-3 shadow-[0_12px_28px_rgba(23,23,23,.06)] sm:block sm:w-44">
-        <div className="flex items-center gap-2 text-xs font-bold"><span className="flex size-7 items-center justify-center rounded-lg bg-[#e8f8c9] text-[#53731b]"><Code2 size={15} /></span>Build · Learn</div>
-        <div className="mt-2 space-y-1.5"><span className="block h-1.5 w-full rounded bg-[#d9d5ea]" /><span className="block h-1.5 w-4/5 rounded bg-[#e9e6f0]" /></div>
+      <div className="absolute right-[3%] bottom-[12%] hidden items-center gap-2 rounded-full border border-white bg-white px-3 py-2 text-[11px] font-bold shadow-[0_8px_22px_rgba(23,23,23,.08)] sm:flex">
+        <span className="size-2 rounded-full bg-[#6bbf58]" /> Runs in your browser
       </div>
 
-      <div className="absolute left-[12%] top-[8%] h-20 w-20 rounded-[45%] bg-[#e8e0ff] blur-[1px] sm:bottom-[5%] sm:left-[5%] sm:top-auto sm:h-32 sm:w-32" />
-      <div className="absolute right-[9%] top-[18%] h-24 w-20 rounded-[45%] bg-[#e4f5c5] sm:bottom-[3%] sm:top-auto sm:h-44 sm:w-36" />
+      <svg viewBox="0 0 620 480" className="absolute inset-x-[2%] bottom-0 h-[92%] w-[96%] overflow-visible" role="presentation">
+        <rect x="74" y="66" width="472" height="332" rx="24" fill="#171b2b" opacity=".08" transform="translate(7 9)" />
+        <rect x="74" y="58" width="472" height="332" rx="24" fill="#fffdf8" stroke="#171b2b" strokeWidth="4" />
+        <path d="M74 112h472" stroke="#dedbd3" strokeWidth="3" />
+        <circle cx="103" cy="85" r="7" fill="#ff8b8b" />
+        <circle cx="126" cy="85" r="7" fill="#ffd45c" />
+        <circle cx="149" cy="85" r="7" fill="#72d89a" />
 
-      <svg viewBox="0 0 600 430" className="absolute inset-x-0 bottom-0 h-[94%] w-full overflow-visible sm:inset-x-[3%] sm:h-[84%] sm:w-[94%] lg:h-[78%]">
-        <path d="M45 386H555" stroke="#171b2b" strokeWidth="3" strokeLinecap="round" />
-        <path d="M103 230h260l-8 14H95z" fill="#fff" stroke="#171b2b" strokeWidth="3" />
-        <path d="M111 244v142M350 244v142" stroke="#171b2b" strokeWidth="3" />
-        <path d="M112 300h238" stroke="#e2dfe8" strokeWidth="2" />
-        <path d="M390 249h91v137h-91z" fill="#fbfbfb" stroke="#171b2b" strokeWidth="3" />
-        <path d="M400 386h90M400 320h90" stroke="#171b2b" strokeWidth="3" />
-        <path d="M176 230c-10-48 6-105 55-111 43-5 70 22 75 61l13 58-70 12z" fill="#5949ed" />
-        <path d="M242 125c-5-28 11-49 37-50 27-1 45 19 40 46l-5 27-62 3z" fill="#f2b88a" stroke="#171b2b" strokeWidth="3" />
-        <circle cx="284" cy="83" r="35" fill="#f2b88a" />
-        <path d="M250 78c2-32 28-49 54-38 15 6 22 18 22 31-19-7-30-19-35-31-7 22-22 34-41 38z" fill="#171b2b" />
-        <circle cx="297" cy="86" r="3" fill="#171b2b" /><path d="M304 98q8 6 14 0" fill="none" stroke="#171b2b" strokeWidth="2" strokeLinecap="round" />
-        <path d="M203 142l-39 55-39-5 44-76z" fill="#f2b88a" stroke="#171b2b" strokeWidth="3" />
-        <path d="M159 191l-39-1-18-24" fill="none" stroke="#171b2b" strokeWidth="8" strokeLinecap="round" />
-        <path d="M237 124l83 35 25 70-76 10-37-61z" fill="#171b2b" />
-        <path d="M321 159l51-65 51 22-38 90-57 24z" fill="#171b2b" />
-        <path d="M327 113l32-63c9-17 30-24 47-16 17 8 24 28 17 45l-31 76z" fill="#5949ed" />
-        <path d="M371 385l-42-1 3-88 55-3z" fill="#ece7ff" stroke="#171b2b" strokeWidth="3" />
-        <path d="M328 296l-5 91-36-1 8-91z" fill="#d8ff8a" stroke="#171b2b" strokeWidth="3" />
-        <path d="M371 385l55 1" stroke="#171b2b" strokeWidth="7" strokeLinecap="round" />
-        <path d="M287 385l-44 1" stroke="#171b2b" strokeWidth="7" strokeLinecap="round" />
-        <rect x="241" y="191" width="117" height="55" rx="5" fill="#101827" stroke="#171b2b" strokeWidth="3" transform="rotate(7 241 191)" />
-        <rect x="251" y="198" width="96" height="38" rx="3" fill="#c9c6ff" opacity=".35" transform="rotate(7 251 198)" />
-        <path d="M290 216l13 8 12-18" fill="none" stroke="#d8ff8a" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M423 235c21 8 34 27 36 53" fill="none" stroke="#171b2b" strokeWidth="5" strokeLinecap="round" />
-        <path d="M464 291c0-37 22-65 45-87" fill="none" stroke="#171b2b" strokeWidth="4" strokeLinecap="round" />
-        <path d="M486 211c14-18 21-31 22-45M486 211c-18-9-30-20-37-35M486 211c18 3 32 0 46-8" stroke="#22a866" strokeWidth="13" strokeLinecap="round" />
-        <path d="M130 386c0-31 26-51 53-51 28 0 50 20 50 51z" fill="#171b2b" />
-        <path d="M153 372q18-16 36 0" fill="none" stroke="#6555ee" strokeWidth="3" />
-        <circle cx="165" cy="370" r="3" fill="#fff" /><circle cx="180" cy="370" r="3" fill="#fff" />
-        <path d="M382 362c0-25 27-34 52-22 21 10 31 28 25 46h-80z" fill="#f5c14b" stroke="#171b2b" strokeWidth="3" />
-        <circle cx="427" cy="359" r="17" fill="#fff" /><path d="M419 358l-4-10 10 6 9-5-3 11" fill="#f5c14b" />
-        <circle cx="422" cy="362" r="2.5" fill="#171b2b" /><circle cx="436" cy="362" r="2.5" fill="#171b2b" />
+        <rect x="104" y="139" width="412" height="64" rx="14" fill="#f3f0e8" />
+        <circle cx="132" cy="171" r="16" fill="#c8f169" />
+        <path d="M126 171h12M132 165v12" stroke="#171b2b" strokeWidth="3" strokeLinecap="round" />
+        <rect x="159" y="161" width="154" height="8" rx="4" fill="#171b2b" opacity=".82" />
+        <rect x="159" y="177" width="104" height="6" rx="3" fill="#171b2b" opacity=".18" />
+        <rect x="422" y="158" width="66" height="27" rx="13.5" fill="#fff" stroke="#dedbd3" strokeWidth="2" />
+        <circle cx="438" cy="171.5" r="5" fill="#6555ee" />
+        <rect x="448" y="167" width="27" height="7" rx="3.5" fill="#171b2b" opacity=".2" />
+
+        <rect x="104" y="223" width="126" height="126" rx="18" fill="#eef7d8" stroke="#d8d4c9" strokeWidth="2" />
+        <circle cx="167" cy="264" r="23" fill="#c8f169" />
+        <Calculator x="151" y="248" width="32" height="32" strokeWidth="2.4" color="#171b2b" />
+        <rect x="128" y="303" width="78" height="7" rx="3.5" fill="#171b2b" opacity=".18" />
+        <rect x="141" y="319" width="52" height="6" rx="3" fill="#171b2b" opacity=".1" />
+
+        <rect x="247" y="223" width="126" height="126" rx="18" fill="#f0eaff" stroke="#d8d4c9" strokeWidth="2" />
+        <circle cx="310" cy="264" r="23" fill="#6555ee" />
+        <Code2 x="294" y="248" width="32" height="32" strokeWidth="2.4" color="#fff" />
+        <rect x="271" y="303" width="78" height="7" rx="3.5" fill="#171b2b" opacity=".18" />
+        <rect x="284" y="319" width="52" height="6" rx="3" fill="#171b2b" opacity=".1" />
+
+        <rect x="390" y="223" width="126" height="126" rx="18" fill="#fff4d9" stroke="#d8d4c9" strokeWidth="2" />
+        <circle cx="453" cy="264" r="23" fill="#f5c14b" />
+        <ImageIcon x="437" y="248" width="32" height="32" strokeWidth="2.4" color="#171b2b" />
+        <rect x="414" y="303" width="78" height="7" rx="3.5" fill="#171b2b" opacity=".18" />
+        <rect x="427" y="319" width="52" height="6" rx="3" fill="#171b2b" opacity=".1" />
+
+        <path d="M184 414h252" stroke="#171b2b" strokeWidth="4" strokeLinecap="round" />
+        <path d="M245 414l-18 20h166l-18-20" fill="#fffdf8" stroke="#171b2b" strokeWidth="3" strokeLinejoin="round" />
+        <rect x="259" y="429" width="102" height="8" rx="4" fill="#171b2b" opacity=".14" />
+        <path d="M452 398c13 0 23 10 23 23" fill="none" stroke="#6555ee" strokeWidth="5" strokeLinecap="round" />
+        <path d="M475 421l12 11" stroke="#6555ee" strokeWidth="5" strokeLinecap="round" />
       </svg>
-      <div className="absolute bottom-[12%] left-[6%] hidden items-center gap-2 rounded-full border border-white bg-white px-3 py-2 text-[11px] font-bold shadow-[0_8px_20px_rgba(23,23,23,.08)] sm:flex"><Sparkles size={13} className="text-[#6555ee]" /> Everything stays in your browser</div>
     </div>
   );
 }
