@@ -67,6 +67,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
   const toolUrl = `${siteUrl}/tools/${tool.slug}/`;
   const categoryUrl = `${siteUrl}/categories/${tool.category}/`;
+  const categoryName = tool.category === "calculators" ? "Money & Calculators" : tool.category === "everyday" ? "Everyday Tools" : tool.category === "developer" ? "Developer Tools" : tool.category === "text" ? "Text Tools" : "File & Image Tools";
   const structuredData = [
     {
       "@context": "https://schema.org",
@@ -83,7 +84,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
-        { "@type": "ListItem", position: 2, name: tool.category, item: categoryUrl },
+        { "@type": "ListItem", position: 2, name: categoryName, item: categoryUrl },
         { "@type": "ListItem", position: 3, name: tool.name, item: toolUrl },
       ],
     },
@@ -95,6 +96,15 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       <SiteHeader />
       <section className="container py-12 md:py-16">
         <div className="mx-auto max-w-5xl min-w-0">
+          <nav aria-label="Breadcrumb" className="mb-6 overflow-x-auto whitespace-nowrap text-sm text-black/50">
+            <ol className="flex min-w-max items-center gap-2">
+              <li><Link href="/" className="rounded-sm underline-offset-4 hover:text-[#171717] hover:underline">Home</Link></li>
+              <li aria-hidden="true">/</li>
+              <li><Link href={`/categories/${tool.category}`} className="rounded-sm underline-offset-4 hover:text-[#171717] hover:underline">{categoryName}</Link></li>
+              <li aria-hidden="true">/</li>
+              <li aria-current="page" className="font-semibold text-[#171717]">{tool.name}</li>
+            </ol>
+          </nav>
           <div className="flex min-w-0 items-start justify-between gap-6 border-b-2 border-[#171717] pb-8">
             <div className="min-w-0"><p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-black/40">Tool / {tool.category}</p><h1 className="mt-3 break-words text-4xl font-black tracking-[-0.04em] md:text-6xl">{tool.name}</h1><p className="mt-4 max-w-2xl break-words text-base leading-7 text-black/55 md:text-lg">{tool.description}</p></div>
             <div className="hidden size-14 shrink-0 items-center justify-center rounded-xl bg-[#c8f169] md:flex"><Icon size={25} /></div>
