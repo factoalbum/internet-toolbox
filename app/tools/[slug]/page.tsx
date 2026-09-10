@@ -13,9 +13,9 @@ export function generateStaticParams() { return tools.filter((tool) => tool.stat
 function getCategory(slug: string) { return categories.find((category) => category.slug === slug); }
 function getWorkspaceHint(category: string) {
   if (category === "calculators") return "Enter the values you want to calculate, then review the estimate below.";
-  if (category === "file-image-tools") return "Choose your file or image, set any options, then create your result.";
-  if (category === "developer-tools") return "Paste or enter the data you want to process, then run the tool.";
-  if (category === "text-tools") return "Enter the text you want to work with, then review and copy the result.";
+  if (category === "files") return "Choose your file or image, set any options, then create your result.";
+  if (category === "developer") return "Paste or enter the data you want to process, then run the tool.";
+  if (category === "text") return "Enter the text you want to work with, then review and copy the result.";
   return "Enter the details the tool needs, then review the result before using it.";
 }
 function getProcessingNote(slug: string) {
