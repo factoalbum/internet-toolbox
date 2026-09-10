@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 const inputClass = "mt-2 w-full rounded-lg border border-[#d8d4c9] bg-[#f8f5ed] px-4 py-3 text-base outline-none focus:border-[#171717]";
 
 type ShortenResponse = { shorturl?: string; errorcode?: number; errormessage?: string };
-
 type ShortenerWindow = Window & { __internetToolboxShortener?: (response: ShortenResponse) => void };
 
 export default function UrlShortener() {
@@ -14,6 +13,7 @@ export default function UrlShortener() {
   const [shortUrl, setShortUrl] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => () => {
@@ -24,6 +24,7 @@ export default function UrlShortener() {
   const shorten = () => {
     setError("");
     setShortUrl("");
+    setCopied(false);
 
     let parsed: URL;
     try {
@@ -72,16 +73,23 @@ export default function UrlShortener() {
     if (!shortUrl) return;
     try {
       await navigator.clipboard.writeText(shortUrl);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
     } catch {
       setError("Copy was blocked by the browser. Select the link and copy it manually.");
     }
   };
 
   const reset = () => {
+    scriptRef.current?.remove();
+    scriptRef.current = null;
+    delete (window as ShortenerWindow).__internetToolboxShortener;
+    setLoading(false);
     setUrl("");
     setAlias("");
     setShortUrl("");
     setError("");
+    setCopied(false);
   };
 
   return (
@@ -89,16 +97,17 @@ export default function UrlShortener() {
       <div className="mx-auto max-w-2xl space-y-5">
         <div>
           <label htmlFor="shortener-url" className="text-sm font-semibold">Long URL</label>
-          <input id="shortener-url" className={inputClass} type="url" value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => e.key === "Enter" && shorten()} placeholder="https://example.com/a-very-long-link" autoComplete="url" />
+          <input id="shortener-url" className={inputClass} type="url" value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => e.key === "Enter" && shorten()} placeholder="https://example.com/a-very-long-link" autoComplete="url" aria-describedby="shortener-help" />
+          <p id="shortener-help" className="mt-2 text-xs text-black/45">Use a public http:// or https:// link.</p>
         </div>
         <div>
           <label htmlFor="shortener-alias" className="text-sm font-semibold">Custom alias <span className="font-normal text-black/40">(optional)</span></label>
-          <input id="shortener-alias" className={inputClass} value={alias} onChange={e => setAlias(e.target.value)} placeholder="my-link" maxLength={30} />
-          <p className="mt-2 text-xs text-black/45">Available aliases depend on the shortening service.</p>
+          <input id="shortener-alias" className={inputClass} value={alias} onChange={e => setAlias(e.target.value)} placeholder="my-link" maxLength={30} aria-describedby="shortener-alias-help" />
+          <p id="shortener-alias-help" className="mt-2 text-xs text-black/45">Letters, numbers, hyphens and underscores, up to 30 characters.</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <button onClick={shorten} disabled={loading} className="min-h-11 rounded-lg bg-[#171717] px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50">{loading ? "Shortening..." : "Shorten URL"}</button>
-          <button onClick={reset} className="min-h-11 rounded-lg border border-[#d8d4c9] px-5 text-sm font-semibold hover:bg-black/5">Clear</button>
+          <button type="button" onClick={shorten} disabled={loading} className="min-h-11 rounded-lg bg-[#171717] px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50">{loading ? "Shortening..." : "Shorten URL"}</button>
+          <button type="button" onClick={reset} className="min-h-11 rounded-lg border border-[#d8d4c9] px-5 text-sm font-semibold hover:bg-black/5">Clear</button>
         </div>
 
         {error && <div role="alert" className="border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>}
@@ -106,7 +115,7 @@ export default function UrlShortener() {
         {shortUrl && <div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5" role="status" aria-live="polite">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Short link</p>
           <a href={shortUrl} target="_blank" rel="noreferrer" className="mt-2 block break-all text-lg font-bold underline underline-offset-4">{shortUrl}</a>
-          <button onClick={copy} className="mt-4 min-h-11 rounded-lg border border-[#171717] px-4 text-sm font-semibold hover:bg-white">Copy short link</button>
+          <button type="button" onClick={copy} className="mt-4 min-h-11 rounded-lg border border-[#171717] px-4 text-sm font-semibold hover:bg-white">{copied ? "Copied" : "Copy short link"}</button>
         </div>}
 
         <p className="border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">This tool uses the is.gd URL shortening service to create the short link. Your URL is sent to that service when you shorten it. Do not shorten links containing passwords, private tokens or other sensitive information.</p>
