@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AnalyticsConsent from "@/components/analytics-consent";
+import SiteSchema from "@/components/site-schema";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
 
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}<AnalyticsConsent /></body>
+      <body><SiteSchema />{children}<AnalyticsConsent /></body>
     </html>
   );
 }
