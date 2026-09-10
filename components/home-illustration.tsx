@@ -2,25 +2,26 @@ import { Code2, FileText, Sparkles } from "lucide-react";
 
 export default function HomeIllustration() {
   return (
-    <div aria-hidden="true" className="relative mx-auto aspect-[1.08/1] w-full max-w-[620px]">
-      <div className="absolute left-[4%] top-[8%] h-28 w-28 rotate-[-7deg] rounded-2xl bg-[#d8ff8a] p-4 shadow-[0_12px_30px_rgba(23,23,23,.08)] sm:h-32 sm:w-32">
+    <div aria-hidden="true" className="relative mx-auto aspect-[1.45/1] w-full max-w-[620px] sm:aspect-[1.2/1] lg:aspect-[1.08/1]">
+      <div className="absolute left-[4%] top-[8%] hidden h-28 w-28 rotate-[-7deg] rounded-2xl bg-[#d8ff8a] p-4 shadow-[0_12px_30px_rgba(23,23,23,.08)] sm:block sm:h-32 sm:w-32">
         <p className="text-sm font-black leading-tight text-[#172015] sm:text-base">Tools<br />For<br />A Better<br />You</p>
       </div>
-      <div className="absolute right-[5%] top-[12%] h-28 w-32 rotate-[6deg] rounded-2xl bg-[#eee3ff] p-4 shadow-[0_12px_30px_rgba(23,23,23,.08)] sm:h-32 sm:w-36">
+      <div className="absolute right-[5%] top-[12%] hidden h-28 w-32 rotate-[6deg] rounded-2xl bg-[#eee3ff] p-4 shadow-[0_12px_30px_rgba(23,23,23,.08)] sm:block sm:h-32 sm:w-36">
         <p className="text-sm font-black leading-tight text-[#272040] sm:text-base">Small<br />Tools<br />Big<br />Impact</p>
       </div>
-      <div className="absolute left-[20%] top-[5%] w-40 rounded-xl border border-[#ddd9f0] bg-white p-3 shadow-[0_14px_35px_rgba(23,23,23,.08)] sm:w-48">
-        <div className="mb-3 flex gap-1"><i className="size-2 rounded-full bg-[#ff8b8b]" /><i className="size-2 rounded-full bg-[#ffd45c]" /><i className="size-2 rounded-full bg-[#72d89a]" /></div>
+      <div className="absolute left-[20%] top-[5%] hidden w-40 rounded-xl border border-[#ddd9f0] bg-white p-3 shadow-[0_14px_35px_rgba(23,23,23,.08)] sm:block sm:w-48">
+        <div className="mb-3 flex gap-1"><i className="size-2 rounded-full bg-[#ff8b8b] /><i className="size-2 rounded-full bg-[#ffd45c] /><i className="size-2 rounded-full bg-[#72d89a] /></div>
         <div className="flex gap-2"><span className="flex size-8 items-center justify-center rounded-md bg-[#6555ee] text-white"><FileText size={16} /></span><div className="flex-1 space-y-1.5 pt-1"><span className="block h-1.5 w-4/5 rounded bg-[#d7d3ee]" /><span className="block h-1.5 w-3/5 rounded bg-[#e6e3f2]" /><span className="block h-1.5 w-2/3 rounded bg-[#e6e3f2]" /></div></div>
       </div>
-      <div className="absolute right-[20%] top-[9%] w-36 rotate-[4deg] rounded-xl bg-white/90 p-3 shadow-[0_12px_28px_rgba(23,23,23,.06)] sm:w-44">
+      <div className="absolute right-[20%] top-[9%] hidden w-36 rotate-[4deg] rounded-xl bg-white/90 p-3 shadow-[0_12px_28px_rgba(23,23,23,.06)] sm:block sm:w-44">
         <div className="flex items-center gap-2 text-xs font-bold"><span className="flex size-7 items-center justify-center rounded-lg bg-[#e8f8c9] text-[#53731b]"><Code2 size={15} /></span>Build · Learn</div>
         <div className="mt-2 space-y-1.5"><span className="block h-1.5 w-full rounded bg-[#d9d5ea]" /><span className="block h-1.5 w-4/5 rounded bg-[#e9e6f0]" /></div>
       </div>
-      <div className="absolute bottom-[5%] left-[5%] h-24 w-24 rounded-[45%] bg-[#e8e0ff] blur-[1px] sm:h-32 sm:w-32" />
-      <div className="absolute bottom-[3%] right-[9%] h-36 w-28 rounded-[45%] bg-[#e4f5c5] sm:h-44 sm:w-36" />
 
-      <svg viewBox="0 0 600 430" className="absolute inset-x-[3%] bottom-0 h-[78%] w-[94%] overflow-visible">
+      <div className="absolute left-[12%] top-[8%] h-20 w-20 rounded-[45%] bg-[#e8e0ff] blur-[1px] sm:bottom-[5%] sm:left-[5%] sm:top-auto sm:h-32 sm:w-32" />
+      <div className="absolute right-[9%] top-[18%] h-24 w-20 rounded-[45%] bg-[#e4f5c5] sm:bottom-[3%] sm:top-auto sm:h-44 sm:w-36" />
+
+      <svg viewBox="0 0 600 430" className="absolute inset-x-0 bottom-0 h-[94%] w-full overflow-visible sm:inset-x-[3%] sm:h-[84%] sm:w-[94%] lg:h-[78%]">
         <path d="M45 386H555" stroke="#171b2b" strokeWidth="3" strokeLinecap="round" />
         <path d="M103 230h260l-8 14H95z" fill="#fff" stroke="#171b2b" strokeWidth="3" />
         <path d="M111 244v142M350 244v142" stroke="#171b2b" strokeWidth="3" />
@@ -54,7 +55,7 @@ export default function HomeIllustration() {
         <circle cx="427" cy="359" r="17" fill="#fff" /><path d="M419 358l-4-10 10 6 9-5-3 11" fill="#f5c14b" />
         <circle cx="422" cy="362" r="2.5" fill="#171b2b" /><circle cx="436" cy="362" r="2.5" fill="#171b2b" />
       </svg>
-      <div className="absolute bottom-[20%] left-[6%] hidden items-center gap-2 rounded-full border border-white bg-white px-3 py-2 text-[11px] font-bold shadow-[0_8px_20px_rgba(23,23,23,.08)] sm:flex"><Sparkles size={13} className="text-[#6555ee]" /> Everything stays in your browser</div>
+      <div className="absolute bottom-[12%] left-[6%] hidden items-center gap-2 rounded-full border border-white bg-white px-3 py-2 text-[11px] font-bold shadow-[0_8px_20px_rgba(23,23,23,.08)] sm:flex"><Sparkles size={13} className="text-[#6555ee]" /> Everything stays in your browser</div>
     </div>
   );
 }
