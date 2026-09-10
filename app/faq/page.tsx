@@ -1,10 +1,23 @@
 import Link from "next/link";
 import SiteHeader from "@/components/site-header";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
+
 export const metadata = {
-  title: "FAQ",
+  title: "FAQ - Internet Toolbox",
   description: "Answers about Internet Toolbox tools, privacy, calculations, browser processing and usage.",
-  alternates: { canonical: "/faq" },
+  alternates: { canonical: `${siteUrl}/faq/` },
+  openGraph: {
+    type: "website",
+    title: "FAQ - Internet Toolbox",
+    description: "Answers about Internet Toolbox tools, privacy, calculations, browser processing and usage.",
+    url: `${siteUrl}/faq/`,
+  },
+  twitter: {
+    card: "summary",
+    title: "FAQ - Internet Toolbox",
+    description: "Answers about Internet Toolbox tools, privacy, calculations, browser processing and usage.",
+  },
 };
 
 const faqs = [
@@ -19,7 +32,12 @@ const faqs = [
 ];
 
 export default function FaqPage() {
-  const structuredData = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(([question, answer]) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) };
+  const pageUrl = `${siteUrl}/faq/`;
+  const structuredData = [
+    { "@context": "https://schema.org", "@type": "WebPage", name: "Frequently asked questions", description: "Answers about Internet Toolbox tools, privacy, calculations, browser processing and usage.", url: pageUrl },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` }, { "@type": "ListItem", position: 2, name: "FAQ", item: pageUrl }] },
+    { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(([question, answer]) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) },
+  ];
   return (
     <main className="min-h-screen bg-[#f3f0e8] text-[#171717]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
