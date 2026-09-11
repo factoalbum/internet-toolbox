@@ -1,1 +1,1 @@
-export { PdfVisualComparator as default } from "./document-compare-suite";
+export { PdfVisualComparator as default } from "./document-tools-suite";
