@@ -121,7 +121,7 @@ export function getToolAccent(slug?: string, category?: ToolCategory) {
 
 export default function ToolIcon({ icon, slug, category, size = 19, className }: ToolIconProps) {
   const accent = getToolAccent(slug, category);
-  const Icon = (slug && semanticIcons[slug]) ?? icon;
+  const Icon = slug ? semanticIcons[slug] ?? icon : icon;
   return (
     <span className={`flex ${className ?? "size-11"} shrink-0 items-center justify-center rounded-xl ${accent.bg} ${accent.text}`} aria-hidden="true">
       <Icon size={size} strokeWidth={1.9} />
