@@ -6,7 +6,7 @@ export type Tool = { slug: string; name: string; description: string; category: 
 export const categories = [
   { slug: "calculators", name: "Money & Calculators", description: "Work out money, taxes, loans and returns.", icon: Calculator },
   { slug: "everyday", name: "Everyday Tools", description: "Handle dates, time, units and everyday tasks.", icon: Zap },
-  { slug: "developer", name: "Developer Tools", description: "Handle common coding and data tasks.", category: "developer", icon: Code2 },
+  { slug: "developer", name: "Developer Tools", description: "Handle common coding and data tasks.", icon: Code2 },
   { slug: "text", name: "Text Tools", description: "Clean, count, write and change text.", icon: Type },
   { slug: "files", name: "File & Image Tools", description: "Handle PDFs, documents, images and common file tasks in your browser.", icon: ImageIcon },
 ] as const;
