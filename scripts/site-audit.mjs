@@ -52,6 +52,27 @@ const liveSlugs = registryEntries.filter((match) => match[2] === "live").map((ma
 const contentSlugs = new Set([...toolContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
 for (const slug of registrySlugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`);
 for (const slug of liveSlugs) assert.ok(contentSlugs.has(slug), `Live tool is missing editorial content for ${slug}`);
+
+// Editorial-quality guard: a content record must contain enough distinct, useful copy
+// to support a real tool page rather than passing the audit with placeholder text.
+const countWords = (value) => value.trim().split(/\s+/).filter(Boolean).length;
+const contentRecordPattern = /["']([^"']+)["']:\s*\{\s*overview:\s*"([^"]*)",\s*bestFor:\s*"([^"]*)",\s*tip:\s*"([^"]*)",\s*limitation:\s*"([^"]*)",\s*faq:\s*\["([^"]*)",\s*"([^"]*)"\]/g;
+const editorialRecords = new Map();
+for (const match of toolContent.matchAll(contentRecordPattern)) {
+  editorialRecords.set(match[1], match.slice(2));
+}
+for (const slug of liveSlugs) {
+  const record = editorialRecords.get(slug);
+  assert.ok(record, `Live tool has an editorial record that could not be parsed for quality checks: ${slug}`);
+  const [overview, bestFor, tip, limitation, faqQuestion, faqAnswer] = record;
+  assert.ok(countWords(overview) >= 8, `Editorial overview is too short for ${slug}`);
+  assert.ok(countWords(bestFor) >= 8, `Editorial bestFor is too short for ${slug}`);
+  assert.ok(countWords(tip) >= 8, `Editorial tip is too short for ${slug}`);
+  assert.ok(countWords(limitation) >= 8, `Editorial limitation is too short for ${slug}`);
+  assert.ok(countWords(faqQuestion) >= 4, `FAQ question is too short for ${slug}`);
+  assert.ok(countWords(faqAnswer) >= 6, `FAQ answer is too short for ${slug}`);
+}
+
 assert.match(toolPage, /generateStaticParams/); assert.match(toolPage, /generateMetadata/); assert.match(toolPage, /getToolContent/); assert.match(toolPage, /ToolRouter/);
 
 console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} registered tools (${liveSlugs.length} live), ${contentSlugs.size} editorial tool entries and ${sourceFiles.length} source files checked.`);
