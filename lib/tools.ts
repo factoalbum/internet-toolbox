@@ -1,4 +1,4 @@
-import { Calculator, CandlestickChart, Code2, FileText, ImageIcon, Link2, Palette, ShieldCheck, Sparkles, Type, Zap, GitCompare, ScanSearch } from "lucide-react";
+import { Calculator, CandlestickChart, Code2, FileText, ImageIcon, Link2, Palette, ShieldCheck, Sparkles, Type, Zap, GitCompare, ScanSearch, FileCode2 } from "lucide-react";
 
 export type ToolCategory = "calculators" | "trading" | "everyday" | "developer" | "text" | "files";
 export type Tool = { slug: string; name: string; description: string; category: ToolCategory; icon: typeof Calculator; status: "live" | "coming-soon" };
@@ -80,6 +80,7 @@ export const tools: Tool[] = [
   { slug: "image-metadata-viewer", name: "Image Metadata Viewer", description: "Inspect image format, size, dimensions, aspect ratio and orientation.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "image-dimension-checker", name: "Image Dimension Checker", description: "Check exact image dimensions, aspect ratio, orientation and megapixels.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "document-compare", name: "Document Compare", description: "Compare two supported text documents for content changes.", category: "files", icon: GitCompare, status: "live" },
+  { slug: "copy-paste-cleaner", name: "Copy-Paste Cleaner", description: "Remove Claude-style copy markers and tidy pasted text without rewriting it.", category: "text", icon: Sparkles, status: "live" },
   { slug: "word-counter", name: "Word Counter", description: "Count words, characters and reading time.", category: "text", icon: FileText, status: "live" },
   { slug: "character-counter", name: "Character Counter", description: "Count characters with and without spaces.", category: "text", icon: FileText, status: "live" },
   { slug: "case-converter", name: "Case Converter", description: "Change text between common letter cases.", category: "text", icon: Type, status: "live" },
@@ -97,7 +98,7 @@ export const tools: Tool[] = [
   { slug: "svg-to-png", name: "SVG to PNG", description: "Convert SVG markup into a PNG image in your browser.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "pdf-page-organizer", name: "PDF Page Organizer", description: "Reorder or remove PDF pages and download the new document.", category: "files", icon: FileText, status: "live" },
   { slug: "pdf-page-rotator", name: "PDF Page Rotator", description: "Rotate an individual PDF page and download the updated document.", category: "files", icon: FileText, status: "live" },
-  { slug: "direct-video-downloader", name: "Direct Video Downloader", description: "Download a video from a direct MP4, WebM, MOV or M4V link.", category: "files", icon: ImageIcon, status: "live" },
+  { slug: "structured-file-export", name: "Structured File Export", description: "Package any file as well-formed XML with metadata, checksum and encoded content.", category: "files", icon: FileCode2, status: "live" },
 ];
 
 export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[35], tools[36], tools[37], tools[38], tools[23], tools[8], tools[13], tools[17]];
