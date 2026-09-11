@@ -1,1 +1,1 @@
-export { PdfSplitter as default } from "./document-compare-suite";
+export { PdfSplitter as default } from "./document-tools-suite";
