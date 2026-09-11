@@ -1,1 +1,1 @@
-export { ImageMetadataViewer as default } from "./document-compare-suite";
+export { ImageMetadataViewer as default } from "./document-tools-suite";
