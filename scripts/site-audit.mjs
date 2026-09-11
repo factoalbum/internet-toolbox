@@ -26,7 +26,7 @@ const errorPage = fs.readFileSync(path.join(root, "app/error.tsx"), "utf8"); ass
 const loadingPage = fs.readFileSync(path.join(root, "app/loading.tsx"), "utf8"); assert.match(loadingPage, /role=["']status["']/); assert.match(loadingPage, /aria-live=["']polite["']/);
 const header = fs.readFileSync(path.join(root, "components/site-header.tsx"), "utf8"); assert.match(header, /focus-visible:ring/);
 
-const knownRoutes = new Set(["/", "/tools", "/about", "/privacy", "/terms", "/faq", "/support", "/contact", "/disclaimer", "/categories", "/categories/calculators", "/categories/everyday", "/categories/developer", "/categories/text", "/categories/files", "/categories/compare"]);
+const knownRoutes = new Set(["/", "/tools", "/about", "/privacy", "/terms", "/faq", "/support", "/contact", "/disclaimer", "/categories", "/categories/calculators", "/categories/trading", "/categories/everyday", "/categories/developer", "/categories/text", "/categories/files", "/categories/compare"]);
 const linkTargets = new Set();
 for (const file of sourceFiles) {
   const content = fs.readFileSync(file, "utf8");
@@ -41,6 +41,7 @@ for (const file of pageFiles) { const content = fs.readFileSync(path.join(root, 
 
 const registry = fs.readFileSync(path.join(root, "lib/tools.ts"), "utf8");
 const toolContent = fs.readFileSync(path.join(root, "lib/tool-content.ts"), "utf8");
+const tradingContent = fs.readFileSync(path.join(root, "lib/trading-tool-content.ts"), "utf8");
 const toolPage = fs.readFileSync(path.join(root, "app/tools/[slug]/page.tsx"), "utf8");
 const toolRouter = fs.readFileSync(path.join(root, "components/tools/tool-router.tsx"), "utf8");
 const toolsStart = registry.indexOf("export const tools:"); const featuredStart = registry.indexOf("export const featuredTools");
@@ -50,36 +51,40 @@ const registryEntries = [...toolsSection.matchAll(/\{\s*slug:\s*["']([^"']+)["']
 const registrySlugs = registryEntries.map((match) => match[1]);
 const liveSlugs = registryEntries.filter((match) => match[2] === "live").map((match) => match[1]);
 const contentSlugs = new Set([...toolContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
+const tradingSlugs = new Set([...tradingContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
 for (const slug of registrySlugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`);
-for (const slug of liveSlugs) assert.ok(contentSlugs.has(slug), `Live tool is missing editorial content for ${slug}`);
+for (const slug of liveSlugs) {
+  if (slug.endsWith("-calculator") || ["trading-profit-loss-calculator", "break-even-calculator", "average-entry-price-calculator", "trading-expectancy-calculator", "drawdown-calculator"].includes(slug)) {
+    assert.ok(tradingSlugs.has(slug) || contentSlugs.has(slug), `Live trading tool is missing editorial content for ${slug}`);
+  } else {
+    assert.ok(contentSlugs.has(slug), `Live tool is missing editorial content for ${slug}`);
+  }
+}
+assert.equal(tradingSlugs.size, 12, "Trading editorial suite should contain exactly 12 records");
 
-// Editorial-quality guard: a content record must contain enough distinct, useful copy
-// to support a real tool page rather than passing the audit with placeholder text.
 const countWords = (value) => value.trim().split(/\s+/).filter(Boolean).length;
 const contentRecordPattern = /["']([^"']+)["']:\s*\{\s*overview:\s*"([^"]*)",\s*bestFor:\s*"([^"]*)",\s*tip:\s*"([^"]*)",\s*limitation:\s*"([^"]*)",\s*faq:\s*\["([^"]*)",\s*"([^"]*)"\]/g;
 const editorialRecords = new Map();
-for (const match of toolContent.matchAll(contentRecordPattern)) {
-  editorialRecords.set(match[1], match.slice(2));
-}
+for (const match of toolContent.matchAll(contentRecordPattern)) editorialRecords.set(match[1], match.slice(2));
+const tradingEditorialRecords = new Map();
+for (const match of tradingContent.matchAll(contentRecordPattern)) tradingEditorialRecords.set(match[1], match.slice(2));
+
 for (const slug of liveSlugs) {
-  const record = editorialRecords.get(slug);
+  const record = tradingEditorialRecords.get(slug) ?? editorialRecords.get(slug);
   assert.ok(record, `Live tool has an editorial record that could not be parsed for quality checks: ${slug}`);
   const [overview, bestFor, tip, limitation, faqQuestion, faqAnswer] = record;
   assert.ok(countWords(overview) >= 8, `Editorial overview is too short for ${slug}`);
   assert.ok(countWords(bestFor) >= 8, `Editorial bestFor is too short for ${slug}`);
   assert.ok(countWords(tip) >= 8, `Editorial tip is too short for ${slug}`);
   assert.ok(countWords(limitation) >= 8, `Editorial limitation is too short for ${slug}`);
-  // Short FAQ questions can still be clear and useful when the answer is substantive.
   assert.ok(countWords(faqQuestion) >= 3, `FAQ question is too short for ${slug}`);
   assert.ok(countWords(faqAnswer) >= 6, `FAQ answer is too short for ${slug}`);
 }
 
-// Reject exact field reuse across different live tools. Shared concepts are fine,
-// but every tool should explain its own use case instead of accumulating templated copy.
 const editorialFields = ["overview", "bestFor", "tip", "limitation", "faqQuestion", "faqAnswer"];
 for (const field of editorialFields) {
   const seen = new Map();
-  for (const [slug, record] of editorialRecords) {
+  for (const [slug, record] of [...editorialRecords, ...tradingEditorialRecords]) {
     if (!liveSlugs.includes(slug)) continue;
     const index = editorialFields.indexOf(field);
     const value = record[index]?.trim().toLowerCase();
@@ -92,4 +97,4 @@ for (const field of editorialFields) {
 
 assert.match(toolPage, /generateStaticParams/); assert.match(toolPage, /generateMetadata/); assert.match(toolPage, /getToolContent/); assert.match(toolPage, /ToolRouter/);
 
-console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} registered tools (${liveSlugs.length} live), ${contentSlugs.size} editorial tool entries and ${sourceFiles.length} source files checked.`);
+console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} registered tools (${liveSlugs.length} live), ${contentSlugs.size + tradingSlugs.size} editorial tool entries and ${sourceFiles.length} source files checked.`);
