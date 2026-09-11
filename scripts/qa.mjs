@@ -68,10 +68,10 @@ test("file to XML preserves bytes, metadata, escaping and checksum", async () =>
   assert.match(xml, /<name>invoice &lt;2026&gt;\.txt<\/name>/);
   assert.match(xml, /<mimeType>text\/plain<\/mimeType>/);
   assert.match(xml, /<size unit="bytes">21<\/size>/);
-  assert.match(xml, /<checksum algorithm="SHA-256">[0-9a-f]{64}<\/checksum>/);
+  assert.match(xml, /<checksum algorithm="SHA-256">8058dedc2e2d9fd857aa674351eb321b07faef6f63e2b25e45afc692ce442cfa<\/checksum>/);
   assert.match(xml, /<encoding>base64<\/encoding>/);
   assert.match(xml, /<generatedAt>2026-01-02T03:04:05\.000Z<\/generatedAt>/);
-  assert.match(xml, /<content>QSAgQiAmIENcbiBzZWNvbmQgbGluZQ==<\/content>/);
+  assert.match(xml, /<content>QSA8IEIgJiBDCnNlY29uZCBsaW5l<\/content>/);
   assert.match(xml, /<\/filePackage>\s*$/);
   await assert.rejects(() => buildFilePackageXml(new File([new Uint8Array(15 * 1024 * 1024 + 1)], "too-big.bin")), /FILE_TOO_LARGE/);
 });
