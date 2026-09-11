@@ -19,62 +19,21 @@ const slugs = [...toolsSection.matchAll(/slug:\s*"([^"]+)"/g)].map((match) => ma
 function readTool(name) { return fs.readFileSync(path.join(toolDir, name), "utf8"); }
 
 test("tool registry is structurally valid", () => { assert.ok(slugs.length >= 50, "Expected a substantial live tool registry"); assert.equal(new Set(slugs).size, slugs.length, "Tool slugs must be unique"); for (const slug of slugs) assert.match(slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/); });
-
-test("every live tool has a component file", () => {
-  const alternates = { "url-encoder-decoder": "url-encoder.tsx", "base64-encoder-decoder": "base64.tsx", "gold-silver-rate-converter": "gold-silver-converter.tsx", "url-slug-generator": "slug-generator.tsx", "text-diff-checker": "text-diff.tsx", "html-entity-encoder-decoder": "html-entity.tsx", "document-similarity-checker": "document-similarity.tsx", "position-size-calculator": "trading-tools-suite.tsx", "risk-reward-calculator": "trading-tools-suite.tsx", "trading-profit-loss-calculator": "trading-tools-suite.tsx", "stop-loss-calculator": "trading-tools-suite.tsx", "take-profit-calculator": "trading-tools-suite.tsx", "trading-risk-calculator": "trading-tools-suite.tsx", "margin-calculator": "trading-tools-suite.tsx", "leverage-calculator": "trading-tools-suite.tsx", "break-even-calculator": "trading-tools-suite.tsx", "average-entry-price-calculator": "trading-tools-suite.tsx", "trading-expectancy-calculator": "trading-tools-suite.tsx", "drawdown-calculator": "trading-tools-suite.tsx", "copy-paste-cleaner": "copy-paste-cleaner-v2.tsx", "structured-file-export": "structured-export.tsx" };
-  for (const slug of slugs) { const expected = path.join(toolDir, `${slug}.tsx`); const alternate = alternates[slug] ? path.join(toolDir, alternates[slug]) : null; assert.ok(fs.existsSync(expected) || (alternate && fs.existsSync(alternate)), `Missing component for ${slug}`); }
-  for (const slug of slugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`);
-});
-
+test("every live tool has a component file", () => { const alternates = { "url-encoder-decoder": "url-encoder.tsx", "base64-encoder-decoder": "base64.tsx", "gold-silver-rate-converter": "gold-silver-converter.tsx", "url-slug-generator": "slug-generator.tsx", "text-diff-checker": "text-diff.tsx", "html-entity-encoder-decoder": "html-entity.tsx", "document-similarity-checker": "document-similarity.tsx", "position-size-calculator": "trading-tools-suite.tsx", "risk-reward-calculator": "trading-tools-suite.tsx", "trading-profit-loss-calculator": "trading-tools-suite.tsx", "stop-loss-calculator": "trading-tools-suite.tsx", "take-profit-calculator": "trading-tools-suite.tsx", "trading-risk-calculator": "trading-tools-suite.tsx", "margin-calculator": "trading-tools-suite.tsx", "leverage-calculator": "trading-tools-suite.tsx", "break-even-calculator": "trading-tools-suite.tsx", "average-entry-price-calculator": "trading-tools-suite.tsx", "trading-expectancy-calculator": "trading-tools-suite.tsx", "drawdown-calculator": "trading-tools-suite.tsx", "copy-paste-cleaner": "copy-paste-cleaner-v2.tsx", "structured-file-export": "structured-export.tsx" }; for (const slug of slugs) { const expected = path.join(toolDir, `${slug}.tsx`); const alternate = alternates[slug] ? path.join(toolDir, alternates[slug]) : null; assert.ok(fs.existsSync(expected) || (alternate && fs.existsSync(alternate)), `Missing component for ${slug}`); } for (const slug of slugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`); });
 test("static tool routing is configured", () => { assert.match(toolPage, /generateStaticParams/); assert.match(toolPage, /params:\s*Promise<\{\s*slug:\s*string\s*\}>/); assert.match(toolPage, /notFound\(\)/); assert.match(toolPage, /ToolRouter/); });
-
 test("AdSense trust and transparency pages exist", () => { for (const file of ["about", "privacy", "terms", "faq", "support", "contact", "disclaimer"]) assert.ok(fs.existsSync(path.join(root, "app", file, "page.tsx")), `Missing /${file}`); assert.ok(fs.existsSync(path.join(root, "app", "not-found.tsx"))); assert.ok(fs.existsSync(path.join(root, "app", "error.tsx"))); assert.match(fs.readFileSync(path.join(root, "app", "about", "page.tsx"), "utf8"), /SiteHeader/); });
-
 test("sitemap includes trust pages and only live tools", () => { const sitemap = fs.readFileSync(path.join(root, "app", "sitemap.ts"), "utf8"); assert.match(sitemap, /contact/); assert.match(sitemap, /disclaimer/); assert.match(sitemap, /status === \"live\"/); });
-
 test("tool pages expose substantive editorial guidance", () => { assert.match(toolPage, /Best for/); assert.match(toolPage, /Helpful tip/); assert.match(toolPage, /Limitation/); assert.match(toolPage, /FAQ/); assert.match(toolPage, /getToolContent/); assert.match(toolContent, /getToolContent/); assert.match(toolContent, /direct-video-downloader/); });
-
-test("policy-sensitive tools carry clear guardrails", () => {
-  const downloaderStart = toolContent.indexOf("\"direct-video-downloader\":");
-  assert.ok(downloaderStart >= 0, "Downloader editorial content is missing");
-  const downloader = toolContent.slice(downloaderStart, downloaderStart + 1200);
-  assert.match(downloader, /permission|authorized|DRM|access control/i, "Downloader is missing authorization guidance");
-  const bmiStart = toolContent.indexOf("\"bmi-calculator\":");
-  const bmi = toolContent.slice(bmiStart, bmiStart + 1200);
-  assert.match(bmi, /screening|diagnos|medical advice/i, "BMI is missing health guidance");
-});
-
+test("policy-sensitive tools carry clear guardrails", () => { const downloaderStart = toolContent.indexOf("\"direct-video-downloader\":"); assert.ok(downloaderStart >= 0, "Downloader editorial content is missing"); const downloader = toolContent.slice(downloaderStart, downloaderStart + 1200); assert.match(downloader, /permission|authorized|DRM|access control/i, "Downloader is missing authorization guidance"); const bmiStart = toolContent.indexOf("\"bmi-calculator\":"); const bmi = toolContent.slice(bmiStart, bmiStart + 1200); assert.match(bmi, /screening|diagnos|medical advice/i, "BMI is missing health guidance"); });
 test("category sidebar is safe for SSR and scroll locking", () => { const files = fs.readdirSync(path.join(root, "components")).filter((entry) => /sidebar/i.test(entry)); for (const file of files) { const content = fs.readFileSync(path.join(root, "components", file), "utf8"); assert.doesNotMatch(content, /document\.body\.style\.overflow\s*=\s*[^\n]*outside useEffect/); } });
-
 test("shared layout prevents horizontal overflow and long text issues", () => { assert.match(fs.readFileSync(path.join(root, "app", "globals.css"), "utf8"), /overflow-x:\s*clip/); assert.match(routeSource, /min-w-0/); });
-
 test("tool components do not inject raw HTML", () => { for (const file of fs.readdirSync(toolDir).filter((entry) => entry.endsWith(".tsx"))) { const content = fs.readFileSync(path.join(toolDir, file), "utf8"); assert.doesNotMatch(content, /dangerouslySetInnerHTML/, `Unexpected raw HTML injection in ${file}`); } });
-
 test("site copy avoids AI-style typography artifacts", () => { for (const file of sourceFiles()) { const content = fs.readFileSync(file, "utf8"); const copy = path.relative(root, file) === "components/tools/trading-tools-suite.tsx" ? content.replace(/\"[^\"]*\"/g, "\"\"") : content; assert.doesNotMatch(copy, /[—…]/, `Avoid em dash and ellipsis in UI/source copy: ${path.relative(root, file)}`); assert.doesNotMatch(content, /(?<!\d)–|–(?!\d)/, `Avoid decorative en dash in UI/source copy: ${path.relative(root, file)}`); } });
 test("tool descriptions stay short and human-readable", () => { for (const tool of toolsSection.matchAll(/description:\s*"([^"]+)"/g)) { assert.ok(tool[1].length <= 100, "Tool description is too long"); assert.doesNotMatch(tool[1], /\b(instantly|effortlessly|seamlessly|powerful|robust|comprehensive)\b/i, "Tool description uses marketing-heavy wording"); } });
 test("message writer stays local and context-driven", () => { const content = readTool("message-writer.tsx"); assert.match(content, /hasEnoughContext/); assert.match(content, /buildMessage/); assert.doesNotMatch(content, /pretend|guarantee|expert/i); });
 test("duplicate line remover preserves order and ignores blank duplicates", () => { const content = readTool("remove-duplicate-lines.tsx"); assert.match(content, /Set/); assert.match(content, /filter/); });
-test("copy paste cleaner removes AI copy artifacts without rewriting wording", () => {
-  for (const example of copyPasteCleanerExamples) assert.equal(cleanCopiedContent(example.input), example.output);
-  assert.equal(cleanCopiedContent("ChatGPT\u00A0text\u200B here  with spaces\n\n\nNext"), "ChatGPT text here with spaces\n\nNext");
-  assert.equal(cleanCopiedContent("▎First line\n▎Second line\n▎\n▎Third line"), "First line\nSecond line\n\nThird line");
-  assert.equal(cleanCopiedContent("Keep this -- wording\n---\nKeep this - list item"), "Keep this -- wording\n\nKeep this - list item");
-});
-test("file to XML preserves bytes, metadata, escaping and checksum", async () => {
-  const source = "A < B & C\nsecond line";
-  const file = new File([new TextEncoder().encode(source)], "invoice <2026>.txt", { type: "text/plain" });
-  const xml = await buildFilePackageXml(file, new Date("2026-01-02T03:04:05.000Z"));
-  assert.match(xml, /<filePackage version="1\.1">/);
-  assert.match(xml, /<name>invoice &lt;2026&gt;\.txt<\/name>/);
-  assert.match(xml, /<mimeType>text\/plain<\/mimeType>/);
-  assert.match(xml, /<size unit="bytes">21<\/size>/);
-  assert.match(xml, /<checksum algorithm="SHA-256">8058dedc2e2d9fd857aa674351eb321b07faef6f63e2b25e45afc692ce442cfa<\/checksum>/);
-  assert.match(xml, /<encoding>base64<\/encoding>/);
-  assert.match(xml, /<generatedAt>2026-01-02T03:04:05\.000Z<\/generatedAt>/);
-  assert.match(xml, /<content>QSA8IEIgJiBDCnNlY29uZCBsaW5l<\/content>/);
-  assert.match(xml, /<\/filePackage>\s*$/);
-  await assert.rejects(() => buildFilePackageXml(new File([new Uint8Array(15 * 1024 * 1024 + 1)], "too-big.bin")), /FILE_TOO_LARGE/);
-});
+test("copy paste cleaner removes AI copy artifacts without rewriting wording", () => { for (const example of copyPasteCleanerExamples) assert.equal(cleanCopiedContent(example.input), example.output); assert.equal(cleanCopiedContent("ChatGPT\u00A0text\u200B here  with spaces\n\n\nNext"), "ChatGPT text here with spaces\n\nNext"); assert.equal(cleanCopiedContent("▎First line\n▎Second line\n▎\n▎Third line"), "First line\nSecond line\n\nThird line"); assert.equal(cleanCopiedContent("Keep this -- wording\n---\nKeep this - list item"), "Keep this -- wording\n\nKeep this - list item"); });
+test("file to XML preserves bytes, metadata, escaping and checksum", async () => { const source = "A < B & C\nsecond line"; const file = new File([new TextEncoder().encode(source)], "invoice <2026>.txt", { type: "text/plain" }); const xml = await buildFilePackageXml(file, new Date("2026-01-02T03:04:05.000Z")); assert.match(xml, /<filePackage version="1\.1">/); assert.match(xml, /<name>invoice &lt;2026&gt;\.txt<\/name>/); assert.match(xml, /<mimeType>text\/plain<\/mimeType>/); assert.match(xml, /<size unit="bytes">21<\/size>/); assert.match(xml, /<checksum algorithm="SHA-256">8058dedc2e2d9fd857aa674351eb321b07faef6f63e2b25e45afc692ce442cfa<\/checksum>/); assert.match(xml, /<encoding>base64<\/encoding>/); assert.match(xml, /<generatedAt>2026-01-02T03:04:05\.000Z<\/generatedAt>/); assert.match(xml, /<content>QSA8IEIgJiBDCnNlY29uZCBsaW5l<\/content>/); assert.match(xml, /<\/filePackage>\s*$/); await assert.rejects(() => buildFilePackageXml(new File([new Uint8Array(15 * 1024 * 1024 + 1)], "too-big.bin")), /FILE_TOO_LARGE/); });
 test("financial calculators guard invalid inputs and expose estimates", () => { for (const file of ["emi-calculator.tsx", "fd-calculator.tsx", "compound-interest-calculator.tsx", "sip-calculator.tsx", "ppf-calculator.tsx", "hra-calculator.tsx"]) { const content = readTool(file); assert.match(content, /Number|parseFloat/); assert.match(content, /if \(|disabled=|Math\.(min|max)/); } });
 test("tax and salary calculators contain current-rule safeguards", () => { assert.match(readTool("income-tax-calculator.tsx"), /FY 2026-27|financial year|tax year/i); assert.match(readTool("salary-calculator.tsx"), /estimate|estimated/i); });
 test("simple calculators expose numeric validation", () => { for (const file of ["percentage-calculator.tsx", "discount-calculator.tsx", "tip-calculator.tsx", "bill-splitter.tsx", "bmi-calculator.tsx"]) { const content = readTool(file); assert.match(content, /Number\(|inputMode=|type="number"/); } });
