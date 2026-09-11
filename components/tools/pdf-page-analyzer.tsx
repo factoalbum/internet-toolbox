@@ -1,1 +1,1 @@
-export { PdfPageAnalyzer as default } from "./document-compare-suite";
+export { PdfPageAnalyzer as default } from "./document-tools-suite";
