@@ -41,6 +41,7 @@ for (const file of pageFiles) { const content = fs.readFileSync(path.join(root, 
 
 const registry = fs.readFileSync(path.join(root, "lib/tools.ts"), "utf8");
 const toolContent = fs.readFileSync(path.join(root, "lib/tool-content.ts"), "utf8");
+const extraContent = fs.readFileSync(path.join(root, "lib/tool-content-extra.ts"), "utf8");
 const tradingContent = fs.readFileSync(path.join(root, "lib/trading-tool-content.ts"), "utf8");
 const toolPage = fs.readFileSync(path.join(root, "app/tools/[slug]/page.tsx"), "utf8");
 const toolRouter = fs.readFileSync(path.join(root, "components/tools/tool-router.tsx"), "utf8");
@@ -50,7 +51,7 @@ const toolsSection = registry.slice(toolsStart, featuredStart);
 const registryEntries = [...toolsSection.matchAll(/\{\s*slug:\s*["']([^"']+)["'][\s\S]*?status:\s*["'](live|coming-soon)["']\s*\}/g)];
 const registrySlugs = registryEntries.map((match) => match[1]);
 const liveSlugs = registryEntries.filter((match) => match[2] === "live").map((match) => match[1]);
-const contentSlugs = new Set([...toolContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
+const contentSlugs = new Set([...toolContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm), ...extraContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
 const tradingSlugs = new Set([...tradingContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
 for (const slug of registrySlugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`);
 for (const slug of liveSlugs) {
@@ -66,6 +67,7 @@ const countWords = (value) => value.trim().split(/\s+/).filter(Boolean).length;
 const contentRecordPattern = /["']([^"']+)["']:\s*\{\s*overview:\s*"([^"]*)",\s*bestFor:\s*"([^"]*)",\s*tip:\s*"([^"]*)",\s*limitation:\s*"([^"]*)",\s*faq:\s*\["([^"]*)",\s*"([^"]*)"\]/g;
 const editorialRecords = new Map();
 for (const match of toolContent.matchAll(contentRecordPattern)) editorialRecords.set(match[1], match.slice(2));
+for (const match of extraContent.matchAll(contentRecordPattern)) editorialRecords.set(match[1], match.slice(2));
 const tradingEditorialRecords = new Map();
 for (const match of tradingContent.matchAll(contentRecordPattern)) tradingEditorialRecords.set(match[1], match.slice(2));
 
