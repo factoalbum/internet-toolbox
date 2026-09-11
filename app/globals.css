@@ -37,6 +37,7 @@ input, select, textarea { min-width: 0; }
   transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
   touch-action: manipulation;
 }
+[data-tool-workspace] button:not(:disabled) { cursor: pointer; }
 [data-tool-workspace] button:not(:disabled):active { transform: translateY(1px); }
 [data-tool-workspace] button:disabled { cursor: not-allowed; }
 [data-tool-workspace] input[type="checkbox"],
@@ -89,6 +90,8 @@ main > section.container > div.mx-auto.max-w-4xl > div.mt-8.rounded-2xl.border b
   [data-tool-workspace] { border-radius: 20px; }
   [data-tool-workspace] > div:first-child { border-radius: 14px; }
   [data-tool-workspace] > div:last-child { border-radius: 16px; }
+  [data-tool-workspace] :where(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="color"]), select, textarea) { font-size: 16px; }
+  [data-tool-workspace] :where(input[type="checkbox"], input[type="radio"]) { min-width: 18px; min-height: 18px; }
   [data-tool-workspace] :where(table) { margin-inline: -1px; max-width: calc(100% + 2px); }
 }
 
