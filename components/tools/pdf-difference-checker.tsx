@@ -1,1 +1,1 @@
-export { PdfDifferenceChecker as default } from "./document-compare-suite";
+export { default } from "./pdf-difference-checker-workspace";
