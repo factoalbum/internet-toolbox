@@ -1,1 +1,1 @@
-export { ScreenshotDifferenceChecker as default } from "./document-compare-suite";
+export { ScreenshotDifferenceChecker as default } from "./document-tools-suite";
