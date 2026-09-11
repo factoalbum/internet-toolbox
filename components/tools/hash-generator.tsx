@@ -41,7 +41,7 @@ export default function HashGenerator() {
     <div className="space-y-5 p-5 md:p-6">
       <div>
         <label htmlFor="hash-input" className="text-sm font-bold">Text to hash</label>
-        <textarea id="hash-input" value={input} onChange={(event) => { setInput(event.target.value); setError(""); }} rows={6} placeholder="Enter text, a file checksum value, or another string..." className="mt-2 w-full resize-y rounded-2xl border border-[#d8d5cc] bg-[#fcfbf8] p-4 text-sm leading-6 outline-none transition focus:border-[#6d8e25] focus:ring-4 focus:ring-[#c8f169]" />
+        <textarea id="hash-input" value={input} onChange={(event) => { setInput(event.target.value); setError(""); }} rows={6} placeholder="Enter the text you want to hash..." className="mt-2 w-full resize-y rounded-2xl border border-[#d8d5cc] bg-[#fcfbf8] p-4 text-sm leading-6 outline-none transition focus:border-[#6d8e25] focus:ring-4 focus:ring-[#c8f169]" />
       </div>
       <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div>
