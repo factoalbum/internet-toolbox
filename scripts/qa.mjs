@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
+import { cleanCopiedContent, copyPasteCleanerExamples } from "../lib/copy-paste-cleaner.mjs";
 
 const root = process.cwd();
 const toolsSource = fs.readFileSync(path.join(root, "lib", "tools.ts"), "utf8");
@@ -19,7 +20,7 @@ function readTool(name) { return fs.readFileSync(path.join(toolDir, name), "utf8
 test("tool registry is structurally valid", () => { assert.ok(slugs.length >= 50, "Expected a substantial live tool registry"); assert.equal(new Set(slugs).size, slugs.length, "Tool slugs must be unique"); for (const slug of slugs) assert.match(slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/); });
 
 test("every live tool has a component file", () => {
-  const alternates = { "url-encoder-decoder": "url-encoder.tsx", "base64-encoder-decoder": "base64.tsx", "gold-silver-rate-converter": "gold-silver-converter.tsx", "url-slug-generator": "slug-generator.tsx", "text-diff-checker": "text-diff.tsx", "html-entity-encoder-decoder": "html-entity.tsx", "document-similarity-checker": "document-similarity.tsx", "position-size-calculator": "trading-tools-suite.tsx", "risk-reward-calculator": "trading-tools-suite.tsx", "trading-profit-loss-calculator": "trading-tools-suite.tsx", "stop-loss-calculator": "trading-tools-suite.tsx", "take-profit-calculator": "trading-tools-suite.tsx", "trading-risk-calculator": "trading-tools-suite.tsx", "margin-calculator": "trading-tools-suite.tsx", "leverage-calculator": "trading-tools-suite.tsx", "break-even-calculator": "trading-tools-suite.tsx", "average-entry-price-calculator": "trading-tools-suite.tsx", "trading-expectancy-calculator": "trading-tools-suite.tsx", "drawdown-calculator": "trading-tools-suite.tsx", "copy-paste-cleaner": "copy-paste-cleaner.tsx", "structured-file-export": "structured-export.tsx" };
+  const alternates = { "url-encoder-decoder": "url-encoder.tsx", "base64-encoder-decoder": "base64.tsx", "gold-silver-rate-converter": "gold-silver-converter.tsx", "url-slug-generator": "slug-generator.tsx", "text-diff-checker": "text-diff.tsx", "html-entity-encoder-decoder": "html-entity.tsx", "document-similarity-checker": "document-similarity.tsx", "position-size-calculator": "trading-tools-suite.tsx", "risk-reward-calculator": "trading-tools-suite.tsx", "trading-profit-loss-calculator": "trading-tools-suite.tsx", "stop-loss-calculator": "trading-tools-suite.tsx", "take-profit-calculator": "trading-tools-suite.tsx", "trading-risk-calculator": "trading-tools-suite.tsx", "margin-calculator": "trading-tools-suite.tsx", "leverage-calculator": "trading-tools-suite.tsx", "break-even-calculator": "trading-tools-suite.tsx", "average-entry-price-calculator": "trading-tools-suite.tsx", "trading-expectancy-calculator": "trading-tools-suite.tsx", "drawdown-calculator": "trading-tools-suite.tsx", "copy-paste-cleaner": "copy-paste-cleaner-v2.tsx", "structured-file-export": "structured-export.tsx" };
   for (const slug of slugs) { const expected = path.join(toolDir, `${slug}.tsx`); const alternate = alternates[slug] ? path.join(toolDir, alternates[slug]) : null; assert.ok(fs.existsSync(expected) || (alternate && fs.existsSync(alternate)), `Missing component for ${slug}`); }
   for (const slug of slugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`);
 });
@@ -52,6 +53,12 @@ test("site copy avoids AI-style typography artifacts", () => { for (const file o
 test("tool descriptions stay short and human-readable", () => { for (const tool of toolsSection.matchAll(/description:\s*"([^"]+)"/g)) { assert.ok(tool[1].length <= 100, "Tool description is too long"); assert.doesNotMatch(tool[1], /\b(instantly|effortlessly|seamlessly|powerful|robust|comprehensive)\b/i, "Tool description uses marketing-heavy wording"); } });
 test("message writer stays local and context-driven", () => { const content = readTool("message-writer.tsx"); assert.match(content, /hasEnoughContext/); assert.match(content, /buildMessage/); assert.doesNotMatch(content, /pretend|guarantee|expert/i); });
 test("duplicate line remover preserves order and ignores blank duplicates", () => { const content = readTool("remove-duplicate-lines.tsx"); assert.match(content, /Set/); assert.match(content, /filter/); });
+test("copy paste cleaner removes AI copy artifacts without rewriting wording", () => {
+  for (const example of copyPasteCleanerExamples) assert.equal(cleanCopiedContent(example.input), example.output);
+  assert.equal(cleanCopiedContent("ChatGPT\u00A0text\u200B here  with spaces\n\n\nNext"), "ChatGPT text here with spaces\n\nNext");
+  assert.equal(cleanCopiedContent("▎First line\n▎Second line\n▎\n▎Third line"), "First line\nSecond line\n\nThird line");
+  assert.equal(cleanCopiedContent("Keep this -- wording\n---\nKeep this - list item"), "Keep this -- wording\n\nKeep this - list item");
+});
 test("financial calculators guard invalid inputs and expose estimates", () => { for (const file of ["emi-calculator.tsx", "fd-calculator.tsx", "compound-interest-calculator.tsx", "sip-calculator.tsx", "ppf-calculator.tsx", "hra-calculator.tsx"]) { const content = readTool(file); assert.match(content, /Number|parseFloat/); assert.match(content, /if \(|disabled=|Math\.(min|max)/); } });
 test("tax and salary calculators contain current-rule safeguards", () => { assert.match(readTool("income-tax-calculator.tsx"), /FY 2026-27|financial year|tax year/i); assert.match(readTool("salary-calculator.tsx"), /estimate|estimated/i); });
 test("simple calculators expose numeric validation", () => { for (const file of ["percentage-calculator.tsx", "discount-calculator.tsx", "tip-calculator.tsx", "bill-splitter.tsx", "bmi-calculator.tsx"]) { const content = readTool(file); assert.match(content, /Number\(|inputMode=|type="number"/); } });
