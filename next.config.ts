@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   basePath: isGitHubPages ? "/internet-toolbox" : "",
+  webpack(config) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "pdfjs-dist/legacy/build/pdf.mjs": require.resolve("pdfjs-dist/webpack.mjs"),
+    };
+    return config;
+  },
 };
 
 export default nextConfig;
