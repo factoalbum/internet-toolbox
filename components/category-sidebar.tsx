@@ -97,7 +97,7 @@ export default function CategorySidebar() {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close categories"
-                className="ml-3 flex size-10 shrink-0 items-center justify-center rounded-md border border-[#d8d4c9] transition hover:border-[#171717] hover:bg-[#f3f0e8] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"
+                className="ml-3 flex size-10 shrink-0 items-center justify-center rounded-xl border border-[#d8d4c9] transition hover:border-[#171717] hover:bg-[#f3f0e8] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"
               >
                 <X size={18} aria-hidden="true" />
               </button>
@@ -107,7 +107,7 @@ export default function CategorySidebar() {
               <Link
                 href="/tools"
                 onClick={() => setOpen(false)}
-                className="group mb-4 flex min-h-12 items-center justify-between border border-[#171717] bg-[#171717] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#303030] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"
+                className="group mb-4 flex min-h-12 items-center justify-between rounded-2xl border border-[#171717] bg-[#171717] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#303030] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"
               >
                 <span>All tools</span>
                 <ArrowRight size={16} aria-hidden="true" />
@@ -122,9 +122,9 @@ export default function CategorySidebar() {
                       key={category.slug}
                       href={`/categories/${category.slug}`}
                       onClick={() => setOpen(false)}
-                      className="group flex min-h-16 items-start gap-3 border border-[#d8d4c9] bg-[#f3f0e8] p-4 transition hover:border-[#171717] hover:bg-[#c8f169] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"
+                      className="group flex min-h-16 items-start gap-3 rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-4 transition hover:border-[#171717] hover:bg-[#c8f169] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"
                     >
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#fffdf8]">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#fffdf8]">
                         <Icon size={17} aria-hidden="true" />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -140,8 +140,8 @@ export default function CategorySidebar() {
 
             <div className="shrink-0 border-t border-[#d8d4c9] bg-[#fffdf8] p-4 sm:p-5">
               <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-black/55">
-                <Link href="/about" onClick={() => setOpen(false)} className="min-h-11 border border-[#d8d4c9] p-3 transition hover:border-[#171717] hover:text-[#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">About</Link>
-                <Link href="/support" onClick={() => setOpen(false)} className="min-h-11 border border-[#d8d4c9] p-3 transition hover:border-[#171717] hover:text-[#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Support</Link>
+                <Link href="/about" onClick={() => setOpen(false)} className="min-h-11 rounded-xl border border-[#d8d4c9] p-3 transition hover:border-[#171717] hover:text-[#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">About</Link>
+                <Link href="/support" onClick={() => setOpen(false)} className="min-h-11 rounded-xl border border-[#d8d4c9] p-3 transition hover:border-[#171717] hover:text-[#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Support</Link>
               </div>
             </div>
           </aside>
@@ -159,7 +159,7 @@ export default function CategorySidebar() {
         aria-label="Open categories"
         aria-expanded={open}
         aria-controls={drawerId}
-        className="flex size-10 shrink-0 items-center justify-center rounded-md border border-[#d8d4c9] bg-[#fffdf8] text-[#171717] transition hover:border-[#171717] hover:bg-[#c8f169] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"
+        className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-[#d8d4c9] bg-[#fffdf8] text-[#171717] transition hover:border-[#171717] hover:bg-[#c8f169] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"
       >
         <Menu size={21} aria-hidden="true" />
       </button>
