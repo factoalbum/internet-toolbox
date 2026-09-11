@@ -2,7 +2,7 @@
 
 import { Check, Clipboard, RotateCcw, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
-import { cleanCopiedContent } from "../../lib/copy-paste-cleaner.mjs";
+import { cleanCopiedContent } from "../../lib/copy-paste-cleaner";
 
 export default function CopyPasteCleanerV2() {
   const [text, setText] = useState("");
