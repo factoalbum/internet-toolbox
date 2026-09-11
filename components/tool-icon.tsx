@@ -1,10 +1,10 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  BadgePercent, Banknote, Binary, Braces, Calculator, CalendarDays, CandlestickChart, CaseSensitive,
+  BadgePercent, Banknote, Binary, Braces, CalendarDays, CandlestickChart, CaseSensitive,
   ChartNoAxesCombined, Clock3, Code2, Coins, FileArchive, FileCode2, FileJson, FileOutput, FileText,
-  Files, GitCompare, Globe2, Hash, HeartPulse, ImageIcon, Images, KeyRound, Landmark, Link2, ListX,
+  Files, GitCompare, Globe2, Hash, HeartPulse, Home, ImageIcon, Images, KeyRound, Landmark, Link2, ListX,
   LockKeyhole, MessageSquareText, Percent, PiggyBank, QrCode, ReceiptText, Regex, Ruler, ScanLine,
-  ScanSearch, Scale, Shuffle, Split, Tag, TextCursorInput, Timer, Type, Utensils, WalletCards, Zap,
+  ScanSearch, Scale, ShieldCheck, Shuffle, Split, TextCursorInput, Timer, Type, Utensils, WalletCards,
 } from "lucide-react";
 import type { ToolCategory } from "@/lib/tools";
 
@@ -51,7 +51,7 @@ const semanticIcons: Record<string, LucideIcon> = {
   "income-tax-calculator": ReceiptText,
   "salary-calculator": WalletCards,
   "ppf-calculator": PiggyBank,
-  "hra-calculator": HomeIconFallback,
+  "hra-calculator": Home,
   "currency-converter": Banknote,
   "gold-silver-rate-converter": Coins,
   "position-size-calculator": CandlestickChart,
@@ -59,7 +59,7 @@ const semanticIcons: Record<string, LucideIcon> = {
   "trading-profit-loss-calculator": ChartNoAxesCombined,
   "stop-loss-calculator": LockKeyhole,
   "take-profit-calculator": BadgePercent,
-  "trading-risk-calculator": ShieldIconFallback,
+  "trading-risk-calculator": ShieldCheck,
   "margin-calculator": WalletCards,
   "leverage-calculator": Scale,
   "break-even-calculator": ReceiptText,
@@ -83,7 +83,7 @@ const semanticIcons: Record<string, LucideIcon> = {
   "color-converter": Type,
   "html-entity-encoder-decoder": Code2,
   "regex-tester": Regex,
-  "jwt-decoder": ShieldIconFallback,
+  "jwt-decoder": ShieldCheck,
   "developer-file-viewer": FileCode2,
   "document-similarity-checker": GitCompare,
   "pdf-difference-checker": GitCompare,
@@ -108,14 +108,6 @@ const semanticIcons: Record<string, LucideIcon> = {
   "case-converter": CaseSensitive,
   "text-cleaner": ListX,
 };
-
-// These fallbacks keep the mapping type-safe if a future tool is added before its icon is chosen.
-function HomeIconFallback({ size, strokeWidth, ...props }: { size?: number; strokeWidth?: number; [key: string]: unknown }) {
-  return <span {...props} /> as never;
-}
-function ShieldIconFallback({ size, strokeWidth, ...props }: { size?: number; strokeWidth?: number; [key: string]: unknown }) {
-  return <span {...props} /> as never;
-}
 
 function accentIndex(slug = "", category: ToolCategory = "everyday") {
   let hash = categoryBase[category];
