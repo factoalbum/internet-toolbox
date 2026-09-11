@@ -5,7 +5,7 @@ import test from "node:test";
 import { cleanCopiedContent, copyPasteCleanerExamples } from "../lib/copy-paste-cleaner.ts";
 import { buildFilePackageXml } from "../lib/file-to-xml.ts";
 import { imageExtension, outputMimeForEdit } from "../lib/image-edit.ts";
-import { convertLocalDateTime } from "../components/tools/time-zone-converter.tsx";
+import { convertLocalDateTime } from "../lib/time-zone.ts";
 
 const root = process.cwd();
 const toolsSource = fs.readFileSync(path.join(root, "lib", "tools.ts"), "utf8");
