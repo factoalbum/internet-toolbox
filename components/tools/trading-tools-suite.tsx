@@ -20,12 +20,13 @@ type FieldProps = { label: string; value: string; onChange: (value: string) => v
 const n = (value: string) => Number.parseFloat(value) || 0;
 const money = (value: number) => Number.isFinite(value) ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "0";
 const percent = (value: number) => `${value.toFixed(2)}%`;
+const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
 
 function Field({ label, value, onChange, suffix, step = "any" }: FieldProps) {
   return <label className="block">
     <span className="mb-2 block text-xs font-bold text-black/60">{label}</span>
     <div className="relative">
-      <input inputMode="decimal" type="number" min="0" step={step} value={value} onChange={(event) => onChange(event.target.value)} className="min-h-11 w-full rounded-xl border border-[#dcd9d1] bg-white px-3.5 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" />
+      <input inputMode="decimal" type="number" min="0" step={step} value={value} onChange={(event) => onChange(event.target.value)} className={`min-h-12 w-full rounded-xl border border-[#dcd9d1] bg-white px-3.5 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${suffix ? "pr-12" : ""}`} />
       {suffix && <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-bold text-black/35">{suffix}</span>}
     </div>
   </label>;
@@ -40,7 +41,13 @@ function Result({ label, value, note }: { label: string; value: string; note?: s
 }
 
 function Shell({ title, children }: { title: string; children: React.ReactNode }) {
-  return <div className="space-y-5 p-5 md:p-6"><div><h3 className="text-base font-black">{title}</h3><p className="mt-1 text-xs leading-5 text-black/40">Calculations run locally in your browser. Values are estimates, not financial advice.</p></div>{children}</div>;
+  return <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.04)]">
+    <div className="border-b border-[#d8d4c9] bg-[#f4f1e9] px-5 py-4 md:px-6">
+      <h3 className="text-base font-black">{title}</h3>
+      <p className="mt-1 text-xs leading-5 text-black/40">Calculations run locally in your browser. Values are estimates, not financial advice.</p>
+    </div>
+    <div className="space-y-5 p-5 md:p-6">{children}</div>
+  </div>;
 }
 
 export default function TradingToolsSuite({ variant }: { variant: Variant }) {
@@ -75,7 +82,7 @@ function RiskReward() {
 function TradingPnL() {
   const [side, setSide] = useState<"long" | "short">("long"), [entry, setEntry] = useState("250"), [exit, setExit] = useState("275"), [qty, setQty] = useState("50"), [fees, setFees] = useState("50");
   const gross = (n(exit) - n(entry)) * n(qty) * (side === "long" ? 1 : -1), net = gross - n(fees), invested = n(entry) * n(qty);
-  return <Shell title="Trading Profit & Loss Calculator"><div className="flex flex-wrap gap-2" role="group" aria-label="Trade direction"><button type="button" onClick={() => setSide("long")} aria-pressed={side === "long"} className={`min-h-10 rounded-xl border px-4 text-sm font-bold ${side === "long" ? "border-[#171717] bg-[#171717] text-white" : "border-[#dcd9d1] bg-white"}`}>Long</button><button type="button" onClick={() => setSide("short")} aria-pressed={side === "short"} className={`min-h-10 rounded-xl border px-4 text-sm font-bold ${side === "short" ? "border-[#171717] bg-[#171717] text-white" : "border-[#dcd9d1] bg-white"}`}>Short</button></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"><Field label="Entry price" value={entry} onChange={setEntry} /><Field label="Exit price" value={exit} onChange={setExit} /><Field label="Quantity" value={qty} onChange={setQty} /><Field label="Total fees" value={fees} onChange={setFees} /></div><div className="grid gap-3 sm:grid-cols-3"><Result label="Gross P&L" value={money(gross)} /><Result label="Fees" value={money(n(fees))} /><Result label="Net P&L" value={money(net)} note={invested > 0 ? `${percent((net / invested) * 100)} return on entry value` : undefined} /></div></Shell>;
+  return <Shell title="Trading Profit & Loss Calculator"><div className="flex flex-wrap gap-2" role="group" aria-label="Trade direction"><button type="button" onClick={() => setSide("long")} aria-pressed={side === "long"} className={`${focusRing} min-h-11 rounded-xl border px-4 text-sm font-bold transition ${side === "long" ? "border-[#171717] bg-[#171717] text-white" : "border-[#dcd9d1] bg-white hover:border-[#171717]"}`}>Long</button><button type="button" onClick={() => setSide("short")} aria-pressed={side === "short"} className={`${focusRing} min-h-11 rounded-xl border px-4 text-sm font-bold transition ${side === "short" ? "border-[#171717] bg-[#171717] text-white" : "border-[#dcd9d1] bg-white hover:border-[#171717]"}`}>Short</button></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"><Field label="Entry price" value={entry} onChange={setEntry} /><Field label="Exit price" value={exit} onChange={setExit} /><Field label="Quantity" value={qty} onChange={setQty} /><Field label="Total fees" value={fees} onChange={setFees} /></div><div className="grid gap-3 sm:grid-cols-3"><Result label="Gross P&L" value={money(gross)} /><Result label="Fees" value={money(n(fees))} /><Result label="Net P&L" value={money(net)} note={invested > 0 ? `${percent((net / invested) * 100)} return on entry value` : undefined} /></div></Shell>;
 }
 
 function StopLoss() {
@@ -113,7 +120,7 @@ function BreakEven() {
   const [entry, setEntry] = useState("250"), [qty, setQty] = useState("50"), [fees, setFees] = useState("100"), [side, setSide] = useState<"long" | "short">("long");
   const feePerUnit = n(qty) > 0 ? n(fees) / n(qty) : 0;
   const breakeven = side === "long" ? n(entry) + feePerUnit : n(entry) - feePerUnit;
-  return <Shell title="Break-Even Price Calculator"><div className="flex flex-wrap gap-2" role="group" aria-label="Trade direction"><button type="button" onClick={() => setSide("long")} aria-pressed={side === "long"} className={`min-h-10 rounded-xl border px-4 text-sm font-bold ${side === "long" ? "border-[#171717] bg-[#171717] text-white" : "border-[#dcd9d1] bg-white"}`}>Long</button><button type="button" onClick={() => setSide("short")} aria-pressed={side === "short"} className={`min-h-10 rounded-xl border px-4 text-sm font-bold ${side === "short" ? "border-[#171717] bg-[#171717] text-white" : "border-[#dcd9d1] bg-white"}`}>Short</button></div><div className="grid gap-4 sm:grid-cols-3"><Field label="Entry price" value={entry} onChange={setEntry} /><Field label="Quantity" value={qty} onChange={setQty} /><Field label="Round-trip fees" value={fees} onChange={setFees} /></div><div className="grid gap-3 sm:grid-cols-2"><Result label="Break-even price" value={money(breakeven)} /><Result label="Fee per unit" value={money(feePerUnit)} /></div></Shell>;
+  return <Shell title="Break-Even Price Calculator"><div className="flex flex-wrap gap-2" role="group" aria-label="Trade direction"><button type="button" onClick={() => setSide("long")} aria-pressed={side === "long"} className={`${focusRing} min-h-11 rounded-xl border px-4 text-sm font-bold transition ${side === "long" ? "border-[#171717] bg-[#171717] text-white" : "border-[#dcd9d1] bg-white hover:border-[#171717]"}`}>Long</button><button type="button" onClick={() => setSide("short")} aria-pressed={side === "short"} className={`${focusRing} min-h-11 rounded-xl border px-4 text-sm font-bold transition ${side === "short" ? "border-[#171717] bg-[#171717] text-white" : "border-[#dcd9d1] bg-white hover:border-[#171717]"}`}>Short</button></div><div className="grid gap-4 sm:grid-cols-3"><Field label="Entry price" value={entry} onChange={setEntry} /><Field label="Quantity" value={qty} onChange={setQty} /><Field label="Round-trip fees" value={fees} onChange={setFees} /></div><div className="grid gap-3 sm:grid-cols-2"><Result label="Break-even price" value={money(breakeven)} /><Result label="Fee per unit" value={money(feePerUnit)} /></div></Shell>;
 }
 
 function AverageEntry() {
