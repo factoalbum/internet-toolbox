@@ -5,7 +5,7 @@ import SiteFooter from "@/components/site-footer";
 export const metadata = {
   title: "Contact",
   description: "Contact Internet Toolbox for support, corrections, accessibility feedback and general questions.",
-  alternates: { canonical: "/contact" },
+  alternates: { canonical: "/contact/" },
 };
 
 export default function ContactPage() {
