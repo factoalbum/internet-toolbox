@@ -1,1 +1,1 @@
-export { PdfMerger as default } from "./document-compare-suite";
+export { PdfMerger as default } from "./document-tools-suite";
