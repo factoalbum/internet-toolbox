@@ -1,1 +1,1 @@
-export { ImageDimensionChecker as default } from "./document-compare-suite";
+export { ImageDimensionChecker as default } from "./document-tools-suite";
