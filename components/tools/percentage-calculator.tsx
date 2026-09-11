@@ -37,7 +37,7 @@ export default function PercentageCalculator() {
       <div className="border-b border-[#d8d4c9] bg-[#f4f1e9] px-5 py-4 md:px-7">
         <div className="flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3"><span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#c8f169]" aria-hidden="true"><Calculator size={20} /></span><div className="min-w-0"><p className="font-bold">Calculate a percentage</p><p className="text-sm text-black/50">Work out a percentage, increase or decrease.</p></div></div>
-          <button type="button" onClick={reset} className="flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 text-sm font-bold text-black/45 transition hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-[#c8f169]" aria-label="Reset percentage calculator"><RotateCcw size={16} /><span className="hidden sm:inline">Reset</span></button>
+          <button type="button" onClick={reset} className="flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 text-sm font-bold text-black/45 transition hover:bg-white hover:text-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]" aria-label="Reset percentage calculator"><RotateCcw size={16} /><span className="hidden sm:inline">Reset</span></button>
         </div>
       </div>
 
@@ -48,9 +48,9 @@ export default function PercentageCalculator() {
       </div>
 
       <div className="px-5 pb-5 md:px-7 md:pb-7">
-        <div className="mb-3 flex flex-wrap items-center gap-2"><span className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Quick %</span>{quickPercentages.map(option => <button key={option} type="button" onClick={() => setPercentage(String(option))} aria-pressed={percentage === String(option)} className={`min-h-9 rounded-full border px-3 text-xs font-bold transition ${percentage === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717]"}`}>{option}%</button>)}</div>
+        <div className="mb-3 flex flex-wrap items-center gap-2"><span className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Quick %</span>{quickPercentages.map(option => <button key={option} type="button" onClick={() => setPercentage(String(option))} aria-pressed={percentage === String(option)} className={`min-h-10 rounded-full border px-3 text-xs font-bold transition focus:outline-none focus:ring-4 focus:ring-[#c8f169] ${percentage === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{option}%</button>)}</div>
         <div className="grid grid-cols-3 gap-1 rounded-xl border border-[#d8d4c9] bg-[#f4f1e9] p-1" role="tablist" aria-label="Percentage operation">
-          {([["of", "X% of Y"], ["increase", "Increase"], ["decrease", "Decrease"]] as const).map(([key, label]) => <button key={key} type="button" role="tab" aria-selected={mode === key} onClick={() => setMode(key)} className={`min-h-11 rounded-lg px-2 text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-[#c8f169] sm:text-sm ${mode === key ? "bg-[#171717] text-white" : "text-black/45 hover:text-black"}`}>{label}</button>)}
+          {([["of", "X% of Y"], ["increase", "Increase"], ["decrease", "Decrease"]] as const).map(([key, label]) => <button key={key} type="button" role="tab" aria-selected={mode === key} onClick={() => setMode(key)} className={`min-h-11 rounded-lg px-2 text-xs font-bold transition focus:outline-none focus:ring-4 focus:ring-[#c8f169] sm:text-sm ${mode === key ? "bg-[#171717] text-white" : "text-black/45 hover:bg-white hover:text-black"}`}>{label}</button>)}
         </div>
       </div>
 
