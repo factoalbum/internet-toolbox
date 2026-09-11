@@ -5,7 +5,7 @@ import SiteFooter from "@/components/site-footer";
 export const metadata = {
   title: "Privacy Policy",
   description: "How Internet Toolbox handles browser processing, external services, analytics, advertising cookies and privacy choices.",
-  alternates: { canonical: "/privacy" },
+  alternates: { canonical: "/privacy/" },
 };
 
 export default function PrivacyPage() {
