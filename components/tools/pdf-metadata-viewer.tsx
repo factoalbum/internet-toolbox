@@ -1,1 +1,1 @@
-export { PdfMetadataViewer as default } from "./document-compare-suite";
+export { PdfMetadataViewer as default } from "./document-tools-suite";
