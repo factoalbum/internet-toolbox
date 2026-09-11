@@ -41,7 +41,7 @@ export const tools: Tool[] = [
   { slug: "json-to-csv", name: "JSON to CSV Converter", description: "Convert a JSON array of objects into downloadable CSV data in your browser.", category: "developer", icon: Code2, status: "live" },
   { slug: "uuid-generator", name: "UUID Generator", description: "Generate UUIDs in your browser.", category: "developer", icon: Code2, status: "live" },
   { slug: "password-generator", name: "Password Generator", description: "Generate strong passwords locally in your browser.", category: "developer", icon: ShieldCheck, status: "live" },
-  { slug: "hash-generator", name: "Hash Generator", description: "Generate SHA-256, SHA-384 and SHA-512 hashes from text in your browser.", category: "developer", icon: ShieldCheck, status: "live" },
+  { slug: "hash-generator", name: "Hash Generator", description: "Generate SHA-256, SHA-384 and SHA-512 hashes from text in your browser.", category: "developer", icon: ShieldCheck, status: "coming-soon" },
   { slug: "url-encoder-decoder", name: "URL Encoder / Decoder", description: "Encode or decode URL text in your browser.", category: "developer", icon: Code2, status: "live" },
   { slug: "base64-encoder-decoder", name: "Base64 Encoder / Decoder", description: "Encode or decode Base64 text.", category: "developer", icon: Code2, status: "live" },
   { slug: "timestamp-converter", name: "Unix Timestamp Converter", description: "Convert Unix timestamps and dates in either direction.", category: "developer", icon: Code2, status: "live" },
@@ -88,4 +88,3 @@ export const tools: Tool[] = [
 ];
 
 export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[35], tools[36], tools[37], tools[38], tools[23], tools[8], tools[13], tools[17]];
-export const brandIcon = Sparkles;
