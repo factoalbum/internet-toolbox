@@ -8,6 +8,7 @@ import SiteFooter from "@/components/site-footer";
 import ToolRouter from "@/components/tools/tool-router";
 import { categories, tools } from "@/lib/tools";
 import { getToolContent } from "@/lib/tool-content";
+import { extraToolContent } from "@/lib/tool-content-extra";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.io/internet-toolbox";
 export function generateStaticParams() { return tools.filter((tool) => tool.status === "live").map((tool) => ({ slug: tool.slug })); }
@@ -45,7 +46,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const category = getCategory(tool.category);
   if (!category) notFound();
   const Icon = tool.icon;
-  const content = getToolContent(tool.slug, tool);
+  const content = extraToolContent[tool.slug as keyof typeof extraToolContent] ?? getToolContent(tool.slug, tool);
   const relatedTools = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug && item.status === "live").slice(0, 3);
   const toolUrl = `${siteUrl}/tools/${tool.slug}/`;
   const categoryUrl = `${siteUrl}/categories/${category.slug}/`;
