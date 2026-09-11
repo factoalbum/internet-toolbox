@@ -54,23 +54,40 @@ function FileSlot({
   onChange: (file: File | null) => void;
   onClear: () => void;
 }) {
+  const [dragging, setDragging] = useState(false);
+
+  function acceptFile(nextFile: File | null) {
+    setDragging(false);
+    if (!nextFile) return;
+    if (nextFile.type !== "application/pdf" && !nextFile.name.toLowerCase().endsWith(".pdf")) return;
+    onChange(nextFile);
+  }
+
   return (
     <div className="min-w-0">
       <p className="mb-2 text-xs font-black uppercase tracking-[.12em] text-black/45">{label}</p>
-      <label className="block min-h-28 cursor-pointer rounded-2xl border-2 border-dashed border-[#d3d0c6] bg-[#faf8f2] p-4 transition hover:border-[#171717] hover:bg-white focus-within:ring-4 focus-within:ring-[#c8f169]">
+      <label
+        className={`block min-h-28 cursor-pointer rounded-2xl border-2 border-dashed p-4 transition focus-within:ring-4 focus-within:ring-[#c8f169] ${dragging ? "border-[#171717] bg-white" : "border-[#d3d0c6] bg-[#faf8f2] hover:border-[#171717] hover:bg-white"}`}
+        onDragOver={(event) => { event.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(event) => { event.preventDefault(); acceptFile(event.dataTransfer.files?.[0] ?? null); }}
+      >
         <input
           className="sr-only"
           type="file"
           accept=".pdf,application/pdf"
-          onChange={(event) => onChange(event.target.files?.[0] ?? null)}
+          onChange={(event) => {
+            acceptFile(event.target.files?.[0] ?? null);
+            event.currentTarget.value = "";
+          }}
         />
         <div className="flex h-full min-h-20 items-center gap-3">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#536b1c] shadow-sm" aria-hidden="true">
             <Upload size={19} />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold">{file ? file.name : "Choose a PDF"}</p>
-            <p className="mt-1 text-xs leading-5 text-black/40">{file ? `${(file.size / 1024 / 1024).toFixed(2)} MB · processed locally` : "Click to browse or drop a PDF here"}</p>
+            <p className="text-sm font-bold">{file ? file.name : dragging ? "Drop the PDF here" : "Choose a PDF"}</p>
+            <p className="mt-1 text-xs leading-5 text-black/40">{file ? `${(file.size / 1024 / 1024).toFixed(2)} MB · processed locally` : "Click to browse or drag a PDF here"}</p>
           </div>
           {file && (
             <button
