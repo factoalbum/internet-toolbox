@@ -98,7 +98,7 @@ export const tools: Tool[] = [
   { slug: "svg-to-png", name: "SVG to PNG", description: "Convert SVG markup into a PNG image in your browser.", category: "files", icon: ImageIcon, status: "live" },
   { slug: "pdf-page-organizer", name: "PDF Page Organizer", description: "Reorder or remove PDF pages and download the new document.", category: "files", icon: FileText, status: "live" },
   { slug: "pdf-page-rotator", name: "PDF Page Rotator", description: "Rotate an individual PDF page and download the updated document.", category: "files", icon: FileText, status: "live" },
-  { slug: "structured-file-export", name: "Structured File Export", description: "Package any file as well-formed XML with metadata, checksum and encoded content.", category: "files", icon: FileCode2, status: "live" },
+  { slug: "structured-file-export", name: "Structured File Export", description: "Package any file into a portable structured payload with metadata, checksum and encoded content.", category: "files", icon: FileCode2, status: "live" },
 ];
 
 export const featuredTools = [tools[0], tools[5], tools[6], tools[7], tools[35], tools[36], tools[37], tools[38], tools[23], tools[8], tools[13], tools[17]];
