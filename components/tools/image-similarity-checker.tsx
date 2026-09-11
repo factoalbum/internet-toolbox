@@ -1,1 +1,1 @@
-export { ImageSimilarityChecker as default } from "./document-compare-suite";
+export { ImageSimilarityChecker as default } from "./document-tools-suite";
