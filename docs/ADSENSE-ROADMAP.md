@@ -69,6 +69,7 @@ The goal is to make the site useful and trustworthy even without advertising. Pa
 - [x] Minimum editorial-depth checks
 - [x] Duplicate editorial-copy detection
 - [x] Category-page informational content
+- [x] CI and static deployment gates passing after editorial fixes
 - [ ] Audit individual live tools for thin or low-value experiences
 - [ ] Review repetitive/template-heavy content
 - [ ] Check for broken/orphaned/low-value pages
@@ -92,5 +93,7 @@ The goal is to make the site useful and trustworthy even without advertising. Pa
 ## Current priority
 
 **Phase 5 is the active phase.** The next work should favor improving the quality and usefulness of existing live pages over adding tools merely to increase the catalogue size.
+
+Recent CI hardening now checks that live-tool editorial records have substantive, tool-specific guidance and that fields are not copied verbatim between live tools. The production verification and GitHub Pages deployment currently pass these gates.
 
 A phase is considered complete only when its checklist is satisfied and the following phase can begin without weakening site quality.
