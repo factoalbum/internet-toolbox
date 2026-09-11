@@ -49,40 +49,53 @@ export default function AgeCalculator() {
   };
 
   return (
-    <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-8">
-      <div className="flex items-start justify-between gap-4">
+    <div className="bg-[#fffdf8] p-5 md:p-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-bold">Find an exact age</p>
-          <p className="mt-1 text-sm text-black/50">Compare a date of birth with any date.</p>
+          <p className="text-base font-black tracking-[-.02em]">Find an exact age</p>
+          <p className="mt-1 text-sm leading-6 text-black/50">Compare a date of birth with any date.</p>
         </div>
-        <button type="button" onClick={reset} className="min-h-11 rounded-lg border border-[#d8d4c9] px-4 text-sm font-semibold transition hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-[#c8f169]" aria-label="Reset age calculator">Reset</button>
+        <button type="button" onClick={reset} className="min-h-11 w-full rounded-xl border border-[#d8d4c9] bg-white px-4 text-sm font-semibold transition hover:border-[#171717] hover:bg-black/[.02] focus:outline-none focus:ring-4 focus:ring-[#c8f169] sm:w-auto" aria-label="Reset age calculator">
+          Reset
+        </button>
       </div>
 
-      <div className="mt-6 grid gap-5 md:grid-cols-2">
-        <label className="block">
-          <span className="text-sm font-semibold">Date of birth</span>
-          <input type="date" value={birth} max={end} onChange={e => setBirth(e.target.value)} className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-3 text-base outline-none focus:border-[#171717] focus:ring-2 focus:ring-[#c8f169]" />
+      <div className="mt-7 grid gap-4 md:grid-cols-2">
+        <label className="rounded-2xl border border-[#e2dfd7] bg-white p-4">
+          <span className="text-sm font-bold">Date of birth</span>
+          <span className="mt-1 block text-xs leading-5 text-black/40">The date you were born.</span>
+          <input id="age-birth-date" type="date" value={birth} max={end} onChange={e => setBirth(e.target.value)} className="mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none focus:border-[#171717] focus:ring-2 focus:ring-[#c8f169]" />
         </label>
-        <label className="block">
-          <span className="text-sm font-semibold">Calculate age on</span>
-          <input type="date" value={end} min={birth} onChange={e => setEnd(e.target.value)} className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-3 text-base outline-none focus:border-[#171717] focus:ring-2 focus:ring-[#c8f169]" />
+        <label className="rounded-2xl border border-[#e2dfd7] bg-white p-4">
+          <span className="text-sm font-bold">Calculate age on</span>
+          <span className="mt-1 block text-xs leading-5 text-black/40">Use today or choose another date.</span>
+          <input id="age-end-date" type="date" value={end} min={birth} onChange={e => setEnd(e.target.value)} className="mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none focus:border-[#171717] focus:ring-2 focus:ring-[#c8f169]" />
         </label>
       </div>
 
       {result ? (
-        <div className="mt-7 space-y-4" aria-live="polite">
-          <div className="border border-[#171717] bg-[#c8f169] p-6">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-black/55">Exact age</p>
-            <p className="mt-2 text-3xl font-black">{result.years} years, {result.months} months, {result.days} days</p>
+        <div className="mt-7 space-y-4" aria-live="polite" aria-atomic="true">
+          <div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5 md:p-6">
+            <p className="text-[11px] font-black uppercase tracking-[.15em] text-black/55">Exact age</p>
+            <p className="mt-2 text-2xl font-black leading-tight tracking-[-.035em] sm:text-3xl">{result.years} years, {result.months} months, {result.days} days</p>
+            <p className="mt-2 text-xs font-medium text-black/55">Calculated from {birth} to {end}</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="border border-[#d8d4c9] p-4"><p className="text-xs text-black/45">Total days</p><p className="mt-1 text-xl font-bold">{result.totalDays.toLocaleString("en-IN")}</p></div>
-            <div className="border border-[#d8d4c9] p-4"><p className="text-xs text-black/45">Date range</p><p className="mt-1 text-sm font-semibold">{birth} → {end}</p></div>
+            <div className="rounded-2xl border border-[#d8d4c9] bg-white p-4">
+              <p className="text-xs font-semibold text-black/45">Total days</p>
+              <p className="mt-1 text-xl font-black">{result.totalDays.toLocaleString("en-IN")}</p>
+            </div>
+            <div className="rounded-2xl border border-[#d8d4c9] bg-white p-4">
+              <p className="text-xs font-semibold text-black/45">Date range</p>
+              <p className="mt-1 break-words text-sm font-bold">{birth} → {end}</p>
+            </div>
           </div>
         </div>
-      ) : <p className="mt-6 text-sm text-black/50" role="alert">Choose a valid birth date before the calculation date.</p>}
+      ) : (
+        <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">Choose a valid birth date before the calculation date.</p>
+      )}
 
-      <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/50">Age uses calendar years, months and days. Total days is calculated from the calendar dates, avoiding daylight-saving-time hour differences.</p>
+      <p className="mt-7 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/50">Age uses calendar years, months and days. Total days is calculated from the calendar dates, avoiding daylight-saving-time hour differences.</p>
     </div>
   );
 }
