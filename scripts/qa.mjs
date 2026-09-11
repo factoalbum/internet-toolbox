@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
-import { cleanCopiedContent, copyPasteCleanerExamples } from "../lib/copy-paste-cleaner.mjs";
+import { cleanCopiedContent, copyPasteCleanerExamples } from "../lib/copy-paste-cleaner.ts";
+import { buildFilePackageXml } from "../lib/file-to-xml.ts";
 
 const root = process.cwd();
 const toolsSource = fs.readFileSync(path.join(root, "lib", "tools.ts"), "utf8");
@@ -58,6 +59,21 @@ test("copy paste cleaner removes AI copy artifacts without rewriting wording", (
   assert.equal(cleanCopiedContent("ChatGPT\u00A0text\u200B here  with spaces\n\n\nNext"), "ChatGPT text here with spaces\n\nNext");
   assert.equal(cleanCopiedContent("▎First line\n▎Second line\n▎\n▎Third line"), "First line\nSecond line\n\nThird line");
   assert.equal(cleanCopiedContent("Keep this -- wording\n---\nKeep this - list item"), "Keep this -- wording\n\nKeep this - list item");
+});
+test("file to XML preserves bytes, metadata, escaping and checksum", async () => {
+  const source = "A < B & C\nsecond line";
+  const file = new File([new TextEncoder().encode(source)], "invoice <2026>.txt", { type: "text/plain" });
+  const xml = await buildFilePackageXml(file, new Date("2026-01-02T03:04:05.000Z"));
+  assert.match(xml, /<filePackage version="1\.1">/);
+  assert.match(xml, /<name>invoice &lt;2026&gt;\.txt<\/name>/);
+  assert.match(xml, /<mimeType>text\/plain<\/mimeType>/);
+  assert.match(xml, /<size unit="bytes">21<\/size>/);
+  assert.match(xml, /<checksum algorithm="SHA-256">[0-9a-f]{64}<\/checksum>/);
+  assert.match(xml, /<encoding>base64<\/encoding>/);
+  assert.match(xml, /<generatedAt>2026-01-02T03:04:05\.000Z<\/generatedAt>/);
+  assert.match(xml, /<content>QSAgQiAmIENcbiBzZWNvbmQgbGluZQ==<\/content>/);
+  assert.match(xml, /<\/filePackage>\s*$/);
+  await assert.rejects(() => buildFilePackageXml(new File([new Uint8Array(15 * 1024 * 1024 + 1)], "too-big.bin")), /FILE_TOO_LARGE/);
 });
 test("financial calculators guard invalid inputs and expose estimates", () => { for (const file of ["emi-calculator.tsx", "fd-calculator.tsx", "compound-interest-calculator.tsx", "sip-calculator.tsx", "ppf-calculator.tsx", "hra-calculator.tsx"]) { const content = readTool(file); assert.match(content, /Number|parseFloat/); assert.match(content, /if \(|disabled=|Math\.(min|max)/); } });
 test("tax and salary calculators contain current-rule safeguards", () => { assert.match(readTool("income-tax-calculator.tsx"), /FY 2026-27|financial year|tax year/i); assert.match(readTool("salary-calculator.tsx"), /estimate|estimated/i); });
