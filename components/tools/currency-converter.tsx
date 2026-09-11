@@ -16,6 +16,7 @@ const currencies = [
 const popularRates = ["USD", "EUR", "GBP", "AED", "SAR", "JPY"] as const;
 const HOURLY_SOURCE = "https://api.exchangerate.fun/latest?base=USD";
 const FALLBACK_SOURCE = "https://open.er-api.com/v6/latest/USD";
+const REQUEST_TIMEOUT_MS = 8000;
 
 function format(value: number, code: string) {
   return new Intl.NumberFormat(undefined, { style: "currency", currency: code, maximumFractionDigits: code === "JPY" ? 0 : 2 }).format(value);
@@ -23,6 +24,20 @@ function format(value: number, code: string) {
 
 function formatInr(value: number) {
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(value);
+}
+
+function isUsableRates(rates: Record<string, number> | undefined) {
+  return Boolean(rates && Number.isFinite(rates.INR) && rates.INR > 0 && Number.isFinite(rates.USD) && rates.USD > 0);
+}
+
+async function fetchWithTimeout(url: string) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    return await fetch(url, { cache: "no-store", signal: controller.signal });
+  } finally {
+    window.clearTimeout(timeout);
+  }
 }
 
 export default function CurrencyConverter() {
@@ -38,23 +53,25 @@ export default function CurrencyConverter() {
   async function loadRates() {
     setLoading(true); setError("");
     try {
-      const response = await fetch(HOURLY_SOURCE, { cache: "no-store" });
+      const response = await fetchWithTimeout(HOURLY_SOURCE);
       if (!response.ok) throw new Error("Primary rate service unavailable");
       const data = await response.json() as RatesResponse;
-      if (!data.rates || !Number.isFinite(data.rates.INR) || !Number.isFinite(data.rates.SAR)) throw new Error("Primary rate data incomplete");
-      setRates(data.rates);
+      if (!isUsableRates(data.rates)) throw new Error("Primary rate data incomplete");
+      setRates(data.rates!);
       setUpdated(data.date ?? "");
       setSourceName("ExchangeRate.fun hourly reference");
     } catch {
       try {
-        const response = await fetch(FALLBACK_SOURCE, { cache: "no-store" });
+        const response = await fetchWithTimeout(FALLBACK_SOURCE);
         if (!response.ok) throw new Error("Fallback unavailable");
         const data = await response.json() as FallbackRatesResponse;
-        if (data.result !== "success" || !data.rates || !Number.isFinite(data.rates.INR)) throw new Error("Fallback data invalid");
-        setRates(data.rates);
+        if (data.result !== "success" || !isUsableRates(data.rates)) throw new Error("Fallback data invalid");
+        setRates(data.rates!);
         setUpdated(data.time_last_update_utc ?? "");
         setSourceName("ExchangeRate-API daily fallback");
       } catch {
+        setRates(null);
+        setUpdated("");
         setError("Live rates could not be loaded. Please try again.");
       }
     } finally { setLoading(false); }
@@ -108,7 +125,7 @@ export default function CurrencyConverter() {
     {error && <div role="alert" className="mt-4 flex flex-col gap-3 rounded-2xl border border-red-700/25 bg-red-50 p-4 text-sm font-semibold text-red-800 sm:flex-row sm:items-center sm:justify-between"><p>{error}</p><button type="button" onClick={() => void loadRates()} className="min-h-11 shrink-0 rounded-xl border border-red-700/25 bg-white px-4 font-black underline underline-offset-2 transition hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-200">Retry</button></div>}
 
     <section className="mt-7 border-t border-[#d8d4c9] pt-6" aria-labelledby="popular-currency-rates">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-[11px] font-black uppercase tracking-[0.14em] text-black/40">Today&apos;s reference</p><h2 id="popular-currency-rates" className="mt-1 text-lg font-black tracking-[-.02em]">Popular rates in INR</h2></div><span className="text-xs text-black/40">1 unit</span></div>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-[11px] font-black uppercase tracking-[0.14em] text-black/40">Reference rates</p><h2 id="popular-currency-rates" className="mt-1 text-lg font-black tracking-[-.02em]">Popular rates in INR</h2></div><span className="text-xs text-black/40">1 unit</span></div>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">{popularRates.map(code => <div key={code} className="rounded-xl border border-[#d8d4c9] bg-[#f8f5ed] p-3.5"><p className="text-xs font-black text-black/45">{code}</p><p className="mt-1 font-bold">{loading ? "Not available" : rateToInr(code) === null ? "Not available" : formatInr(rateToInr(code)!)}</p></div>)}</div>
     </section>
 
