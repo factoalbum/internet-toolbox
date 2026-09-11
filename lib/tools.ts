@@ -1,10 +1,11 @@
-import { Calculator, Code2, FileText, ImageIcon, Link2, Palette, ShieldCheck, Sparkles, Type, Zap, GitCompare, ScanSearch } from "lucide-react";
+import { Calculator, CandlestickChart, Code2, FileText, ImageIcon, Link2, Palette, ShieldCheck, Sparkles, Type, Zap, GitCompare, ScanSearch } from "lucide-react";
 
-export type ToolCategory = "calculators" | "everyday" | "developer" | "text" | "files";
+export type ToolCategory = "calculators" | "trading" | "everyday" | "developer" | "text" | "files";
 export type Tool = { slug: string; name: string; description: string; category: ToolCategory; icon: typeof Calculator; status: "live" | "coming-soon" };
 
 export const categories = [
   { slug: "calculators", name: "Money & Calculators", description: "Work out money, taxes, loans and returns.", icon: Calculator },
+  { slug: "trading", name: "Trading & Investing", description: "Plan trade risk, position size, returns and portfolio scenarios.", icon: CandlestickChart },
   { slug: "everyday", name: "Everyday Tools", description: "Handle dates, time, units and everyday tasks.", icon: Zap },
   { slug: "developer", name: "Developer Tools", description: "Handle common coding and data tasks.", icon: Code2 },
   { slug: "text", name: "Text Tools", description: "Clean, count, write and change text.", icon: Type },
@@ -31,6 +32,18 @@ export const tools: Tool[] = [
   { slug: "hra-calculator", name: "HRA Calculator", description: "Estimate HRA exemption and taxable HRA.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "currency-converter", name: "Currency Converter", description: "Convert currencies using current reference exchange rates.", category: "calculators", icon: Calculator, status: "live" },
   { slug: "gold-silver-rate-converter", name: "Gold & Silver Rate Converter", description: "Check gold and silver reference values in INR by weight and purity.", category: "calculators", icon: Calculator, status: "live" },
+  { slug: "position-size-calculator", name: "Position Size Calculator", description: "Calculate trade quantity from account size, risk and stop-loss distance.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "risk-reward-calculator", name: "Risk / Reward Calculator", description: "Compare potential reward with the amount at risk on a trade.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "trading-profit-loss-calculator", name: "Trading Profit & Loss Calculator", description: "Estimate long or short trade profit and loss after fees.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "stop-loss-calculator", name: "Stop-Loss Calculator", description: "Calculate a stop price from entry, quantity and maximum planned risk.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "take-profit-calculator", name: "Take-Profit Calculator", description: "Calculate target prices from entry, stop-loss and an R multiple.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "trading-risk-calculator", name: "Trading Risk Calculator", description: "Calculate the cash amount represented by a chosen risk percentage.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "margin-calculator", name: "Margin Calculator", description: "Estimate required margin from position value and leverage.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "leverage-calculator", name: "Leverage Calculator", description: "Calculate effective leverage from capital and position value.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "break-even-calculator", name: "Break-Even Price Calculator", description: "Find the price needed to cover entry costs and trading fees.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "average-entry-price-calculator", name: "Average Entry Price Calculator", description: "Calculate the weighted average price across multiple buys.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "trading-expectancy-calculator", name: "Trading Win Rate & Expectancy Calculator", description: "Estimate expected profit or loss per trade from win rate and average outcomes.", category: "trading", icon: CandlestickChart, status: "live" },
+  { slug: "drawdown-calculator", name: "Trading Drawdown Calculator", description: "Measure account drawdown and the gain needed to recover it.", category: "trading", icon: CandlestickChart, status: "live" },
   { slug: "random-number-generator", name: "Random Number Generator", description: "Generate random integers in your browser.", category: "everyday", icon: Calculator, status: "live" },
   { slug: "tip-calculator", name: "Tip Calculator", description: "Calculate a tip, final bill and each person's share.", category: "everyday", icon: Calculator, status: "live" },
   { slug: "bill-splitter", name: "Bill Splitter", description: "Split a bill between people with an optional tip.", category: "everyday", icon: Calculator, status: "live" },
