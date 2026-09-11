@@ -29,5 +29,5 @@ const components = {
 export default function ToolRouter({ slug }: { slug: string }) {
   const Component = components[slug as keyof typeof components];
   if (!Component) return null;
-  return <Component />;
+  return <div className="min-w-0 overflow-hidden bg-[#faf9f6] p-2.5 sm:p-3 md:p-4"><Component /></div>;
 }
