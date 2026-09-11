@@ -20,5 +20,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body className="min-w-0 overflow-x-clip"><SiteSchema />{children}<AnalyticsConsent /></body></html>;
+  return <html lang="en"><body className="min-w-0 overflow-x-clip"><a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-[#171717] focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-white focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Skip to main content</a><SiteSchema /><div id="main-content" tabIndex={-1}>{children}</div><AnalyticsConsent /></body></html>;
 }
