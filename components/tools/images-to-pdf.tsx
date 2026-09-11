@@ -1,1 +1,1 @@
-export { ImagesToPdf as default } from "./document-compare-suite";
+export { ImagesToPdf as default } from "./document-tools-suite";
