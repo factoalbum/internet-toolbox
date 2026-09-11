@@ -1,1 +1,1 @@
-export { PdfCompressor as default } from "./document-compare-suite";
+export { PdfCompressor as default } from "./document-tools-suite";
