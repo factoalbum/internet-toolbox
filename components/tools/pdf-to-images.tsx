@@ -1,1 +1,1 @@
-export { PdfToImages as default } from "./document-compare-suite";
+export { PdfToImages as default } from "./document-tools-suite";
