@@ -7,7 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
-    "qa": "node --test scripts/qa.mjs",
+    "qa": "node --experimental-strip-types --test scripts/qa.mjs",
     "site-audit": "node scripts/site-audit.mjs"
   },
   "dependencies": {
