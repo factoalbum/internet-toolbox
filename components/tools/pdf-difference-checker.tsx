@@ -1,1 +1,1 @@
-export { default } from "./pdf-difference-checker-workspace";
+export { PdfDifferenceChecker as default } from "./document-tools-suite";
