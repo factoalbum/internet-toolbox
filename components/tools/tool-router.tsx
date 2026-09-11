@@ -7,7 +7,7 @@ const ImageEditSuite = dynamic(() => import("./image-edit-suite"));
 const ImageBase64Suite = dynamic(() => import("./image-base64-suite"));
 const FileUtilitySuite = dynamic(() => import("./file-utility-suite"));
 const TradingToolsSuite = dynamic(() => import("./trading-tools-suite"));
-const CopyPasteCleaner = dynamic(() => import("./copy-paste-cleaner"));
+const CopyPasteCleaner = dynamic(() => import("./copy-paste-cleaner-v2"));
 const StructuredExport = dynamic(() => import("./structured-export"));
 const QrCodeGenerator = dynamic(() => import("./qr-code-generator"));
 const HashGenerator = dynamic(() => import("./hash-generator"));
