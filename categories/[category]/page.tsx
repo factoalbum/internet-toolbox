@@ -40,6 +40,10 @@ function getCategoryGuide(slug: ToolCategory) {
       intro: "File and image tools help you inspect, compare, convert and reorganize common documents and images in your browser. Where a tool processes files locally, your files do not need to be uploaded to a server for that operation.",
       choosing: "Choose the tool based on the result you need: inspect metadata or dimensions when you need information, compare files when you need to find changes, and use conversion or organization tools when you need a new file. Always review the output before relying on it for an important document.",
     },
+    trading: {
+      intro: "Trading and investing tools provide quick calculations for position sizing, risk, reward, leverage, margin, break-even levels, average entry price, expectancy and drawdown. They are calculation aids, not trading signals, investment advice or guarantees of outcome.",
+      choosing: "Start with the number you need to understand: position size and trading risk help define exposure, stop-loss and take-profit tools help model price levels, while expectancy and drawdown help review a strategy's historical assumptions. Check fees, slippage, broker rules, contract specifications and current market conditions separately before acting.",
+    },
   };
   return guides[slug];
 }
