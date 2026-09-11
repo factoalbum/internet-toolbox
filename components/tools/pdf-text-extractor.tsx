@@ -1,1 +1,1 @@
-export { PdfTextExtractor as default } from "./document-compare-suite";
+export { PdfTextExtractor as default } from "./document-tools-suite";
