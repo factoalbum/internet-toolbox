@@ -4,7 +4,7 @@ import SiteHeader from "@/components/site-header";
 export const metadata = {
   title: "About",
   description: "Learn why Internet Toolbox exists and how the tools are designed.",
-  alternates: { canonical: "/about" },
+  alternates: { canonical: "/about/" },
 };
 
 export default function AboutPage() {
