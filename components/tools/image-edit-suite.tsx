@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Download, Image as ImageIcon, Upload } from "lucide-react";
+import { imageExtension, outputMimeForEdit } from "../../lib/image-edit";
 
 type Variant = "image-resizer" | "image-cropper" | "image-rotate-flip" | "image-format-converter";
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
@@ -40,7 +41,7 @@ function download(blob: Blob, name: string) {
   anchor.href = url;
   anchor.download = name;
   anchor.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function FileDrop({ file, onChange }: { file: File | null; onChange: (file: File) => void }) {
@@ -103,7 +104,7 @@ export default function ImageEditSuite({ variant }: { variant: Variant }) {
       else if (variant === "image-rotate-flip") { ctx.translate(canvas.width / 2, canvas.height / 2); ctx.rotate(rad); ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1); ctx.drawImage(bitmap, -bitmap.width / 2, -bitmap.height / 2); }
       else { ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height); }
       bitmap.close();
-      const type = variant === "image-format-converter" ? format : (file.type === "image/png" ? "image/png" : "image/jpeg");
+      const type = outputMimeForEdit(variant, file.type, format);
       const blob = await canvasBlob(canvas, type, type === "image/png" ? undefined : 0.92);
       setOutput(blob); setOutputUrl(URL.createObjectURL(blob));
     } catch (err) { setError(err instanceof Error ? err.message : "The image could not be processed."); }
@@ -111,8 +112,8 @@ export default function ImageEditSuite({ variant }: { variant: Variant }) {
   }
 
   const reset = () => { if (outputUrl) URL.revokeObjectURL(outputUrl); setFile(null); setOutput(null); setOutputUrl(""); setError(""); if (inputRef.current) inputRef.current.value = ""; };
-  const extension = format === "image/png" ? "png" : format === "image/webp" ? "webp" : "jpg";
-  const outputName = file ? `${file.name.replace(/\.[^.]+$/, "")}-${variant.replace("image-", "")}.${variant === "image-format-converter" ? extension : (file.type === "image/png" ? "png" : "jpg")}` : "edited-image";
+  const extension = variant === "image-format-converter" ? imageExtension(outputMimeForEdit(variant, file?.type ?? "", format)) : imageExtension(outputMimeForEdit(variant, file?.type ?? "", format));
+  const outputName = file ? `${file.name.replace(/\.[^.]+$/, "")}-${variant.replace("image-", "")}.${extension}` : "edited-image";
 
   return <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-8"><div className="mx-auto flex max-w-3xl flex-col gap-5"><div className="flex items-start justify-between gap-4"><div><div className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[.14em] text-black/40"><ImageIcon size={15} /> File & Image Tools</div><h2 className="text-2xl font-black tracking-tight">{meta.title}</h2><p className="mt-2 text-sm leading-6 text-black/55">{meta.description}</p></div><button type="button" onClick={reset} disabled={!file && !error} className="min-h-10 shrink-0 rounded-md border border-[#d8d4c9] px-3 text-xs font-bold hover:bg-black/5 disabled:opacity-35 focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Reset</button></div>
     <FileDrop file={file} onChange={choose} />
