@@ -4,7 +4,7 @@ import SiteFooter from "@/components/site-footer";
 export const metadata = {
   title: "Disclaimer",
   description: "Important limitations for Internet Toolbox calculators, reference data and browser utilities.",
-  alternates: { canonical: "/disclaimer" },
+  alternates: { canonical: "/disclaimer/" },
 };
 
 export default function DisclaimerPage() {
