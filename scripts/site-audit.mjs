@@ -17,8 +17,7 @@ walk(root);
 const required = ["app/privacy/page.tsx", "app/terms/page.tsx", "app/faq/page.tsx", "app/not-found.tsx", "app/error.tsx", "app/loading.tsx", "app/robots.ts", "app/sitemap.ts", "app/icon.svg", "app/manifest.ts", "components/analytics-consent.tsx"];
 for (const file of required) assert.ok(fs.existsSync(path.join(root, file)), `Missing ${file}`);
 
-const layout = fs.readFileSync(path.join(root, "app/layout.tsx"), "utf8");
-assert.match(layout, /metadataBase/); assert.match(layout, /title:/); assert.match(layout, /description:/); assert.match(layout, /canonical/); assert.match(layout, /openGraph/); assert.match(layout, /twitter/); assert.match(layout, /AnalyticsConsent/);
+const layout = fs.readFileSync(path.join(root, "app/layout.tsx"), "utf8"); assert.match(layout, /metadataBase/); assert.match(layout, /title:/); assert.match(layout, /description:/); assert.match(layout, /canonical/); assert.match(layout, /openGraph/); assert.match(layout, /twitter/); assert.match(layout, /AnalyticsConsent/);
 const robots = fs.readFileSync(path.join(root, "app/robots.ts"), "utf8"); assert.match(robots, /sitemap/i);
 const sitemap = fs.readFileSync(path.join(root, "app/sitemap.ts"), "utf8"); assert.match(sitemap, /categories/);
 const analytics = fs.readFileSync(path.join(root, "components/analytics-consent.tsx"), "utf8"); assert.match(analytics, /NEXT_PUBLIC_GA_ID/); assert.match(analytics, /document\.cookie/); assert.match(analytics, /gtag/);
@@ -41,13 +40,18 @@ const pageFiles = ["app/page.tsx", "app/tools/page.tsx", "app/categories/page.ts
 for (const file of pageFiles) { const content = fs.readFileSync(path.join(root, file), "utf8"); assert.match(content, /export const metadata|generateMetadata/, `${file} is missing page metadata`); }
 
 const registry = fs.readFileSync(path.join(root, "lib/tools.ts"), "utf8");
+const toolContent = fs.readFileSync(path.join(root, "lib/tool-content.ts"), "utf8");
 const toolPage = fs.readFileSync(path.join(root, "app/tools/[slug]/page.tsx"), "utf8");
 const toolRouter = fs.readFileSync(path.join(root, "components/tools/tool-router.tsx"), "utf8");
 const toolsStart = registry.indexOf("export const tools:"); const featuredStart = registry.indexOf("export const featuredTools");
 assert.ok(toolsStart >= 0 && featuredStart > toolsStart, "Could not isolate the main tool registry");
 const toolsSection = registry.slice(toolsStart, featuredStart);
-const registrySlugs = [...toolsSection.matchAll(/slug:\s*["']([^"']+)["']/g)].map((match) => match[1]);
+const registryEntries = [...toolsSection.matchAll(/\{\s*slug:\s*["']([^"']+)["'][\s\S]*?status:\s*["'](live|coming-soon)["']\s*\}/g)];
+const registrySlugs = registryEntries.map((match) => match[1]);
+const liveSlugs = registryEntries.filter((match) => match[2] === "live").map((match) => match[1]);
+const contentSlugs = new Set([...toolContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
 for (const slug of registrySlugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`);
-assert.match(toolPage, /generateStaticParams/); assert.match(toolPage, /generateMetadata/); assert.match(toolPage, /ToolRouter/);
+for (const slug of liveSlugs) assert.ok(contentSlugs.has(slug), `Live tool is missing editorial content for ${slug}`);
+assert.match(toolPage, /generateStaticParams/); assert.match(toolPage, /generateMetadata/); assert.match(toolPage, /getToolContent/); assert.match(toolPage, /ToolRouter/);
 
-console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} routed tools and ${sourceFiles.length} source files checked.`);
+console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} registered tools (${liveSlugs.length} live), ${contentSlugs.size} editorial tool entries and ${sourceFiles.length} source files checked.`);
