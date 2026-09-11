@@ -37,10 +37,10 @@ export function getToolAccent(slug?: string, category?: ToolCategory) {
   return accents[accentIndex(slug, category)];
 }
 
-export default function ToolIcon({ icon: Icon, slug, category, size = 19, className = "" }: ToolIconProps) {
+export default function ToolIcon({ icon: Icon, slug, category, size = 19, className }: ToolIconProps) {
   const accent = getToolAccent(slug, category);
   return (
-    <span className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${accent.bg} ${accent.text} ${className}`} aria-hidden="true">
+    <span className={`flex ${className ?? "size-11"} shrink-0 items-center justify-center rounded-xl ${accent.bg} ${accent.text}`} aria-hidden="true">
       <Icon size={size} strokeWidth={1.9} />
     </span>
   );
