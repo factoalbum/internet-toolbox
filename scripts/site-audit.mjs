@@ -73,6 +73,22 @@ for (const slug of liveSlugs) {
   assert.ok(countWords(faqAnswer) >= 6, `FAQ answer is too short for ${slug}`);
 }
 
+// Reject exact field reuse across different live tools. Shared concepts are fine,
+// but every tool should explain its own use case instead of accumulating templated copy.
+const editorialFields = ["overview", "bestFor", "tip", "limitation", "faqQuestion", "faqAnswer"];
+for (const field of editorialFields) {
+  const seen = new Map();
+  for (const [slug, record] of editorialRecords) {
+    if (!liveSlugs.includes(slug)) continue;
+    const index = editorialFields.indexOf(field);
+    const value = record[index]?.trim().toLowerCase();
+    if (!value) continue;
+    const previous = seen.get(value);
+    assert.ok(!previous, `Duplicate ${field} copy reused by ${previous} and ${slug}`);
+    seen.set(value, slug);
+  }
+}
+
 assert.match(toolPage, /generateStaticParams/); assert.match(toolPage, /generateMetadata/); assert.match(toolPage, /getToolContent/); assert.match(toolPage, /ToolRouter/);
 
 console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} registered tools (${liveSlugs.length} live), ${contentSlugs.size} editorial tool entries and ${sourceFiles.length} source files checked.`);
