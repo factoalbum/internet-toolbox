@@ -5,7 +5,7 @@ import SiteHeader from "@/components/site-header";
 export const metadata = {
   title: "Support",
   description: "Get help, report a problem or suggest a useful tool for Internet Toolbox.",
-  alternates: { canonical: "/support" },
+  alternates: { canonical: "/support/" },
 };
 
 const issueUrl = "https://github.com/factoalbum/internet-toolbox/issues/new";
