@@ -46,6 +46,17 @@ input, select, textarea { min-width: 0; }
 [data-tool-workspace] :where(pre, code) { overflow-wrap: anywhere; }
 [data-tool-workspace] :where(table) { max-width: 100%; }
 
+/* Keep keyboard focus obvious after component-level styling without changing pointer visuals. */
+[data-tool-workspace] :where(button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--accent) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--ink), 0 0 0 5px rgb(200 241 105 / 32%);
+}
+[data-tool-workspace] :where(button, input, select, textarea):disabled:focus-visible {
+  outline-color: #bdbab2 !important;
+  box-shadow: 0 0 0 1px #bdbab2;
+}
+
 /* Keep legacy outer cards from competing with the new route-level workspace frame. */
 main > section.container > div.mx-auto.max-w-4xl > div.mt-8.rounded-2xl.border { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; overflow: visible !important; }
 main > section.container > div.mx-auto.max-w-4xl > div.mt-8.rounded-2xl.border > div:first-child { border-radius: 14px !important; }
