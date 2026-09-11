@@ -44,13 +44,20 @@ function offsetAt(date: Date, timeZone: string) {
 
 function localTimeToInstant(value: string, timeZone: string) {
   const [datePart, timePart] = value.split("T");
+  if (!datePart || !timePart) return new Date(NaN);
   const [year, month, day] = datePart.split("-").map(Number);
   const [hour, minute] = timePart.split(":").map(Number);
+  if (![year, month, day, hour, minute].every(Number.isFinite)) return new Date(NaN);
   const wallTime = Date.UTC(year, month - 1, day, hour, minute, 0);
   let instant = new Date(wallTime - offsetAt(new Date(wallTime), timeZone));
   const correctedOffset = offsetAt(instant, timeZone);
   if (correctedOffset !== offsetAt(new Date(wallTime), timeZone)) instant = new Date(wallTime - correctedOffset);
   return instant;
+}
+
+export function convertLocalDateTime(value: string, fromTimeZone: string, toTimeZone: string) {
+  const instant = localTimeToInstant(value, fromTimeZone);
+  return Number.isNaN(instant.getTime()) ? null : formatResult(instant, toTimeZone);
 }
 
 function formatResult(date: Date, timeZone: string) {
@@ -72,11 +79,7 @@ export default function TimeZoneConverter() {
   const [from, setFrom] = useState("Asia/Kolkata");
   const [to, setTo] = useState("America/New_York");
 
-  const result = useMemo(() => {
-    if (!value) return null;
-    const instant = localTimeToInstant(value, from);
-    return Number.isNaN(instant.getTime()) ? null : formatResult(instant, to);
-  }, [value, from, to]);
+  const result = useMemo(() => convertLocalDateTime(value, from, to), [value, from, to]);
 
   return (
     <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-8">
@@ -87,13 +90,13 @@ export default function TimeZoneConverter() {
         </div>
         <div>
           <label htmlFor="timezone-from" className="block text-sm font-bold">From</label>
-          <select id="timezone-from" value={from} onChange={(event) => setFrom(event.target.value)} className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717]">
+          <select id="timezone-from" value={from} onChange={(event) => setFrom(event.target.value)} className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40">
             {zones.map((zone) => <option key={zone.value} value={zone.value}>{zone.label}</option>)}
           </select>
         </div>
         <div>
           <label htmlFor="timezone-to" className="block text-sm font-bold">Convert to</label>
-          <select id="timezone-to" value={to} onChange={(event) => setTo(event.target.value)} className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717]">
+          <select id="timezone-to" value={to} onChange={(event) => setTo(event.target.value)} className="mt-2 min-h-12 w-full rounded-md border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40">
             {zones.map((zone) => <option key={zone.value} value={zone.value}>{zone.label}</option>)}
           </select>
         </div>
