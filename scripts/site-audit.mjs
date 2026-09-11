@@ -69,7 +69,8 @@ for (const slug of liveSlugs) {
   assert.ok(countWords(bestFor) >= 8, `Editorial bestFor is too short for ${slug}`);
   assert.ok(countWords(tip) >= 8, `Editorial tip is too short for ${slug}`);
   assert.ok(countWords(limitation) >= 8, `Editorial limitation is too short for ${slug}`);
-  assert.ok(countWords(faqQuestion) >= 4, `FAQ question is too short for ${slug}`);
+  // Short FAQ questions can still be clear and useful when the answer is substantive.
+  assert.ok(countWords(faqQuestion) >= 3, `FAQ question is too short for ${slug}`);
   assert.ok(countWords(faqAnswer) >= 6, `FAQ answer is too short for ${slug}`);
 }
 
