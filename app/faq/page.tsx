@@ -23,10 +23,13 @@ export const metadata = {
 const faqs = [
   ["Are Internet Toolbox tools free?", "Yes. The tools are designed to be free to use and do not require an account for normal use."],
   ["Do I need to install anything?", "No. Internet Toolbox is designed to work in a modern web browser on phones, tablets and computers."],
-  ["Is my data uploaded?", "Many tools process inputs directly in your browser. Tools that need an external service are clearly identified and may send the required data to that service."],
+  ["Is my data uploaded?", "Many tools process inputs directly in your browser. Tools that use live data or an external service are identified on their tool page. Only the information required for that service is sent outside the browser."],
+  ["Does Internet Toolbox store my uploaded files?", "Browser-based file tools are designed to process files locally rather than upload them to Internet Toolbox. Your browser still controls temporary memory, downloads and any external service used by a particular tool."],
+  ["What happens to my files after I use a browser-based tool?", "The site does not need a server upload for local file processing. Results are created in your browser and downloaded when you choose to save them. Closing or refreshing the page can clear temporary browser state."],
   ["Can I use the calculators for financial decisions?", "Use calculator results as estimates, not professional financial advice. Rates, rules, fees and personal circumstances can change the actual result."],
   ["How accurate are the currency and gold rates?", "Market-data tools use reference data from external providers and can differ from a bank, exchange, jeweller, local bullion board or another data source."],
   ["Why is a result different from Google or my bank?", "Different services can use different providers, timestamps, spreads, rounding and local pricing. Internet Toolbox shows reference calculations rather than promising an exact match to another service."],
+  ["Are the tools available on phones?", "Yes. The interface is designed to adapt to phones, tablets and desktop screens. A current browser is recommended for file, image and newer browser-based features."],
   ["Can I suggest a new tool?", "Yes. Visit the support page and describe the everyday task you want to make faster."],
   ["How can I report a wrong result?", "Open the support page and include the tool name, values entered and expected result. Do not include passwords or sensitive account information."],
 ];
