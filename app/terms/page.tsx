@@ -4,7 +4,7 @@ import SiteHeader from "@/components/site-header";
 export const metadata = {
   title: "Terms of Use",
   description: "Terms for using the free online tools and services provided by Internet Toolbox.",
-  alternates: { canonical: "/terms" },
+  alternates: { canonical: "/terms/" },
 };
 
 export default function TermsPage() {
