@@ -43,10 +43,27 @@ input, select, textarea { min-width: 0; }
 [data-tool-workspace] input[type="radio"],
 [data-tool-workspace] input[type="file"],
 [data-tool-workspace] input[type="color"] { min-height: auto; }
-[data-tool-workspace] input[type="file"] { max-width: 100%; }
+[data-tool-workspace] input[type="file"] { max-width: 100%; cursor: pointer; }
+[data-tool-workspace] input[type="file"]::file-selector-button {
+  min-height: 40px;
+  margin-right: 10px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+[data-tool-workspace] input[type="file"]::file-selector-button:hover { border-color: var(--ink); background: #faf9f6; }
 [data-tool-workspace] textarea { line-height: 1.55; overflow-wrap: anywhere; }
 [data-tool-workspace] :where(pre, code) { overflow-wrap: anywhere; }
-[data-tool-workspace] :where(table) { max-width: 100%; }
+[data-tool-workspace] :where(table) { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+[data-tool-workspace] :where(th, td) { white-space: nowrap; }
+[data-tool-workspace] :where(p, li, h1, h2, h3, h4) { overflow-wrap: anywhere; }
 
 /* Keep keyboard focus obvious after component-level styling without changing pointer visuals. */
 [data-tool-workspace] :where(button, input, select, textarea):focus-visible {
@@ -72,6 +89,7 @@ main > section.container > div.mx-auto.max-w-4xl > div.mt-8.rounded-2xl.border b
   [data-tool-workspace] { border-radius: 20px; }
   [data-tool-workspace] > div:first-child { border-radius: 14px; }
   [data-tool-workspace] > div:last-child { border-radius: 16px; }
+  [data-tool-workspace] :where(table) { margin-inline: -1px; max-width: calc(100% + 2px); }
 }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; } }
