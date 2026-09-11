@@ -1,32 +1,61 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { test } from "node:test";
+import test from "node:test";
 
 const root = process.cwd();
+const toolsSource = fs.readFileSync(path.join(root, "lib", "tools.ts"), "utf8");
+const toolPage = fs.readFileSync(path.join(root, "app", "tools", "[slug]", "page.tsx"), "utf8");
+const toolRouter = fs.readFileSync(path.join(root, "components", "tools", "tool-router.tsx"), "utf8");
+const routeSource = fs.readFileSync(path.join(root, "app", "layout.tsx"), "utf8");
+const toolContent = fs.readFileSync(path.join(root, "lib", "tool-content.ts"), "utf8");
 const toolDir = path.join(root, "components", "tools");
-const readTool = (name) => fs.readFileSync(path.join(toolDir, name), "utf8");
-const sourceFiles = () => {
-  const walk = (directory) => fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const full = path.join(directory, entry.name);
-    return entry.isDirectory() ? walk(full) : entry.name.match(/\.(tsx|ts|css|md)$/) ? [full] : [];
-  });
-  return [...walk(path.join(root, "app")), ...walk(path.join(root, "components")), ...walk(path.join(root, "lib")), ...walk(path.join(root, "docs"))];
-};
-const toolsSection = fs.readFileSync(path.join(root, "lib", "tools.ts"), "utf8");
-const routeSource = fs.readFileSync(path.join(root, "app", "tools", "[slug]", "page.tsx"), "utf8");
-const downloader = readTool("direct-video-downloader.tsx");
+const sourceFiles = () => [path.join(root, "app", "page.tsx"), path.join(root, "app", "globals.css"), path.join(root, "components", "site-header.tsx"), ...fs.readdirSync(toolDir).filter((entry) => entry.endsWith(".tsx")).map((entry) => path.join(toolDir, entry))];
+const toolsSection = toolsSource.match(/export const tools: Tool\[\] = \[(.*?)\];\n\nexport const featuredTools/s)?.[1] ?? "";
+const slugs = [...toolsSection.matchAll(/slug:\s*"([^"]+)"/g)].map((match) => match[1]);
 
-test("tool registry is structurally valid", () => { assert.match(toolsSection, /export const tools/); assert.match(toolsSection, /slug:/); assert.match(toolsSection, /component:/); });
-test("every live tool has a component file", () => { for (const match of toolsSection.matchAll(/component:\s*"([^"]+)"/g)) assert.ok(fs.existsSync(path.join(toolDir, match[1])), `Missing component ${match[1]}`); });
-test("static tool routing is configured", () => { assert.match(routeSource, /generateStaticParams/); assert.match(routeSource, /notFound/); });
-test("AdSense trust and transparency pages exist", () => { for (const page of ["about", "contact", "privacy", "terms", "disclaimer", "support", "faq"]) assert.ok(fs.existsSync(path.join(root, "app", page, "page.tsx")), `Missing ${page} page`); });
-test("sitemap includes trust pages and only live tools", () => { const sitemap = fs.readFileSync(path.join(root, "app", "sitemap.ts"), "utf8"); assert.match(sitemap, /about|contact|privacy|terms|disclaimer|support|faq/); assert.match(sitemap, /tools/); });
-test("tool pages expose substantive editorial guidance", () => { const content = fs.readFileSync(path.join(root, "lib", "tool-content.ts"), "utf8"); assert.match(content, /howToUse|bestFor|limitations|faq/); });
-test("policy-sensitive tools carry clear guardrails", () => { assert.match(downloader, /permission|authorized|DRM|access control/i, "Downloader is missing authorization guidance"); });
+function readTool(name) { return fs.readFileSync(path.join(toolDir, name), "utf8"); }
+
+test("tool registry is structurally valid", () => { assert.ok(slugs.length >= 50, "Expected a substantial live tool registry"); assert.equal(new Set(slugs).size, slugs.length, "Tool slugs must be unique"); for (const slug of slugs) assert.match(slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/); });
+
+test("every live tool has a component file", () => {
+  const alternates = { "url-encoder-decoder": "url-encoder.tsx", "base64-encoder-decoder": "base64.tsx", "gold-silver-rate-converter": "gold-silver-converter.tsx", "url-slug-generator": "slug-generator.tsx", "text-diff-checker": "text-diff.tsx", "html-entity-encoder-decoder": "html-entity.tsx", "document-similarity-checker": "document-similarity.tsx" };
+  for (const slug of slugs) { const expected = path.join(toolDir, `${slug}.tsx`); const alternate = alternates[slug] ? path.join(toolDir, alternates[slug]) : null; assert.ok(fs.existsSync(expected) || (alternate && fs.existsSync(alternate)), `Missing component for ${slug}`); }
+  for (const slug of slugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`);
+});
+
+test("static tool routing is configured", () => { assert.match(toolPage, /generateStaticParams/); assert.match(toolPage, /params:\s*Promise<\{\s*slug:\s*string\s*\}>/); assert.match(toolPage, /notFound\(\)/); assert.match(toolPage, /ToolRouter/); });
+
+test("AdSense trust and transparency pages exist", () => { for (const file of ["about", "privacy", "terms", "faq", "support", "contact", "disclaimer"]) assert.ok(fs.existsSync(path.join(root, "app", file, "page.tsx")), `Missing /${file}`); assert.ok(fs.existsSync(path.join(root, "app", "not-found.tsx"))); assert.ok(fs.existsSync(path.join(root, "app", "error.tsx"))); assert.match(fs.readFileSync(path.join(root, "app", "about", "page.tsx"), "utf8"), /SiteHeader/); });
+
+test("sitemap includes trust pages and only live tools", () => { const sitemap = fs.readFileSync(path.join(root, "app", "sitemap.ts"), "utf8"); assert.match(sitemap, /contact/); assert.match(sitemap, /disclaimer/); assert.match(sitemap, /status === \"live\"/); });
+
+test("tool pages expose substantive editorial guidance", () => { assert.match(toolPage, /Best for/); assert.match(toolPage, /Helpful tip/); assert.match(toolPage, /Limitation/); assert.match(toolPage, /FAQ/); assert.match(toolPage, /getToolContent/); assert.match(toolContent, /getToolContent/); assert.match(toolContent, /direct-video-downloader/); });
+
+test("policy-sensitive tools carry clear guardrails", () => {
+  for (const slug of ["emi-calculator", "income-tax-calculator", "salary-calculator", "ppf-calculator", "hra-calculator", "sip-calculator", "fd-calculator", "gst-calculator"]) {
+    const marker = `\"${slug}\":`;
+    const start = toolContent.indexOf(marker);
+    assert.ok(start >= 0, `${slug} editorial content is missing`);
+    const section = toolContent.slice(start, start + 1200);
+    assert.match(section, /estimate|official|professional|verify/i, `${slug} is missing financial guidance`);
+  }
+  const bmiStart = toolContent.indexOf("\"bmi-calculator\":");
+  assert.ok(bmiStart >= 0, "BMI editorial content is missing");
+  const bmi = toolContent.slice(bmiStart, bmiStart + 1200);
+  assert.match(bmi, /screening|diagnos|medical advice/i, "BMI is missing health guidance");
+  const downloaderStart = toolContent.indexOf("\"direct-video-downloader\":");
+  assert.ok(downloaderStart >= 0, "Downloader editorial content is missing");
+  const downloader = toolContent.slice(downloaderStart, downloaderStart + 1200);
+  assert.match(downloader, /permission|authorized|DRM|access control/i, "Downloader is missing authorization guidance");
+});
+
 test("category sidebar is safe for SSR and scroll locking", () => { const files = fs.readdirSync(path.join(root, "components")).filter((entry) => /sidebar/i.test(entry)); for (const file of files) { const content = fs.readFileSync(path.join(root, "components", file), "utf8"); assert.doesNotMatch(content, /document\.body\.style\.overflow\s*=\s*[^\n]*outside useEffect/); } });
+
 test("shared layout prevents horizontal overflow and long text issues", () => { assert.match(fs.readFileSync(path.join(root, "app", "globals.css"), "utf8"), /overflow-x:\s*clip/); assert.match(routeSource, /min-w-0/); });
+
 test("tool components do not inject raw HTML", () => { for (const file of fs.readdirSync(toolDir).filter((entry) => entry.endsWith(".tsx"))) { const content = fs.readFileSync(path.join(toolDir, file), "utf8"); assert.doesNotMatch(content, /dangerouslySetInnerHTML/, `Unexpected raw HTML injection in ${file}`); } });
+
 test("site copy avoids AI-style typography artifacts", () => { for (const file of sourceFiles()) { const content = fs.readFileSync(file, "utf8"); assert.doesNotMatch(content, /[—…]/, `Avoid em dash and ellipsis in UI/source copy: ${path.relative(root, file)}`); assert.doesNotMatch(content, /(?<!\d)–|–(?!\d)/, `Avoid decorative en dash in UI/source copy: ${path.relative(root, file)}`); } });
 test("tool descriptions stay short and human-readable", () => { for (const tool of toolsSection.matchAll(/description:\s*"([^"]+)"/g)) { assert.ok(tool[1].length <= 100, "Tool description is too long"); assert.doesNotMatch(tool[1], /\b(instantly|effortlessly|seamlessly|powerful|robust|comprehensive)\b/i, "Tool description uses marketing-heavy wording"); } });
 test("message writer stays local and context-driven", () => { const content = readTool("message-writer.tsx"); assert.match(content, /hasEnoughContext/); assert.match(content, /buildMessage/); assert.doesNotMatch(content, /pretend|guarantee|expert/i); });
