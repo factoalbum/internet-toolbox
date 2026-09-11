@@ -9,7 +9,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.i
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return categories.map((category) => ({ category: category.slug }));
+  return categories.filter((category) => tools.some((tool) => tool.category === category.slug && tool.status === "live")).map((category) => ({ category: category.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
@@ -36,7 +36,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         <div className="mt-5 flex flex-col gap-5 sm:mt-6 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
           <div className="flex min-w-0 items-start gap-4">
             <ToolIcon icon={Icon} slug={category.slug} category={category.slug} size={23} className="size-12 sm:size-14" />
-            <div className="min-w-0 max-w-3xl"><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6d8e25] sm:text-xs">Tool collection</p><h1 className="mt-1 text-3xl font-black tracking-[-0.05em] sm:text-4xl md:text-5xl">{category.name}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-black/55 sm:text-base sm:leading-7">{category.description} Pick a tool and get straight to the task — no account, no complicated setup.</p></div>
+            <div className="min-w-0 max-w-3xl"><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6d8e25] sm:text-xs">Tool collection</p><h1 className="mt-1 text-3xl font-black tracking-[-0.05em] sm:text-4xl md:text-5xl">{category.name}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-black/55 sm:text-base sm:leading-7">{category.description} Pick a tool and get straight to the task - no account, no complicated setup.</p></div>
           </div>
           <div className="w-full shrink-0 rounded-2xl border border-[#e1ded6] bg-[#faf9f6] px-4 py-3 sm:w-auto sm:min-w-40 sm:px-5 sm:py-4"><p className="text-2xl font-black">{categoryTools.length}</p><p className="mt-0.5 text-xs font-semibold text-black/45">free tools available</p></div>
         </div>
