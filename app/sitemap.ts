@@ -6,6 +6,8 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://factoalbum.github.i
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const liveTools = tools.filter((tool) => tool.status === "live");
+  const liveCategorySlugs = new Set(liveTools.map((tool) => tool.category));
+
   return [
     { url: `${baseUrl}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${baseUrl}/tools/`, changeFrequency: "weekly", priority: 0.95 },
@@ -17,7 +19,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/privacy/`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${baseUrl}/terms/`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${baseUrl}/disclaimer/`, changeFrequency: "yearly", priority: 0.5 },
-    ...categories.map((category) => ({ url: `${baseUrl}/categories/${category.slug}/`, changeFrequency: "weekly" as const, priority: 0.8 })),
+    ...categories
+      .filter((category) => liveCategorySlugs.has(category.slug))
+      .map((category) => ({ url: `${baseUrl}/categories/${category.slug}/`, changeFrequency: "weekly" as const, priority: 0.8 })),
     ...liveTools.map((tool) => ({ url: `${baseUrl}/tools/${tool.slug}/`, changeFrequency: "monthly" as const, priority: 0.7 })),
   ];
 }
