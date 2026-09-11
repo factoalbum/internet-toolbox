@@ -20,6 +20,7 @@ input, select, textarea { min-width: 0; }
 [data-tool-workspace] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="color"]),
 [data-tool-workspace] select,
 [data-tool-workspace] textarea {
+  min-height: 44px;
   border-radius: 12px;
   transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
 }
@@ -31,6 +32,7 @@ input, select, textarea { min-width: 0; }
   outline: none;
 }
 [data-tool-workspace] button {
+  min-height: 44px;
   border-radius: 12px;
   transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
   touch-action: manipulation;
