@@ -14,17 +14,18 @@ function walk(dir) {
 }
 walk(root);
 
-const required = ["app/privacy/page.tsx", "app/terms/page.tsx", "app/faq/page.tsx", "app/not-found.tsx", "app/error.tsx", "app/loading.tsx", "app/robots.ts", "app/sitemap.ts", "app/icon.svg", "app/manifest.ts", "components/analytics-consent.tsx"];
+const required = ["app/about/page.tsx", "app/privacy/page.tsx", "app/terms/page.tsx", "app/faq/page.tsx", "app/support/page.tsx", "app/contact/page.tsx", "app/disclaimer/page.tsx", "app/not-found.tsx", "app/error.tsx", "app/loading.tsx", "app/robots.ts", "app/sitemap.ts", "app/icon.svg", "app/manifest.ts", "components/analytics-consent.tsx"];
 for (const file of required) assert.ok(fs.existsSync(path.join(root, file)), `Missing ${file}`);
 
-const layout = fs.readFileSync(path.join(root, "app/layout.tsx"), "utf8"); assert.match(layout, /metadataBase/); assert.match(layout, /title:/); assert.match(layout, /description:/); assert.match(layout, /canonical/); assert.match(layout, /openGraph/); assert.match(layout, /twitter/); assert.match(layout, /AnalyticsConsent/);
+const layout = fs.readFileSync(path.join(root, "app/layout.tsx"), "utf8");
+assert.match(layout, /metadataBase/); assert.match(layout, /title:/); assert.match(layout, /description:/); assert.match(layout, /canonical/); assert.match(layout, /openGraph/); assert.match(layout, /twitter/); assert.match(layout, /robots:/); assert.match(layout, /AnalyticsConsent/);
 const robots = fs.readFileSync(path.join(root, "app/robots.ts"), "utf8"); assert.match(robots, /sitemap/i);
-const sitemap = fs.readFileSync(path.join(root, "app/sitemap.ts"), "utf8"); assert.match(sitemap, /categories/);
+const sitemap = fs.readFileSync(path.join(root, "app/sitemap.ts"), "utf8"); assert.match(sitemap, /categories/); assert.match(sitemap, /status === \"live\"/);
 const analytics = fs.readFileSync(path.join(root, "components/analytics-consent.tsx"), "utf8"); assert.match(analytics, /NEXT_PUBLIC_GA_ID/); assert.match(analytics, /document\.cookie/); assert.match(analytics, /gtag/);
 const nextConfig = fs.readFileSync(path.join(root, "next.config.ts"), "utf8"); assert.match(nextConfig, /output:\s*["']export["']/); assert.match(nextConfig, /trailingSlash:\s*true/);
 const errorPage = fs.readFileSync(path.join(root, "app/error.tsx"), "utf8"); assert.match(errorPage, /reset/); assert.match(errorPage, /Try again/);
 const loadingPage = fs.readFileSync(path.join(root, "app/loading.tsx"), "utf8"); assert.match(loadingPage, /role=["']status["']/); assert.match(loadingPage, /aria-live=["']polite["']/);
-const header = fs.readFileSync(path.join(root, "components/site-header.tsx"), "utf8"); assert.match(header, /focus-visible:ring/);
+const header = fs.readFileSync(path.join(root, "components/site-header.tsx"), "utf8"); assert.match(header, /focus-visible:ring|focus:ring/);
 
 const knownRoutes = new Set(["/", "/tools", "/about", "/privacy", "/terms", "/faq", "/support", "/contact", "/disclaimer", "/categories", "/categories/calculators", "/categories/trading", "/categories/everyday", "/categories/developer", "/categories/text", "/categories/files", "/categories/compare"]);
 const linkTargets = new Set();
@@ -36,7 +37,7 @@ for (const file of sourceFiles) {
 }
 for (const target of linkTargets) { if (target.startsWith("/tools/") || target.startsWith("/categories/")) continue; assert.ok(knownRoutes.has(target), `Possible broken internal link: ${target}`); }
 
-const pageFiles = ["app/page.tsx", "app/tools/page.tsx", "app/categories/page.tsx", "app/about/page.tsx", "app/privacy/page.tsx", "app/terms/page.tsx", "app/faq/page.tsx", "app/support/page.tsx"];
+const pageFiles = ["app/page.tsx", "app/tools/page.tsx", "app/categories/page.tsx", "app/about/page.tsx", "app/privacy/page.tsx", "app/terms/page.tsx", "app/faq/page.tsx", "app/support/page.tsx", "app/contact/page.tsx", "app/disclaimer/page.tsx"];
 for (const file of pageFiles) { const content = fs.readFileSync(path.join(root, file), "utf8"); assert.match(content, /export const metadata|generateMetadata/, `${file} is missing page metadata`); }
 
 const registry = fs.readFileSync(path.join(root, "lib/tools.ts"), "utf8");
@@ -54,6 +55,10 @@ const liveSlugs = registryEntries.filter((match) => match[2] === "live").map((ma
 const contentSlugs = new Set([...toolContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm), ...extraContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
 const tradingSlugs = new Set([...tradingContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
 for (const slug of registrySlugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`);
+const componentBlock = toolRouter.match(/const components = \{([\s\S]*?)\n\} as const;/)?.[1] ?? "";
+const routedSlugs = [...componentBlock.matchAll(/\"([a-z0-9-]+)\"\s*:/g)].map((match) => match[1]);
+assert.equal(new Set(routedSlugs).size, routedSlugs.length, "Tool router contains duplicate route keys");
+assert.deepEqual(new Set(routedSlugs), new Set(registrySlugs), "Router has stale routes or the registry has an unrouted tool");
 for (const slug of liveSlugs) {
   if (slug.endsWith("-calculator") || ["trading-profit-loss-calculator", "break-even-calculator", "average-entry-price-calculator", "trading-expectancy-calculator", "drawdown-calculator"].includes(slug)) {
     assert.ok(tradingSlugs.has(slug) || contentSlugs.has(slug), `Live trading tool is missing editorial content for ${slug}`);
@@ -98,5 +103,27 @@ for (const field of editorialFields) {
 }
 
 assert.match(toolPage, /generateStaticParams/); assert.match(toolPage, /generateMetadata/); assert.match(toolPage, /getToolContent/); assert.match(toolPage, /ToolRouter/);
+assert.match(toolPage, /alternates:\s*\{\s*canonical:/); assert.match(toolPage, /openGraph:/); assert.match(toolPage, /twitter:/); assert.match(toolPage, /status !== "live"/);
+assert.match(toolPage, /overflow-x-auto/); assert.match(toolPage, /min-w-0/); assert.match(toolPage, /focus:ring-4/); assert.match(toolPage, /scroll-mt-24/);
 
-console.log(`Site audit passed: ${required.length} readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} registered tools (${liveSlugs.length} live), ${contentSlugs.size + tradingSlugs.size} editorial tool entries and ${sourceFiles.length} source files checked.`);
+const allToolsBrowser = fs.readFileSync(path.join(root, "components/all-tools-browser.tsx"), "utf8");
+assert.match(allToolsBrowser, /return live \? <Link/); assert.match(allToolsBrowser, /coming soon/);
+const viewer = fs.readFileSync(path.join(root, "components/tools/developer-file-viewer.tsx"), "utf8");
+assert.match(viewer, /requestAnimationFrame/); assert.match(viewer, /setTimeout\(\(\) => renderMarkdown/); assert.match(viewer, /kind === "markdown"/);
+const fileTools = fs.readFileSync(path.join(root, "components/tools/document-tools-suite.tsx"), "utf8");
+assert.match(fileTools, /MAX_FILE_SIZE|MAX_FILE/); assert.match(fileTools, /20 \* 1024 \* 1024/);
+const utilityTools = fs.readFileSync(path.join(root, "components/tools/file-utility-suite.tsx"), "utf8");
+assert.match(utilityTools, /25 \* 1024 \* 1024/); assert.match(utilityTools, /MAX_PDF_PAGES|100/);
+const base64Tools = fs.readFileSync(path.join(root, "components/tools/image-base64-suite.tsx"), "utf8");
+assert.match(base64Tools, /parseImageBase64/);
+const editTools = fs.readFileSync(path.join(root, "components/tools/image-edit-suite.tsx"), "utf8");
+assert.match(editTools, /20 \* 1024 \* 1024/); assert.match(editTools, /URL\.revokeObjectURL/);
+
+const privacy = fs.readFileSync(path.join(root, "app/privacy/page.tsx"), "utf8");
+const terms = fs.readFileSync(path.join(root, "app/terms/page.tsx"), "utf8");
+const disclaimer = fs.readFileSync(path.join(root, "app/disclaimer/page.tsx"), "utf8");
+assert.match(privacy, /cookies|analytics|third-party|browser/i);
+assert.match(terms, /tools|responsibility|availability/i);
+assert.match(disclaimer, /estimate|accuracy|professional|financial|medical/i);
+
+console.log(`Site audit passed: ${required.length} trust/readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} registered tools (${liveSlugs.length} live), ${contentSlugs.size + tradingSlugs.size} editorial tool entries, ${routedSlugs.length} exact router mappings and ${sourceFiles.length} source files checked.`);
