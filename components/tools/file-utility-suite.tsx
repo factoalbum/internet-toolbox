@@ -2,11 +2,9 @@
 
 import { ChangeEvent, useState } from "react";
 import { ArrowDown, ArrowUp, Download, FileText, RotateCcw, Upload } from "lucide-react";
-import { PDFDocument, degrees } from "pdf-lib";
+import { organizePdf, rotatePdfPage } from "../../lib/file-utility";
 
 type Variant = "svg-to-png" | "pdf-page-organizer" | "pdf-page-rotator";
-const MAX_FILE_SIZE = 25 * 1024 * 1024;
-const MAX_PDF_PAGES = 100;
 const labels: Record<Variant, { title: string; description: string; action: string }> = {
   "svg-to-png": { title: "SVG to PNG", description: "Convert SVG markup into a PNG image directly in your browser.", action: "Convert to PNG" },
   "pdf-page-organizer": { title: "PDF Page Organizer", description: "Reorder or remove PDF pages, then download the organized document.", action: "Create organized PDF" },
@@ -15,12 +13,11 @@ const labels: Record<Variant, { title: string; description: string; action: stri
 function formatBytes(bytes: number) { if (bytes < 1024) return `${bytes} B`; if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`; return `${(bytes / (1024 * 1024)).toFixed(1)} MB`; }
 function download(blob: Blob, name: string) { const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = name; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
 function FileDrop({ accept, file, onChange, label }: { accept: string; file: File | null; onChange: (file: File) => void; label: string }) { const handle = (event: ChangeEvent<HTMLInputElement>) => { const next = event.target.files?.[0]; if (next) onChange(next); }; return <label className="block cursor-pointer rounded-2xl border-2 border-dashed border-[#d3d0c6] bg-[#faf8f2] p-5 transition hover:border-[#171717] hover:bg-white focus-within:ring-4 focus-within:ring-[#c8f169]"><input className="sr-only" type="file" accept={accept} onChange={handle} /><div className="flex items-center gap-4"><span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#536b1c] shadow-sm" aria-hidden="true"><Upload size={19} /></span><div className="min-w-0"><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">{label}</p><p className="mt-1 truncate text-sm font-bold">{file?.name ?? "Click here to choose a file"}</p><p className="mt-1 text-xs text-black/35">Up to 25 MB, processed locally</p></div></div></label>; }
-async function loadPdf(file: File) { if (file.type !== "application/pdf") throw new Error("Please choose a PDF file."); if (file.size > MAX_FILE_SIZE) throw new Error("Please choose a PDF smaller than 25 MB."); const pdf = await PDFDocument.load(new Uint8Array(await file.arrayBuffer())); if (pdf.getPageCount() > MAX_PDF_PAGES) throw new Error("This PDF has more than 100 pages. Please use a smaller document."); return pdf; }
 
 export default function FileUtilitySuite({ variant }: { variant: Variant }) {
   const meta = labels[variant]; const [file, setFile] = useState<File | null>(null); const [text, setText] = useState(""); const [output, setOutput] = useState<Blob | null>(null); const [error, setError] = useState(""); const [busy, setBusy] = useState(false); const [pages, setPages] = useState<number[]>([]); const [rotations, setRotations] = useState<Record<number, number>>({}); const [selectedPage, setSelectedPage] = useState(1); const [rotateBy, setRotateBy] = useState(90); const [svgWidth, setSvgWidth] = useState(1200); const [svgHeight, setSvgHeight] = useState(800);
   const reset = () => { setFile(null); setText(""); setOutput(null); setError(""); setPages([]); setRotations({}); setSelectedPage(1); setRotateBy(90); setSvgWidth(1200); setSvgHeight(800); };
-  const choosePdf = async (next: File) => { setError(""); setOutput(null); try { const pdf = await loadPdf(next); setFile(next); setPages(Array.from({ length: pdf.getPageCount() }, (_, index) => index)); setRotations({}); setSelectedPage(1); } catch (err) { setFile(null); setPages([]); setError(err instanceof Error ? err.message : "The PDF could not be read."); } };
+  const choosePdf = async (next: File) => { setError(""); setOutput(null); try { const bytes = new Uint8Array(await next.arrayBuffer()); const probe = await organizePdf({ type: next.type, size: next.size, arrayBuffer: async () => bytes }, [0]); const { PDFDocument } = await import("pdf-lib"); const pdf = await PDFDocument.load(probe); setFile(next); setPages(Array.from({ length: pdf.getPageCount() }, (_, index) => index)); setRotations({}); setSelectedPage(1); } catch (err) { setFile(null); setPages([]); setError(err instanceof Error ? err.message : "The PDF could not be read."); } };
   async function run() {
     setBusy(true); setError(""); setOutput(null);
     try {
@@ -30,9 +27,9 @@ export default function FileUtilitySuite({ variant }: { variant: Variant }) {
         try { const image = new Image(); image.src = source; await image.decode(); const canvas = document.createElement("canvas"); canvas.width = Math.max(1, Math.min(8000, svgWidth)); canvas.height = Math.max(1, Math.min(8000, svgHeight)); const ctx = canvas.getContext("2d"); if (!ctx) throw new Error("Canvas is not available in this browser."); ctx.drawImage(image, 0, 0, canvas.width, canvas.height); const png = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png")); if (!png) throw new Error("PNG conversion failed."); setOutput(png); } finally { URL.revokeObjectURL(source); }
         return;
       }
-      if (!file) throw new Error("Choose a PDF first."); const pdf = await loadPdf(file);
-      if (variant === "pdf-page-organizer") { if (!pages.length) throw new Error("The PDF has no pages to organize."); const result = await PDFDocument.create(); const copied = await result.copyPages(pdf, pages); copied.forEach((page) => result.addPage(page)); const pdfBytes = await result.save(); setOutput(new Blob([pdfBytes.buffer as ArrayBuffer], { type: "application/pdf" })); }
-      else { const angle = rotations[selectedPage - 1] ?? 0; if (!angle) throw new Error("Choose a rotation for the selected page first."); const page = pdf.getPage(selectedPage - 1); page.setRotation(degrees(page.getRotation().angle + angle)); const pdfBytes = await pdf.save(); setOutput(new Blob([pdfBytes.buffer as ArrayBuffer], { type: "application/pdf" })); }
+      if (!file) throw new Error("Choose a PDF first."); const source = { type: file.type, size: file.size, arrayBuffer: () => file.arrayBuffer() };
+      if (variant === "pdf-page-organizer") { const pdfBytes = await organizePdf(source, pages); setOutput(new Blob([pdfBytes.buffer as ArrayBuffer], { type: "application/pdf" })); }
+      else { const angle = rotations[selectedPage - 1] ?? 0; if (!angle) throw new Error("Choose a rotation for the selected page first."); const pdfBytes = await rotatePdfPage(source, selectedPage, angle); setOutput(new Blob([pdfBytes.buffer as ArrayBuffer], { type: "application/pdf" })); }
     } catch (err) { setError(err instanceof Error ? err.message : "The file could not be processed."); } finally { setBusy(false); }
   }
   const movePage = (index: number, direction: -1 | 1) => { const target = index + direction; if (target < 0 || target >= pages.length) return; setPages((current) => { const next = [...current]; [next[index], next[target]] = [next[target], next[index]]; return next; }); };
