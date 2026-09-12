@@ -16,6 +16,7 @@ function removeDuplicateLines(value: string) {
 export default function RemoveDuplicateLines() {
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
   const result = useMemo(() => removeDuplicateLines(text), [text]);
 
   const stats = useMemo(() => {
@@ -26,18 +27,21 @@ export default function RemoveDuplicateLines() {
 
   async function copyResult() {
     if (!result) return;
+    setCopied(false);
+    setCopyFailed(false);
     try {
       await navigator.clipboard.writeText(result);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1400);
     } catch {
-      setCopied(false);
+      setCopyFailed(true);
     }
   }
 
   function clear() {
     setText("");
     setCopied(false);
+    setCopyFailed(false);
   }
 
   const focusRing = "focus:outline-none focus:ring-4 focus:ring-[#c8f169]";
@@ -69,7 +73,7 @@ export default function RemoveDuplicateLines() {
               <label htmlFor="duplicate-lines-input" className="text-sm font-bold">Your lines</label>
               <span className="text-[11px] font-semibold text-black/35">{stats.lines.toLocaleString()} non-empty</span>
             </div>
-            <textarea id="duplicate-lines-input" value={text} onChange={(event) => { setText(event.target.value); setCopied(false); }} placeholder="Paste one item per line" aria-describedby="duplicate-lines-help" className={`min-h-72 w-full resize-y rounded-xl border border-[#bcb8ae] bg-[#fffdf8] p-4 text-base leading-7 text-[#171717] outline-none transition placeholder:text-black/25 focus:border-[#171717] ${focusRing}`} />
+            <textarea id="duplicate-lines-input" value={text} onChange={(event) => { setText(event.target.value); setCopied(false); setCopyFailed(false); }} placeholder="Paste one item per line" aria-describedby="duplicate-lines-help" className={`min-h-72 w-full resize-y rounded-xl border border-[#bcb8ae] bg-[#fffdf8] p-4 text-base leading-7 text-[#171717] outline-none transition placeholder:text-black/25 focus:border-[#171717] ${focusRing}`} />
             <p id="duplicate-lines-help" className="mt-2 text-xs leading-5 text-black/40">Blank lines are ignored. Matching is case-sensitive after surrounding whitespace is trimmed.</p>
           </div>
 
@@ -88,6 +92,7 @@ export default function RemoveDuplicateLines() {
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-black/40" aria-live="polite" aria-atomic="true">
               <span>{stats.unique.toLocaleString()} unique {stats.unique === 1 ? "line" : "lines"}</span>
               {stats.removed > 0 ? <span className="font-bold text-[#6d8e25]">{stats.removed.toLocaleString()} duplicates removed</span> : <span>No duplicates found</span>}
+              {copyFailed ? <span className="font-semibold text-[#9a4b2f]">Copy was blocked. Select the result and copy it manually.</span> : null}
             </div>
           </div>
         </div>
