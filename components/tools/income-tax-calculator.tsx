@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Landmark, RotateCcw } from "lucide-react";
 
 const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
 
@@ -46,18 +47,11 @@ function calculate(income: number, regime: "old" | "new", deductions: number): R
       ];
 
   let tax = slabTax(taxable, slabs);
-
   if (regime === "new") {
-    if (taxable <= 1_200_000) {
-      tax = Math.max(0, tax - Math.min(tax, 60_000));
-    } else {
-      // Marginal relief prevents a small rise above ₹12 lakh from causing a disproportionate tax jump.
-      tax = Math.min(tax, taxable - 1_200_000);
-    }
+    if (taxable <= 1_200_000) tax = Math.max(0, tax - Math.min(tax, 60_000));
+    else tax = Math.min(tax, taxable - 1_200_000);
   }
-  if (regime === "old" && taxable <= 500_000) {
-    tax = Math.max(0, tax - Math.min(tax, 12_500));
-  }
+  if (regime === "old" && taxable <= 500_000) tax = Math.max(0, tax - Math.min(tax, 12_500));
 
   const rate = surchargeRate(taxable, regime);
   const surcharge = tax * rate;
@@ -83,43 +77,51 @@ export default function IncomeTaxCalculator() {
   }, [income, deductions, old80C, old80D]);
 
   const reset = () => { setIncome("1200000"); setDeductions("0"); setOld80C("0"); setOld80D("0"); };
-  const inputClass = "mt-2 w-full rounded-lg border border-[#d8d4c9] bg-[#f8f5ed] px-4 py-3 text-base outline-none focus:border-[#171717]";
+  const inputClass = "mt-2 min-h-12 w-full rounded-xl border border-[#d8d4c9] bg-[#f8f5ed] px-4 text-base font-medium text-[#171717] outline-none transition placeholder:text-black/30 hover:border-black/30 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] focus:ring-offset-1";
+  const field = (label: string, value: string, setValue: (value: string) => void, hint?: string) => (
+    <label className="block min-w-0 rounded-2xl border border-[#e2ded4] bg-white p-4">
+      <span className="block text-sm font-bold">{label}</span>
+      {hint && <span className="mt-1 block text-xs leading-5 text-black/45">{hint}</span>}
+      <input className={inputClass} type="number" min="0" value={value} onChange={e => setValue(e.target.value)} inputMode="decimal" />
+    </label>
+  );
 
   return (
-    <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-8">
-      <div className="grid gap-6 lg:grid-cols-[1fr_.9fr]">
+    <div className="bg-[#fffdf8] p-3 sm:p-5 md:p-7">
+      <div className="mb-6 flex items-start gap-3 rounded-2xl border border-[#e2ded4] bg-[#f5f2ea] p-4 sm:p-5">
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#e8f2c9] text-[#58721e]"><Landmark size={21} aria-hidden="true" /></span>
+        <div className="min-w-0"><p className="text-xs font-black uppercase tracking-[.14em] text-[#6d8e25]">FY 2026-27</p><h3 className="mt-1 text-base font-black">Compare your estimated income tax</h3><p className="mt-1 text-xs leading-5 text-black/50">Enter gross annual income first. Add deductions only when comparing the old regime.</p></div>
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-[1fr_.95fr] lg:gap-7">
         <div className="space-y-5">
-          <div>
-            <label className="text-sm font-semibold">Annual gross income</label>
-            <input className={inputClass} type="number" min="0" value={income} onChange={e => setIncome(e.target.value)} placeholder="e.g. 1200000" />
-          </div>
-          <div className="border-t border-[#e5e1d7] pt-5">
-            <p className="text-sm font-bold">Old regime deductions</p>
-            <p className="mt-1 text-xs leading-5 text-black/50">Optional inputs. The new regime only uses the ₹75,000 salary standard deduction here.</p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-3">
-              <div><label className="text-xs font-semibold">Other deductions</label><input className={inputClass} type="number" min="0" value={deductions} onChange={e => setDeductions(e.target.value)} placeholder="0" /></div>
-              <div><label className="text-xs font-semibold">80C</label><input className={inputClass} type="number" min="0" value={old80C} onChange={e => setOld80C(e.target.value)} placeholder="0" /></div>
-              <div><label className="text-xs font-semibold">80D</label><input className={inputClass} type="number" min="0" value={old80D} onChange={e => setOld80D(e.target.value)} placeholder="0" /></div>
+          {field("Annual gross income", income, setIncome, "Before deductions and tax.")}
+          <section className="rounded-2xl border border-[#e2ded4] bg-[#faf9f6] p-4 sm:p-5" aria-labelledby="old-regime-deductions">
+            <div><h4 id="old-regime-deductions" className="text-sm font-black">Old regime deductions</h4><p className="mt-1 text-xs leading-5 text-black/45">Optional. These inputs affect the old-regime estimate only.</p></div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {field("Other deductions", deductions, setDeductions, "Capped in this estimate")}
+              {field("Section 80C", old80C, setOld80C, "Up to ₹1.5 lakh")}
+              {field("Section 80D", old80D, setOld80D, "Up to ₹1 lakh")}
             </div>
-          </div>
-          <button onClick={reset} className="min-h-11 rounded-lg border border-[#d8d4c9] px-4 text-sm font-semibold hover:bg-black/5">Reset</button>
+          </section>
+          <button type="button" onClick={reset} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-4 text-sm font-bold transition hover:border-[#171717] hover:bg-[#f5f2ea] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><RotateCcw size={15} aria-hidden="true" />Reset</button>
         </div>
 
-        <div className="space-y-4">
-          <div className="border border-[#d8d4c9] bg-[#f3f0e8] p-5">
-            <div className="flex items-center justify-between gap-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">New regime · FY 2026-27</p>{result.best === "new" && <span className="rounded-full bg-[#c8f169] px-2.5 py-1 text-xs font-bold">Lower tax</span>}</div>
-            <p className="mt-3 text-3xl font-black tracking-tight">{inr.format(result.newer.total)}</p>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div>Taxable income <strong className="block">{inr.format(result.newer.taxable)}</strong></div><div>Monthly equivalent <strong className="block">{inr.format(result.newer.total / 12)}</strong></div></div>
+        <div className="space-y-4" aria-live="polite">
+          <div className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-5 sm:p-6">
+            <div className="flex items-start justify-between gap-3"><p className="text-xs font-black uppercase tracking-[.14em] text-black/45">New regime</p>{result.best === "new" && <span className="shrink-0 rounded-full bg-[#c8f169] px-2.5 py-1 text-[11px] font-black">Lower tax</span>}</div>
+            <p className="mt-3 text-3xl font-black tracking-[-.03em] sm:text-4xl">{inr.format(result.newer.total)}</p><p className="mt-1 text-xs text-black/45">Estimated total tax</p>
+            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-[#d8d4c9] pt-4 text-xs text-black/50"><div>Taxable income<strong className="mt-1 block text-sm text-[#171717]">{inr.format(result.newer.taxable)}</strong></div><div>Monthly equivalent<strong className="mt-1 block text-sm text-[#171717]">{inr.format(result.newer.total / 12)}</strong></div></div>
           </div>
-          <div className="border border-[#d8d4c9] p-5">
-            <div className="flex items-center justify-between gap-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Old regime · FY 2026-27</p>{result.best === "old" && <span className="rounded-full bg-[#c8f169] px-2.5 py-1 text-xs font-bold">Lower tax</span>}</div>
-            <p className="mt-3 text-3xl font-black tracking-tight">{inr.format(result.older.total)}</p>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div>Taxable income <strong className="block">{inr.format(result.older.taxable)}</strong></div><div>Monthly equivalent <strong className="block">{inr.format(result.older.total / 12)}</strong></div></div>
+          <div className="rounded-2xl border border-[#d8d4c9] bg-white p-5 sm:p-6">
+            <div className="flex items-start justify-between gap-3"><p className="text-xs font-black uppercase tracking-[.14em] text-black/45">Old regime</p>{result.best === "old" && <span className="shrink-0 rounded-full bg-[#c8f169] px-2.5 py-1 text-[11px] font-black">Lower tax</span>}</div>
+            <p className="mt-3 text-3xl font-black tracking-[-.03em] sm:text-4xl">{inr.format(result.older.total)}</p><p className="mt-1 text-xs text-black/45">Estimated total tax</p>
+            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-[#e3dfd5] pt-4 text-xs text-black/50"><div>Taxable income<strong className="mt-1 block text-sm text-[#171717]">{inr.format(result.older.taxable)}</strong></div><div>Monthly equivalent<strong className="mt-1 block text-sm text-[#171717]">{inr.format(result.older.total / 12)}</strong></div></div>
           </div>
-          <div className="rounded-lg bg-[#171717] p-5 text-white"><p className="text-xs font-bold uppercase tracking-[0.14em] text-white/50">Estimated savings</p><p className="mt-2 text-2xl font-black">{inr.format(Math.abs(result.newer.total - result.older.total))}</p><p className="mt-1 text-sm text-white/60">The {result.best === "new" ? "new" : "old"} regime is lower with these inputs.</p></div>
+          <div className="rounded-2xl bg-[#171717] p-5 text-white sm:p-6"><p className="text-xs font-black uppercase tracking-[.14em] text-white/50">Estimated difference</p><p className="mt-2 text-2xl font-black tracking-[-.02em]">{inr.format(Math.abs(result.newer.total - result.older.total))}</p><p className="mt-1 text-sm leading-6 text-white/60">The {result.best === "new" ? "new" : "old"} regime is lower with these inputs.</p></div>
         </div>
       </div>
-      <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/50">Estimate for FY 2026-27 / AY 2027-28 using normal slab-rate income. It includes 4% health & education cess and compares the new and old regimes. It does not model capital gains or other special-rate income, HRA, home-loan-specific rules, or every possible deduction. For filing, verify against your Form 16 and the Income Tax Department.</p>
+      <p className="mt-6 rounded-2xl border border-[#e2ded4] bg-[#f8f5ed] p-4 text-xs leading-5 text-black/50">Estimate for FY 2026-27 / AY 2027-28 using normal slab-rate income. It includes 4% health & education cess and compares the new and old regimes. It does not model capital gains or other special-rate income, HRA, home-loan-specific rules, or every possible deduction. For filing, verify against your Form 16 and the Income Tax Department.</p>
     </div>
   );
 }
