@@ -13,6 +13,7 @@ export default function BmiCalculator() {
     const h = Number(height) / 100, w = Number(weight);
     if (!Number.isFinite(h) || !Number.isFinite(w) || h <= 0 || w <= 0) return null;
     const bmi = w / (h * h);
+    if (!Number.isFinite(bmi)) return null;
     const category = bmi < 18.5 ? "Underweight" : bmi < 25 ? "Healthy range" : bmi < 30 ? "Overweight" : "Obesity";
     return { bmi, category };
   }, [height, weight]);
