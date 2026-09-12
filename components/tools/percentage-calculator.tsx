@@ -49,8 +49,8 @@ export default function PercentageCalculator() {
 
       <div className="px-5 pb-5 md:px-7 md:pb-7">
         <div className="mb-3 flex flex-wrap items-center gap-2"><span className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Quick %</span>{quickPercentages.map(option => <button key={option} type="button" onClick={() => setPercentage(String(option))} aria-pressed={percentage === String(option)} className={`min-h-10 rounded-full border px-3 text-xs font-bold transition focus:outline-none focus:ring-4 focus:ring-[#c8f169] ${percentage === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{option}%</button>)}</div>
-        <div className="grid grid-cols-3 gap-1 rounded-xl border border-[#d8d4c9] bg-[#f4f1e9] p-1" role="tablist" aria-label="Percentage operation">
-          {([["of", "X% of Y"], ["increase", "Increase"], ["decrease", "Decrease"]] as const).map(([key, label]) => <button key={key} type="button" role="tab" aria-selected={mode === key} onClick={() => setMode(key)} className={`min-h-11 rounded-lg px-2 text-xs font-bold transition focus:outline-none focus:ring-4 focus:ring-[#c8f169] sm:text-sm ${mode === key ? "bg-[#171717] text-white" : "text-black/45 hover:bg-white hover:text-black"}`}>{label}</button>)}
+        <div className="grid grid-cols-3 gap-1 rounded-xl border border-[#d8d4c9] bg-[#f4f1e9] p-1" role="radiogroup" aria-label="Percentage operation">
+          {([["of", "X% of Y"], ["increase", "Increase"], ["decrease", "Decrease"]] as const).map(([key, label]) => <button key={key} type="button" role="radio" aria-checked={mode === key} onClick={() => setMode(key)} className={`min-h-11 rounded-lg px-2 text-xs font-bold transition focus:outline-none focus:ring-4 focus:ring-[#c8f169] sm:text-sm ${mode === key ? "bg-[#171717] text-white" : "text-black/45 hover:bg-white hover:text-black"}`}>{label}</button>)}
         </div>
       </div>
 
