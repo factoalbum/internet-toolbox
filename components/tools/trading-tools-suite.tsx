@@ -67,7 +67,7 @@ function Shell({ title, children }: { title: string; children: React.ReactNode }
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f1ff] text-[#315fba]" aria-hidden="true"><Icon size={20} /></span>
         <div className="min-w-0">
           <h3 id={headingId} className="text-base font-black">{title}</h3>
-          <p className="mt-1 text-xs leading-5 text-black/45">Set your inputs below. Results update instantly in your browser — no sign-in or upload required.</p>
+          <p className="mt-1 text-xs leading-5 text-black/45">Set your inputs below. Results update instantly in your browser - no sign-in or upload required.</p>
         </div>
       </div>
     </div>
@@ -101,7 +101,7 @@ function PositionSize() {
 function RiskReward() {
   const [entry, setEntry] = useState("250"), [stop, setStop] = useState("240"), [target, setTarget] = useState("270");
   const risk = Math.abs(n(entry) - n(stop)), reward = Math.abs(n(target) - n(entry));
-  return <Shell title="Risk / Reward Calculator"><div className="grid gap-4 sm:grid-cols-3"><Field label="Entry price" value={entry} onChange={setEntry} /><Field label="Stop-loss price" value={stop} onChange={setStop} /><Field label="Target price" value={target} onChange={setTarget} /></div><div className="grid gap-3 sm:grid-cols-3"><Result label="Risk per unit" value={money(risk)} /><Result label="Reward per unit" value={money(reward)} /><Result label="Risk / reward" value={risk > 0 ? `1 : ${(reward / risk).toFixed(2)}` : "—"} /></div></Shell>;
+  return <Shell title="Risk / Reward Calculator"><div className="grid gap-4 sm:grid-cols-3"><Field label="Entry price" value={entry} onChange={setEntry} /><Field label="Stop-loss price" value={stop} onChange={setStop} /><Field label="Target price" value={target} onChange={setTarget} /></div><div className="grid gap-3 sm:grid-cols-3"><Result label="Risk per unit" value={money(risk)} /><Result label="Reward per unit" value={money(reward)} /><Result label="Risk / reward" value={risk > 0 ? `1 : ${(reward / risk).toFixed(2)}` : "-"} /></div></Shell>;
 }
 
 function TradingPnL() {
@@ -158,7 +158,7 @@ function Expectancy() {
   const [winRate, setWinRate] = useState("55"), [avgWin, setAvgWin] = useState("1000"), [avgLoss, setAvgLoss] = useState("600");
   const expectancy = n(winRate) / 100 * n(avgWin) - (1 - n(winRate) / 100) * n(avgLoss);
   const lossRate = 100 - n(winRate);
-  return <Shell title="Trading Win Rate & Expectancy Calculator"><div className="grid gap-4 sm:grid-cols-3"><Field label="Win rate" value={winRate} onChange={setWinRate} suffix="%" /><Field label="Average win" value={avgWin} onChange={setAvgWin} /><Field label="Average loss" value={avgLoss} onChange={setAvgLoss} /></div><div className="grid gap-3 sm:grid-cols-3"><Result label="Loss rate" value={percent(lossRate)} /><Result label="Expectancy / trade" value={money(expectancy)} /><Result label="Win / loss ratio" value={n(avgLoss) > 0 ? `${(n(avgWin) / n(avgLoss)).toFixed(2)} : 1` : "—"} /></div></Shell>;
+  return <Shell title="Trading Win Rate & Expectancy Calculator"><div className="grid gap-4 sm:grid-cols-3"><Field label="Win rate" value={winRate} onChange={setWinRate} suffix="%" /><Field label="Average win" value={avgWin} onChange={setAvgWin} /><Field label="Average loss" value={avgLoss} onChange={setAvgLoss} /></div><div className="grid gap-3 sm:grid-cols-3"><Result label="Loss rate" value={percent(lossRate)} /><Result label="Expectancy / trade" value={money(expectancy)} /><Result label="Win / loss ratio" value={n(avgLoss) > 0 ? `${(n(avgWin) / n(avgLoss)).toFixed(2)} : 1` : "-"} /></div></Shell>;
 }
 
 function Drawdown() {
