@@ -109,7 +109,7 @@ assert.match(toolPage, /overflow-x-auto/); assert.match(toolPage, /min-w-0/); as
 const allToolsBrowser = fs.readFileSync(path.join(root, "components/all-tools-browser.tsx"), "utf8");
 assert.match(allToolsBrowser, /return live \? <Link/); assert.match(allToolsBrowser, /coming soon/);
 const viewer = fs.readFileSync(path.join(root, "components/tools/developer-file-viewer.tsx"), "utf8");
-assert.match(viewer, /requestAnimationFrame/); assert.match(viewer, /setTimeout\(\(\) => renderMarkdown/); assert.match(viewer, /kind === "markdown"/);
+assert.match(viewer, /requestAnimationFrame/); assert.match(viewer, /setTimeout\(\(\) => \{[\s\S]*renderMarkdown/); assert.match(viewer, /kind === "markdown"/);
 const fileTools = fs.readFileSync(path.join(root, "components/tools/document-tools-suite.tsx"), "utf8");
 assert.match(fileTools, /MAX_FILE_SIZE|MAX_FILE/); assert.match(fileTools, /20 \* 1024 \* 1024/);
 const utilityTools = fs.readFileSync(path.join(root, "components/tools/file-utility-suite.tsx"), "utf8");
