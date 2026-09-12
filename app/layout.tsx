@@ -9,14 +9,18 @@ const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "Internet Toolbox | Free online tools for everyday tasks", template: "%s | Internet Toolbox" },
-  description: "Free online calculators, converters, text tools and file utilities for everyday tasks. Fast, clear and no account required.",
+  description: "Free online calculators, converters, text tools, developer utilities and browser-based file tools for everyday tasks. Fast, clear and no account required.",
   applicationName: "Internet Toolbox",
-  keywords: ["online tools", "free calculators", "unit converter", "percentage calculator", "EMI calculator", "GST calculator", "text tools", "developer tools", "image compressor"],
+  category: "utilities",
+  creator: "Internet Toolbox",
+  publisher: "Internet Toolbox",
+  referrer: "strict-origin-when-cross-origin",
+  keywords: ["online tools", "free calculators", "unit converter", "percentage calculator", "EMI calculator", "GST calculator", "SIP calculator", "text tools", "developer tools", "PDF tools", "image tools", "JSON formatter", "password generator"],
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
   alternates: { canonical: "/" },
   verification: googleVerification ? { google: googleVerification } : undefined,
-  openGraph: { type: "website", siteName: "Internet Toolbox", title: "Internet Toolbox | Free online tools for everyday tasks", description: "Free online calculators, converters, text tools and file utilities for everyday tasks. Fast, clear and no account required.", url: siteUrl, images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "Internet Toolbox: free online tools for everyday tasks" }] },
-  twitter: { card: "summary_large_image", title: "Internet Toolbox | Free online tools for everyday tasks", description: "Free online calculators, converters, text tools and file utilities for everyday tasks.", images: ["/og-image.svg"] },
+  openGraph: { type: "website", siteName: "Internet Toolbox", title: "Internet Toolbox | Free online tools for everyday tasks", description: "Free online calculators, converters, text tools, developer utilities and browser-based file tools for everyday tasks. Fast, clear and no account required.", url: siteUrl, images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "Internet Toolbox: free online tools for everyday tasks" }] },
+  twitter: { card: "summary_large_image", title: "Internet Toolbox | Free online tools for everyday tasks", description: "Free online calculators, converters, text tools and browser-based file tools for everyday tasks.", images: ["/og-image.svg"] },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
