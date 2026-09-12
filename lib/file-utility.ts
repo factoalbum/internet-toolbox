@@ -15,6 +15,11 @@ async function loadPdf(file: { type: string; size: number; arrayBuffer: () => Pr
   return pdf;
 }
 
+export async function getPdfPageCount(file: { type: string; size: number; arrayBuffer: () => Promise<ArrayBuffer> }) {
+  const pdf = await loadPdf(file);
+  return pdf.getPageCount();
+}
+
 function assertPageOrder(pages: number[], pageCount: number) {
   if (!pages.length) throw new Error("The PDF has no pages to organize.");
   if (pages.some((page) => !Number.isInteger(page) || page < 0 || page >= pageCount)) throw new Error("The selected page order is invalid.");
