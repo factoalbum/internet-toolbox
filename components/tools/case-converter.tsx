@@ -38,20 +38,28 @@ function convert(value: string, mode: CaseName) {
 export default function CaseConverter() {
   const [text, setText] = useState("");
   const [mode, setMode] = useState<CaseName>("upper");
-  const [copied, setCopied] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "success" | "error">("idle");
   const result = useMemo(() => convert(text, mode), [text, mode]);
 
   async function copyResult() {
     if (!result) return;
-    await navigator.clipboard.writeText(result);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1400);
+
+    try {
+      await navigator.clipboard.writeText(result);
+      setCopyState("success");
+      window.setTimeout(() => setCopyState("idle"), 1400);
+    } catch {
+      setCopyState("error");
+      window.setTimeout(() => setCopyState("idle"), 2200);
+    }
   }
 
   function clearText() {
     setText("");
-    setCopied(false);
+    setCopyState("idle");
   }
+
+  const copyLabel = copyState === "success" ? "Copied" : copyState === "error" ? "Copy failed" : "Copy";
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]">
@@ -97,12 +105,13 @@ export default function CaseConverter() {
                 <label htmlFor="case-output" className="text-sm font-bold">Converted text</label>
                 <p className="mt-1 text-xs leading-5 text-black/45">Your result updates as you type.</p>
               </div>
-              <button type="button" onClick={copyResult} disabled={!result} className="flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[#cfcabf] bg-white px-3 text-xs font-bold transition hover:bg-[#f3f0e8] focus:outline-none focus:ring-4 focus:ring-[#c8f169] disabled:cursor-not-allowed disabled:opacity-35" aria-label={copied ? "Converted text copied" : "Copy converted text"}>
-                {copied ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
-                <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
+              <button type="button" onClick={copyResult} disabled={!result} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-lg border px-3 text-xs font-bold transition focus:outline-none focus:ring-4 focus:ring-[#c8f169] disabled:cursor-not-allowed disabled:opacity-35 ${copyState === "error" ? "border-[#b45309] text-[#92400e]" : "border-[#cfcabf] bg-white hover:bg-[#f3f0e8]"}`} aria-label={copyState === "success" ? "Converted text copied" : copyState === "error" ? "Copy converted text failed" : "Copy converted text"}>
+                {copyState === "success" ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
+                <span className="hidden sm:inline">{copyLabel}</span>
               </button>
             </div>
-            <textarea id="case-output" value={result} readOnly placeholder="Your converted text will appear here" aria-live="polite" className="mt-3 min-h-64 w-full resize-y rounded-xl border border-[#d8d4c9] bg-[#f4f1e9] p-4 text-base leading-7 outline-none placeholder:text-black/25" />
+            <textarea id="case-output" value={result} readOnly placeholder="Your converted text will appear here" aria-label="Converted text result" className="mt-3 min-h-64 w-full resize-y rounded-xl border border-[#d8d4c9] bg-[#f4f1e9] p-4 text-base leading-7 outline-none placeholder:text-black/25" />
+            {copyState === "error" && <p className="mt-2 text-xs font-medium text-[#92400e]" role="status">Copying was blocked by your browser. Select the result and copy it manually.</p>}
           </div>
         </div>
 
