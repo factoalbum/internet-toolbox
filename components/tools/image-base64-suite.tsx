@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { Copy, Download, Image as ImageIcon, Upload } from "lucide-react";
 import { IMAGE_BASE64_TYPES, MAX_IMAGE_BASE64_CHARS, parseImageBase64 } from "../../lib/image-base64";
 
@@ -19,16 +19,25 @@ export default function ImageBase64Suite({ variant }: { variant: Variant }) {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
+  const readRequestRef = useRef(0);
 
-  const reset = () => { setValue(""); setFileName(""); setMime("image/png"); setError(""); setCopied(false); setPreviewUrl(""); };
+  const reset = () => { readRequestRef.current += 1; setValue(""); setFileName(""); setMime("image/png"); setError(""); setCopied(false); setPreviewUrl(""); };
 
   const handleFile = (file: File) => {
+    const requestId = ++readRequestRef.current;
     setError(""); setCopied(false); setPreviewUrl("");
     if (!IMAGE_BASE64_TYPES.has(file.type)) { setValue(""); setFileName(""); setError("Please choose a supported image file: JPG, PNG, WebP, GIF or SVG."); return; }
     if (file.size > MAX_FILE_SIZE) { setValue(""); setFileName(""); setError("Please choose an image smaller than 20 MB."); return; }
     const reader = new FileReader();
-    reader.onload = () => { const result = String(reader.result); setValue(result); setFileName(file.name); setMime(file.type); };
-    reader.onerror = () => { setValue(""); setFileName(""); setError("The image could not be read. Please try another file."); };
+    reader.onload = () => {
+      if (requestId !== readRequestRef.current) return;
+      const result = String(reader.result);
+      setValue(result); setFileName(file.name); setMime(file.type);
+    };
+    reader.onerror = () => {
+      if (requestId !== readRequestRef.current) return;
+      setValue(""); setFileName(""); setError("The image could not be read. Please try another file.");
+    };
     reader.readAsDataURL(file);
   };
 
