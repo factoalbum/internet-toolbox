@@ -23,7 +23,6 @@ const components = {
   "image-resizer": () => <ImageEditSuite variant="image-resizer" />, "image-cropper": () => <ImageEditSuite variant="image-cropper" />, "image-rotate-flip": () => <ImageEditSuite variant="image-rotate-flip" />, "image-format-converter": () => <ImageEditSuite variant="image-format-converter" />,
   "image-to-base64": () => <ImageBase64Suite variant="image-to-base64" />, "base64-to-image": () => <ImageBase64Suite variant="base64-to-image" />,
   "svg-to-png": () => <FileUtilitySuite variant="svg-to-png" />, "pdf-page-organizer": () => <FileUtilitySuite variant="pdf-page-organizer" />, "pdf-page-rotator": () => <FileUtilitySuite variant="pdf-page-rotator" />,
-  "direct-video-downloader": dynamic(() => import("./direct-video-downloader")),
 } as const;
 
 export default function ToolRouter({ slug }: { slug: string }) {
