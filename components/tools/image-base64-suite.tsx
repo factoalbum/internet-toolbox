@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useState } from "react";
 import { Copy, Download, Image as ImageIcon, Upload } from "lucide-react";
-import { IMAGE_BASE64_TYPES, MAX_IMAGE_BASE64_CHARS, parseImageBase64 } from "../../lib/image-base64.ts";
+import { IMAGE_BASE64_TYPES, MAX_IMAGE_BASE64_CHARS, parseImageBase64 } from "../../lib/image-base64";
 
 type Variant = "image-to-base64" | "base64-to-image";
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
