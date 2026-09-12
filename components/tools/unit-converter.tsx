@@ -35,14 +35,20 @@ export default function UnitConverter() {
   const [from, setFrom] = useState("m");
   const [to, setTo] = useState("ft");
 
-  const result = useMemo(() => {
+  const { result, error } = useMemo(() => {
     const number = Number(value);
-    if (!value.trim() || !Number.isFinite(number)) return null;
-    if (category === "temperature") return convertTemperature(number, from, to);
+    if (!value.trim() || !Number.isFinite(number)) return { result: null, error: null };
+
+    if (category === "temperature") {
+      const celsius = from === "c" ? number : from === "f" ? (number - 32) * 5 / 9 : number - 273.15;
+      if (celsius < -273.15) return { result: null, error: "Temperature cannot be below absolute zero (−273.15 °C)." };
+      return { result: convertTemperature(number, from, to), error: null };
+    }
+
     const source = units[category].find((unit) => unit.value === from);
     const target = units[category].find((unit) => unit.value === to);
-    if (!source?.factor || !target?.factor) return null;
-    return number * source.factor / target.factor;
+    if (!source?.factor || !target?.factor) return { result: null, error: null };
+    return { result: number * source.factor / target.factor, error: null };
   }, [category, value, from, to]);
 
   function changeCategory(next: Category) {
@@ -93,7 +99,7 @@ export default function UnitConverter() {
 
         <div className="mt-6 rounded-2xl border border-[#171717] bg-[#171717] p-5 text-white md:p-7" aria-live="polite" aria-atomic="true">
           <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-white/40">Converted result</p>
-          <p className="mt-2 break-all text-4xl font-black tracking-tight md:text-5xl">{result === null ? "Enter a value" : formatNumber(result)}</p>
+          <p className={`mt-2 break-words text-4xl font-black tracking-tight md:text-5xl ${error ? "text-2xl md:text-3xl" : ""}`}>{error ?? (result === null ? "Enter a value" : formatNumber(result))}</p>
           {result !== null && <p className="mt-2 text-sm text-white/45">{formatNumber(Number(value))} {options.find((unit) => unit.value === from)?.label} → {formatNumber(result)} {options.find((unit) => unit.value === to)?.label}</p>}
         </div>
 
