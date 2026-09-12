@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CandlestickChart, CircleDollarSign, Gauge, Scale, ShieldCheck, Target, TrendingUp } from "lucide-react";
 
 type Variant =
   | "position-size-calculator"
@@ -23,11 +24,12 @@ const percent = (value: number) => `${value.toFixed(2)}%`;
 const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
 
 function Field({ label, value, onChange, suffix, step = "any" }: FieldProps) {
-  return <label className="block">
-    <span className="mb-2 block text-xs font-bold text-black/60">{label}</span>
+  return <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
+    <span className="mb-1 block text-sm font-bold text-black/70">{label}</span>
+    <span className="mb-2 block text-xs leading-5 text-black/40">Enter a value to update the result instantly.</span>
     <div className="relative">
-      <input inputMode="decimal" type="number" min="0" step={step} value={value} onChange={(event) => onChange(event.target.value)} className={`min-h-12 w-full rounded-xl border border-[#dcd9d1] bg-white px-3.5 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${suffix ? "pr-12" : ""}`} />
-      {suffix && <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-bold text-black/35">{suffix}</span>}
+      <input aria-label={label} inputMode="decimal" type="number" min="0" step={step} value={value} onChange={(event) => onChange(event.target.value)} className={`min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3.5 text-base font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${suffix ? "pr-12" : ""} ${focusRing}`} />
+      {suffix && <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-bold text-black/35" aria-hidden="true">{suffix}</span>}
     </div>
   </label>;
 }
@@ -40,14 +42,37 @@ function Result({ label, value, note }: { label: string; value: string; note?: s
   </div>;
 }
 
+function iconForTitle(title: string) {
+  if (title.includes("Position Size")) return Target;
+  if (title.includes("Risk / Reward")) return Scale;
+  if (title.includes("Profit & Loss")) return TrendingUp;
+  if (title.includes("Stop-Loss")) return ShieldCheck;
+  if (title.includes("Take-Profit")) return Target;
+  if (title.includes("Risk Calculator")) return ShieldCheck;
+  if (title.includes("Margin")) return CircleDollarSign;
+  if (title.includes("Leverage")) return Gauge;
+  if (title.includes("Break-Even")) return Scale;
+  if (title.includes("Average Entry")) return TrendingUp;
+  if (title.includes("Expectancy")) return TrendingUp;
+  if (title.includes("Drawdown")) return TrendingUp;
+  return CandlestickChart;
+}
+
 function Shell({ title, children }: { title: string; children: React.ReactNode }) {
-  return <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.04)]">
+  const Icon = iconForTitle(title);
+  const headingId = `trading-tool-${title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+  return <section aria-labelledby={headingId} className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.04)]">
     <div className="border-b border-[#d8d4c9] bg-[#f4f1e9] px-5 py-4 md:px-6">
-      <h3 className="text-base font-black">{title}</h3>
-      <p className="mt-1 text-xs leading-5 text-black/40">Calculations run locally in your browser. Values are estimates, not financial advice.</p>
+      <div className="flex items-start gap-3">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f1ff] text-[#315fba]" aria-hidden="true"><Icon size={20} /></span>
+        <div className="min-w-0">
+          <h3 id={headingId} className="text-base font-black">{title}</h3>
+          <p className="mt-1 text-xs leading-5 text-black/45">Set your inputs below. Results update instantly in your browser — no sign-in or upload required.</p>
+        </div>
+      </div>
     </div>
     <div className="space-y-5 p-5 md:p-6">{children}</div>
-  </div>;
+  </section>;
 }
 
 export default function TradingToolsSuite({ variant }: { variant: Variant }) {
