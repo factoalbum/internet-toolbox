@@ -93,7 +93,7 @@ export default function ColorConverter() {
             </label>
             {([['Red','r',r],['Green','g',g],['Blue','b',b]] as const).map(([label, channel, value]) => (
               <label key={channel} className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
-                <span className="text-sm font-bold">{label}</span><span className="mt-1 block text-xs text-black/40">0–255</span>
+                <span className="text-sm font-bold">{label}</span><span className="mt-1 block text-xs text-black/40">0 to 255</span>
                 <input type="number" min="0" max="255" inputMode="numeric" value={value} onChange={(event) => updateFromRgb(channel, event.target.value)} aria-label={`${label} RGB value`} className={`mt-3 h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 font-mono text-base font-bold outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
               </label>
             ))}
@@ -113,7 +113,7 @@ export default function ColorConverter() {
             <div className="mt-3 grid gap-3 sm:grid-cols-3">
               {([['HEX', normalizedHex], ['RGB', rgbText], ['HSL', hslText]] as const).map(([label, value]) => <div key={label} className="rounded-2xl border border-[#d8d4c9] bg-white p-4">
                 <div className="flex items-center justify-between gap-2"><p className="text-xs font-bold text-black/45">{label}</p><button type="button" onClick={() => copyValue(label, value)} disabled={!value} className={`flex min-h-10 min-w-10 items-center justify-center rounded-lg border border-[#d8d4c9] text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`} aria-label={`Copy ${label} value`}>{copied === label ? <Check size={16}/> : <Clipboard size={16}/>}</button></div>
-                <p className="mt-3 break-all font-mono text-sm font-bold">{value || "—"}</p>
+                <p className="mt-3 break-all font-mono text-sm font-bold">{value || "Invalid"}</p>
               </div>)}
             </div>
           </section>
