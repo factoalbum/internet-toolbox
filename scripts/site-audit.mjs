@@ -113,7 +113,8 @@ assert.match(viewer, /requestAnimationFrame/); assert.match(viewer, /setTimeout\
 const fileTools = fs.readFileSync(path.join(root, "components/tools/document-tools-suite.tsx"), "utf8");
 assert.match(fileTools, /MAX_(?:FILE_)?SIZE/); assert.match(fileTools, /20 \* 1024 \* 1024/);
 const utilityTools = fs.readFileSync(path.join(root, "components/tools/file-utility-suite.tsx"), "utf8");
-assert.match(utilityTools, /25 \* 1024 \* 1024/); assert.match(utilityTools, /MAX_PDF_PAGES|100/);
+const utilityLibrary = fs.readFileSync(path.join(root, "lib/file-utility.ts"), "utf8");
+assert.match(`${utilityTools}\n${utilityLibrary}`, /25 \* 1024 \* 1024/); assert.match(utilityLibrary, /MAX_PDF_PAGES\s*=\s*100/);
 const base64Tools = fs.readFileSync(path.join(root, "components/tools/image-base64-suite.tsx"), "utf8");
 assert.match(base64Tools, /parseImageBase64/);
 const editTools = fs.readFileSync(path.join(root, "components/tools/image-edit-suite.tsx"), "utf8");
