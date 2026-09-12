@@ -6,15 +6,18 @@ import { RotateCcw, UsersRound } from "lucide-react";
 const inputClassName =
   "min-h-12 w-full bg-transparent px-3 text-base font-semibold text-[#171717] outline-none placeholder:text-black/30 focus-visible:ring-4 focus-visible:ring-[#c8f169]";
 
+const toFiniteNumber = (value: number, fallback: number) =>
+  Number.isFinite(value) ? value : fallback;
+
 export default function BillSplitter() {
   const [bill, setBill] = useState(1000);
   const [people, setPeople] = useState(2);
   const [tip, setTip] = useState(0);
 
   const result = useMemo(() => {
-    const safeBill = Math.max(0, Number(bill) || 0);
-    const safePeople = Math.max(1, Math.floor(Number(people) || 1));
-    const safeTip = Math.max(0, Number(tip) || 0);
+    const safeBill = Math.max(0, toFiniteNumber(Number(bill), 0));
+    const safePeople = Math.max(1, Math.floor(toFiniteNumber(Number(people), 1)));
+    const safeTip = Math.max(0, toFiniteNumber(Number(tip), 0));
     const tipAmount = safeBill * (safeTip / 100);
     const total = safeBill + tipAmount;
     return { safePeople, tipAmount, total, each: total / safePeople };
