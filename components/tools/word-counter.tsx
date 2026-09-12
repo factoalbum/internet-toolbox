@@ -39,7 +39,7 @@ export default function WordCounter() {
           id="word-counter-input"
           value={text}
           onChange={(event) => setText(event.target.value)}
-          placeholder="Start typing or paste text here…"
+          placeholder="Start typing or paste text here..."
           aria-describedby="word-counter-help"
           className="mt-2 min-h-72 w-full resize-y rounded-xl border border-[#cfcabf] bg-[#faf9f6] p-4 text-base leading-7 text-[#171717] outline-none transition placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/45"
         />
