@@ -11,6 +11,15 @@ const silverFixture = `
   12 September 2026 [Input]
 `;
 
+const validSnapshot = {
+  source: "Goodreturns",
+  city: "Mumbai",
+  updatedAt: "12 September 2026",
+  fetchedAt: "2026-09-12T00:00:00.000Z",
+  gold: { "24k": 15442, "22k": 14155, "18k": 11582 },
+  silver: { perGram: 245, perKg: 245000 },
+};
+
 test("Goodreturns Mumbai gold parser extracts all purities", () => {
   assert.deepEqual(parseGoodreturnsGold(goldFixture), {
     gold: { "24k": 15442, "22k": 14155, "18k": 11582 },
@@ -26,6 +35,10 @@ test("Goodreturns Mumbai silver parser extracts gram and kilogram rates", () => 
 });
 
 test("India metal snapshot validation rejects inconsistent data", () => {
-  assert.throws(() => validateIndiaMetalRates({ source: "Goodreturns", city: "Mumbai", updatedAt: "12 September 2026", fetchedAt: "2026-09-12T00:00:00.000Z", gold: { "24k": 15442, "22k": 14155, "18k": 11582 }, silver: { perGram: 245, perKg: 240000 } }), /inconsistent/);
-  assert.equal(validateIndiaMetalRates({ source: "Goodreturns", city: "Mumbai", updatedAt: "12 September 2026", fetchedAt: "2026-09-12T00:00:00.000Z", gold: { "24k": 15442, "22k": 14155, "18k": 11582 }, silver: { perGram: 245, perKg: 245000 }), true);
+  const invalid = {
+    ...validSnapshot,
+    silver: { perGram: 245, perKg: 240000 },
+  };
+  assert.throws(() => validateIndiaMetalRates(invalid), /inconsistent/);
+  assert.equal(validateIndiaMetalRates(validSnapshot), true);
 });
