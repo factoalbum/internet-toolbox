@@ -3,15 +3,22 @@
 import { Download, Link2, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
-const videoExtensions = /\.(mp4|webm|mov|m4v)(?:[?#].*)?$/i;
+const videoExtensions = /\.(mp4|webm|mov|m4v)$/i;
 
-function isHttpUrl(value: string) {
+function parseHttpUrl(value: string) {
   try {
     const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    if (url.username || url.password) return null;
+    return url;
   } catch {
-    return false;
+    return null;
   }
+}
+
+function isDirectVideoUrl(value: string) {
+  const url = parseHttpUrl(value);
+  return Boolean(url && videoExtensions.test(url.pathname));
 }
 
 export default function DirectVideoDownloader() {
@@ -19,16 +26,17 @@ export default function DirectVideoDownloader() {
   const [error, setError] = useState("");
 
   const trimmedUrl = url.trim();
-  const valid = useMemo(() => isHttpUrl(trimmedUrl), [trimmedUrl]);
-  const looksLikeVideo = useMemo(() => videoExtensions.test(trimmedUrl), [trimmedUrl]);
+  const valid = useMemo(() => Boolean(parseHttpUrl(trimmedUrl)), [trimmedUrl]);
+  const looksLikeVideo = useMemo(() => isDirectVideoUrl(trimmedUrl), [trimmedUrl]);
   const ready = valid && looksLikeVideo && !error;
 
   const prepare = () => {
-    if (!isHttpUrl(trimmedUrl)) {
-      setError("Enter a valid http:// or https:// video URL.");
+    const parsed = parseHttpUrl(trimmedUrl);
+    if (!parsed) {
+      setError("Enter a valid http:// or https:// video URL without embedded login credentials.");
       return;
     }
-    if (!videoExtensions.test(trimmedUrl)) {
+    if (!videoExtensions.test(parsed.pathname)) {
       setError("Use a direct .mp4, .webm, .mov or .m4v file URL for reliable browser downloads.");
       return;
     }
