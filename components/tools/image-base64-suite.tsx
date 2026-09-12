@@ -5,6 +5,7 @@ import { Copy, Download, Image as ImageIcon, Upload } from "lucide-react";
 
 type Variant = "image-to-base64" | "base64-to-image";
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
+const MAX_BASE64_CHARS = Math.ceil((MAX_FILE_SIZE * 4) / 3) + 64;
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"]);
 
 function FilePicker({ onFile }: { onFile: (file: File) => void }) {
@@ -36,9 +37,13 @@ export default function ImageBase64Suite({ variant }: { variant: Variant }) {
     setError(""); setCopied(false); setPreviewUrl("");
     const raw = value.trim();
     if (!raw) { setError("Paste a Base64 image or data URL first."); return; }
-    const data = raw.match(/^data:(image\/(?:jpeg|png|webp|gif|svg\+xml));base64,([A-Za-z0-9+/=\s]+)$/i) ? raw : `data:${mime};base64,${raw.replace(/\s/g, "")}`;
-    if (!/^data:image\/(jpeg|png|webp|gif|svg\+xml);base64,[A-Za-z0-9+/=]+$/i.test(data)) { setError("Use a valid Base64 image or data URL."); return; }
-    setPreviewUrl(data); setMime(data.match(/^data:([^;]+)/i)?.[1] ?? mime);
+    const normalized = raw.replace(/\s/g, "");
+    if (normalized.length > MAX_BASE64_CHARS) { setError("The Base64 image is larger than the 20 MB browser limit."); return; }
+    const dataMatch = normalized.match(/^data:(image\/(?:jpeg|png|webp|gif|svg\+xml));base64,([A-Za-z0-9+/=]+)$/i);
+    const payload = dataMatch?.[2] ?? normalized;
+    const detectedMime = dataMatch?.[1]?.toLowerCase() ?? mime;
+    if (!/^([A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(payload) || !IMAGE_TYPES.has(detectedMime)) { setError("Use a valid Base64 image or data URL."); return; }
+    setPreviewUrl(`data:${detectedMime};base64,${payload}`); setMime(detectedMime);
   };
 
   const copy = async () => { if (!value) return; try { await navigator.clipboard.writeText(value); setCopied(true); setTimeout(() => setCopied(false), 1600); } catch { setError("Clipboard access is unavailable. Select and copy the text manually."); } };
