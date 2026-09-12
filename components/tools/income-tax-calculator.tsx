@@ -4,8 +4,20 @@ import { useMemo, useState } from "react";
 import { Landmark, RotateCcw } from "lucide-react";
 
 const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
+const inputClass = "mt-2 min-h-12 w-full rounded-xl border border-[#d8d4c9] bg-[#f8f5ed] px-4 text-base font-medium text-[#171717] outline-none transition placeholder:text-black/30 hover:border-black/30 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] focus:ring-offset-1";
 
 type RegimeResult = { taxable: number; tax: number; cess: number; surcharge: number; total: number };
+type NumberFieldProps = { label: string; value: string; setValue: (value: string) => void; hint?: string };
+
+function NumberField({ label, value, setValue, hint }: NumberFieldProps) {
+  return (
+    <label className="block min-w-0 rounded-2xl border border-[#e2ded4] bg-white p-4">
+      <span className="block text-sm font-bold">{label}</span>
+      {hint && <span className="mt-1 block text-xs leading-5 text-black/45">{hint}</span>}
+      <input className={inputClass} type="number" min="0" value={value} onChange={e => setValue(e.target.value)} inputMode="decimal" />
+    </label>
+  );
+}
 
 function slabTax(income: number, slabs: { limit: number; rate: number }[]) {
   let tax = 0;
@@ -77,14 +89,6 @@ export default function IncomeTaxCalculator() {
   }, [income, deductions, old80C, old80D]);
 
   const reset = () => { setIncome("1200000"); setDeductions("0"); setOld80C("0"); setOld80D("0"); };
-  const inputClass = "mt-2 min-h-12 w-full rounded-xl border border-[#d8d4c9] bg-[#f8f5ed] px-4 text-base font-medium text-[#171717] outline-none transition placeholder:text-black/30 hover:border-black/30 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] focus:ring-offset-1";
-  const field = (label: string, value: string, setValue: (value: string) => void, hint?: string) => (
-    <label className="block min-w-0 rounded-2xl border border-[#e2ded4] bg-white p-4">
-      <span className="block text-sm font-bold">{label}</span>
-      {hint && <span className="mt-1 block text-xs leading-5 text-black/45">{hint}</span>}
-      <input className={inputClass} type="number" min="0" value={value} onChange={e => setValue(e.target.value)} inputMode="decimal" />
-    </label>
-  );
 
   return (
     <div className="bg-[#fffdf8] p-3 sm:p-5 md:p-7">
@@ -95,13 +99,13 @@ export default function IncomeTaxCalculator() {
 
       <div className="grid gap-5 lg:grid-cols-[1fr_.95fr] lg:gap-7">
         <div className="space-y-5">
-          {field("Annual gross income", income, setIncome, "Before deductions and tax.")}
+          <NumberField label="Annual gross income" value={income} setValue={setIncome} hint="Before deductions and tax." />
           <section className="rounded-2xl border border-[#e2ded4] bg-[#faf9f6] p-4 sm:p-5" aria-labelledby="old-regime-deductions">
             <div><h4 id="old-regime-deductions" className="text-sm font-black">Old regime deductions</h4><p className="mt-1 text-xs leading-5 text-black/45">Optional. These inputs affect the old-regime estimate only.</p></div>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              {field("Other deductions", deductions, setDeductions, "Capped in this estimate")}
-              {field("Section 80C", old80C, setOld80C, "Up to ₹1.5 lakh")}
-              {field("Section 80D", old80D, setOld80D, "Up to ₹1 lakh")}
+              <NumberField label="Other deductions" value={deductions} setValue={setDeductions} hint="Capped in this estimate" />
+              <NumberField label="Section 80C" value={old80C} setValue={setOld80C} hint="Up to ₹1.5 lakh" />
+              <NumberField label="Section 80D" value={old80D} setValue={setOld80D} hint="Up to ₹1 lakh" />
             </div>
           </section>
           <button type="button" onClick={reset} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-4 text-sm font-bold transition hover:border-[#171717] hover:bg-[#f5f2ea] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><RotateCcw size={15} aria-hidden="true" />Reset</button>
