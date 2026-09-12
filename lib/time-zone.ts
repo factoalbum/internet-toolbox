@@ -24,11 +24,37 @@ function localTimeToInstant(value: string, timeZone: string) {
   const [year, month, day] = datePart.split("-").map(Number);
   const [hour, minute] = timePart.split(":").map(Number);
   if (![year, month, day, hour, minute].every(Number.isFinite)) return new Date(NaN);
+
+  const calendarDate = new Date(Date.UTC(year, month - 1, day));
+  if (
+    calendarDate.getUTCFullYear() !== year ||
+    calendarDate.getUTCMonth() !== month - 1 ||
+    calendarDate.getUTCDate() !== day ||
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31 ||
+    hour < 0 ||
+    hour > 23 ||
+    minute < 0 ||
+    minute > 59
+  ) return new Date(NaN);
+
   const wallTime = Date.UTC(year, month - 1, day, hour, minute, 0);
   const initialOffset = offsetAt(new Date(wallTime), timeZone);
   let instant = new Date(wallTime - initialOffset);
   const correctedOffset = offsetAt(instant, timeZone);
   if (correctedOffset !== initialOffset) instant = new Date(wallTime - correctedOffset);
+
+  const resolved = partsFor(instant, timeZone);
+  if (
+    Number(resolved.year) !== year ||
+    Number(resolved.month) !== month ||
+    Number(resolved.day) !== day ||
+    Number(resolved.hour) !== hour ||
+    Number(resolved.minute) !== minute
+  ) return new Date(NaN);
+
   return instant;
 }
 
