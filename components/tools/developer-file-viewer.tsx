@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type ChangeEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { Check, Clipboard, Code2, Download, FileCode2, FileText, Upload, X } from "lucide-react";
 
 type FileKind = "markdown" | "html" | "json" | "code" | "text";
@@ -59,26 +59,40 @@ export default function DeveloperFileViewer() {
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
   const [reading, setReading] = useState(false);
+  const [markdownPreview, setMarkdownPreview] = useState<{ source: string; nodes: ReactNode[] } | null>(null);
 
   const kind = file ? kindOf(file.name) : "text";
   const canPreview = kind === "markdown" || kind === "html" || kind === "json";
   const lineCount = useMemo(() => content ? content.split(/\r?\n/).length : 0, [content]);
   const wordCount = useMemo(() => content.trim() ? content.trim().split(/\s+/).length : 0, [content]);
   const displayContent = useMemo(() => { if (kind !== "json" || !content.trim()) return content; try { return JSON.stringify(JSON.parse(content), null, 2); } catch { return content; } }, [content, kind]);
-  const markdownPreview = useMemo(() => kind === "markdown" && content ? renderMarkdown(content) : null, [content, kind]);
+
+  useEffect(() => {
+    if (kind !== "markdown" || !content || tab !== "preview") return;
+    if (markdownPreview?.source === content) return;
+
+    let cancelled = false;
+    let timer = 0;
+    const frame = window.requestAnimationFrame(() => {
+      timer = window.setTimeout(() => {
+        if (!cancelled) setMarkdownPreview({ source: content, nodes: renderMarkdown(content) });
+      }, 0);
+    });
+    return () => { cancelled = true; window.cancelAnimationFrame(frame); window.clearTimeout(timer); };
+  }, [content, kind, tab, markdownPreview]);
 
   const readFile = (selected: File) => {
     const ext = extensionOf(selected.name);
     if (!supported.includes(ext)) { setError("Unsupported file type. Try a common text/code file such as .md, .html, .js, .ts, .py, .json or .yaml."); return; }
     if (selected.size > MAX_FILE_SIZE) { setError("This tool supports files up to 5 MB."); return; }
-    setError(""); setCopied(false); setFile(selected); setTab("preview"); setContent(""); setReading(true);
+    setError(""); setCopied(false); setMarkdownPreview(null); setFile(selected); setTab("preview"); setContent(""); setReading(true);
     const reader = new FileReader();
     reader.onload = () => { setContent(typeof reader.result === "string" ? reader.result : ""); setReading(false); };
     reader.onerror = () => { setReading(false); setError("Could not read this file in your browser."); };
     reader.readAsText(selected);
   };
   const onInput = (event: ChangeEvent<HTMLInputElement>) => { const selected = event.target.files?.[0]; if (selected) readFile(selected); };
-  const clear = () => { setFile(null); setContent(""); setError(""); setCopied(false); setReading(false); if (inputRef.current) inputRef.current.value = ""; };
+  const clear = () => { setFile(null); setContent(""); setError(""); setCopied(false); setReading(false); setMarkdownPreview(null); if (inputRef.current) inputRef.current.value = ""; };
   const copy = async () => { try { await navigator.clipboard.writeText(content); setCopied(true); window.setTimeout(() => setCopied(false), 1600); } catch { setError("Copy was blocked by the browser. Select the source text and copy it manually."); } };
   const download = () => { if (!file) return; const url = URL.createObjectURL(new Blob([content], { type: "text/plain;charset=utf-8" })); const anchor = document.createElement("a"); anchor.href = url; anchor.download = file.name; document.body.appendChild(anchor); anchor.click(); anchor.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 0); };
 
@@ -90,7 +104,7 @@ export default function DeveloperFileViewer() {
       {canPreview && <div className="flex gap-1 rounded-lg bg-[#f0eee8] p-1" role="tablist" aria-label="File view"><button type="button" role="tab" aria-selected={tab === "preview"} onClick={() => setTab("preview")} className={`min-h-10 rounded-md px-4 text-xs font-bold ${tab === "preview" ? "bg-white shadow-sm" : "text-black/50"}`}>Preview</button><button type="button" role="tab" aria-selected={tab === "source"} onClick={() => setTab("source")} className={`min-h-10 rounded-md px-4 text-xs font-bold ${tab === "source" ? "bg-white shadow-sm" : "text-black/50"}`}>Source</button></div>}
       {reading && <div className="flex min-h-[320px] items-center justify-center rounded-xl border border-[#d8d4c9] bg-white"><p className="text-sm font-semibold text-black/45">Reading file...</p></div>}
       {!reading && tab === "preview" && kind === "html" && <div className="min-h-[70vh] overflow-hidden rounded-xl border border-[#d8d4c9] bg-white"><iframe title={`Preview of ${file.name}`} sandbox="" srcDoc={content} className="block h-[70vh] min-h-[680px] w-full border-0 bg-white" /></div>}
-      {!reading && tab === "preview" && kind === "markdown" && <article className="min-h-[320px] rounded-xl border border-[#d8d4c9] bg-white p-6 md:p-8">{markdownPreview}</article>}
+      {!reading && tab === "preview" && kind === "markdown" && <article className="min-h-[320px] rounded-xl border border-[#d8d4c9] bg-white p-6 md:p-8">{markdownPreview?.source === content ? markdownPreview.nodes : <div className="flex min-h-[260px] items-center justify-center text-sm font-semibold text-black/40">Preparing preview...</div>}</article>}
       {!reading && tab === "preview" && kind === "json" && <pre className="min-h-[320px] overflow-auto rounded-xl border border-[#d8d4c9] bg-[#171717] p-5 font-mono text-sm leading-6 text-white/85">{displayContent || "No JSON content"}</pre>}
       {!reading && (tab === "source" || !canPreview) && <pre className="max-h-[620px] min-h-[320px] overflow-auto rounded-xl border border-[#d8d4c9] bg-[#171717] p-5 font-mono text-[13px] leading-6 text-white/85">{displayContent}</pre>}
       <div className="flex items-start gap-3 border-t border-[#e4e1d9] pt-4 text-xs leading-5 text-black/45"><Code2 size={15} className="mt-0.5 shrink-0" aria-hidden="true" /><p>{kind === "html" ? "HTML is previewed in a sandboxed frame. Scripts are not given permission to run." : "Your file stays in this browser tab. It is not uploaded to the server."}</p></div>
