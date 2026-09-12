@@ -26,6 +26,12 @@ function gramsFor(amount: number, unit: Unit) {
   return amount;
 }
 
+function ratesUrl() {
+  const configuredBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const githubPagesBasePath = window.location.pathname.startsWith("/internet-toolbox") ? "/internet-toolbox" : "";
+  return `${configuredBasePath || githubPagesBasePath}/data/india-metal-rates.json`;
+}
+
 export default function GoldSilverConverter() {
   const [metal, setMetal] = useState<Metal>("gold");
   const [purity, setPurity] = useState<keyof Rates["gold"]>("24k");
@@ -39,7 +45,7 @@ export default function GoldSilverConverter() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/data/india-metal-rates.json", { cache: "no-store" });
+      const response = await fetch(ratesUrl(), { cache: "no-store" });
       if (!response.ok) throw new Error(`Rate snapshot request failed: ${response.status}`);
       const data = await response.json() as Rates;
       const values = [data.gold["24k"], data.gold["22k"], data.gold["18k"], data.silver.perGram, data.silver.perKg];
