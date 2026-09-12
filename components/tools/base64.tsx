@@ -10,33 +10,41 @@ function encode(value: string) {
 }
 
 function decode(value: string) {
-  const binary = atob(value.replace(/\s/g, ""));
+  const normalized = value.replace(/\s/g, "");
+  if (!normalized) return "";
+  if (!/^[A-Za-z0-9+/]*={0,2}$/.test(normalized) || normalized.length % 4 !== 0) {
+    throw new Error("Invalid Base64 input.");
+  }
+  const binary = atob(normalized);
   const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
+  return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
 }
 
 export default function Base64Tool() {
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"encode" | "decode">("encode");
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState("");
 
   const result = useMemo(() => {
     if (!input) return { value: "", error: "" };
     try {
       return { value: mode === "encode" ? encode(input) : decode(input), error: "" };
     } catch {
-      return { value: "", error: "Invalid Base64 input." };
+      return { value: "", error: "Invalid Base64 input. Use a complete Base64 value with valid padding." };
     }
   }, [input, mode]);
 
   async function copy() {
     if (!result.value) return;
+    setCopyError("");
     try {
       await navigator.clipboard.writeText(result.value);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1400);
     } catch {
       setCopied(false);
+      setCopyError("Copying was blocked by your browser. Select the result and copy it manually.");
     }
   }
 
@@ -45,12 +53,14 @@ export default function Base64Tool() {
     setInput(result.value);
     setMode(mode === "encode" ? "decode" : "encode");
     setCopied(false);
+    setCopyError("");
   }
 
   function reset() {
     setInput("");
     setMode("encode");
     setCopied(false);
+    setCopyError("");
   }
 
   const inputPlaceholder = mode === "encode" ? "Hello, world!" : "SGVsbG8sIHdvcmxkIQ==";
@@ -69,8 +79,8 @@ export default function Base64Tool() {
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex rounded-lg bg-black/[0.045] p-1" role="group" aria-label="Base64 operation">
-            <button type="button" onClick={() => { setMode("encode"); setCopied(false); }} aria-pressed={mode === "encode"} className={`min-h-11 rounded-md px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 ${mode === "encode" ? "bg-[#171717] text-white shadow-sm" : "text-black/60 hover:bg-white hover:text-[#171717]"}`}>Encode</button>
-            <button type="button" onClick={() => { setMode("decode"); setCopied(false); }} aria-pressed={mode === "decode"} className={`min-h-11 rounded-md px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 ${mode === "decode" ? "bg-[#171717] text-white shadow-sm" : "text-black/60 hover:bg-white hover:text-[#171717]"}`}>Decode</button>
+            <button type="button" onClick={() => { setMode("encode"); setCopied(false); setCopyError(""); }} aria-pressed={mode === "encode"} className={`min-h-11 rounded-md px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 ${mode === "encode" ? "bg-[#171717] text-white shadow-sm" : "text-black/60 hover:bg-white hover:text-[#171717]"}`}>Encode</button>
+            <button type="button" onClick={() => { setMode("decode"); setCopied(false); setCopyError(""); }} aria-pressed={mode === "decode"} className={`min-h-11 rounded-md px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 ${mode === "decode" ? "bg-[#171717] text-white shadow-sm" : "text-black/60 hover:bg-white hover:text-[#171717]"}`}>Decode</button>
           </div>
           <button type="button" onClick={reset} className="min-h-11 rounded-md border border-[#c9c5ba] bg-white px-4 text-sm font-semibold text-[#171717] transition-colors hover:bg-black/[0.035] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60">Reset</button>
         </div>
@@ -85,7 +95,7 @@ export default function Base64Tool() {
             </div>
             <span className="rounded-full bg-[#f2efe7] px-2.5 py-1 text-[11px] font-semibold text-black/50">Local only</span>
           </div>
-          <textarea id="base64-input" value={input} onChange={(event) => { setInput(event.target.value); setCopied(false); }} spellCheck={false} placeholder={inputPlaceholder} aria-describedby="base64-input-help" className="mt-4 min-h-56 w-full resize-y rounded-lg border border-[#c9c5ba] bg-[#fffdf8] p-4 font-mono text-sm leading-6 text-[#171717] outline-none transition-shadow placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
+          <textarea id="base64-input" value={input} onChange={(event) => { setInput(event.target.value); setCopied(false); setCopyError(""); }} spellCheck={false} placeholder={inputPlaceholder} aria-describedby="base64-input-help" className="mt-4 min-h-56 w-full resize-y rounded-lg border border-[#c9c5ba] bg-[#fffdf8] p-4 font-mono text-sm leading-6 text-[#171717] outline-none transition-shadow placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
           <p id="base64-input-help" className="mt-2 text-xs leading-5 text-black/45">Tip: whitespace is ignored when decoding.</p>
         </section>
 
@@ -102,7 +112,9 @@ export default function Base64Tool() {
       </div>
 
       <div id="base64-status" className="mt-5 flex flex-col gap-3 border-t border-[#d8d4c9] pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className={`text-xs leading-5 ${result.error ? "font-semibold text-red-700" : "text-black/45"}`} role={result.error ? "alert" : undefined}>{result.error || "Processed locally in your browser. Nothing is uploaded."}</p>
+        <div className="space-y-1">
+          <p className={`text-xs leading-5 ${result.error ? "font-semibold text-red-700" : copyError ? "font-semibold text-[#7b4a20]" : "text-black/45"}`} role={result.error || copyError ? "alert" : undefined}>{result.error || copyError || "Processed locally in your browser. Nothing is uploaded."}</p>
+        </div>
         <button type="button" onClick={useResult} disabled={!result.value || !!result.error} className="min-h-11 rounded-md border border-[#171717] bg-[#171717] px-4 text-sm font-semibold text-white transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 disabled:cursor-not-allowed disabled:opacity-35">Use result as input</button>
       </div>
     </div>
