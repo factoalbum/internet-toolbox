@@ -1,10 +1,10 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  BadgePercent, Banknote, Binary, Braces, CalendarDays, CandlestickChart, CaseSensitive,
-  ChartNoAxesCombined, Clock3, Code2, Coins, FileArchive, FileCode2, FileJson, FileOutput, FileText,
-  Files, GitCompare, Globe2, Hash, HeartPulse, Home, ImageIcon, Images, KeyRound, Landmark, Link2, ListX,
+  Activity, BadgePercent, Banknote, Binary, Braces, CalendarDays, CandlestickChart, CaseSensitive,
+  ChartNoAxesCombined, ChartSpline, CircleDollarSign, Clock3, Code2, Coins, FileArchive, FileCode2, FileJson, FileOutput, FileText,
+  Files, Gauge, GitCompare, Globe2, Hash, HeartPulse, Home, ImageIcon, Images, KeyRound, Landmark, Link2, ListX,
   LockKeyhole, MessageSquareText, Percent, PiggyBank, QrCode, ReceiptText, Regex, Ruler, ScanLine,
-  ScanSearch, Scale, ShieldCheck, Shuffle, Split, TextCursorInput, Timer, Type, Utensils, WalletCards,
+  ScanSearch, Scale, ShieldAlert, ShieldCheck, Shuffle, Split, Target, TextCursorInput, Timer, TrendingUp, Type, Utensils, WalletCards,
 } from "lucide-react";
 import type { ToolCategory } from "@/lib/tools";
 
@@ -56,16 +56,16 @@ const semanticIcons: Record<string, LucideIcon> = {
   "gold-silver-rate-converter": Coins,
   "position-size-calculator": CandlestickChart,
   "risk-reward-calculator": Scale,
-  "trading-profit-loss-calculator": ChartNoAxesCombined,
+  "trading-profit-loss-calculator": CircleDollarSign,
   "stop-loss-calculator": LockKeyhole,
-  "take-profit-calculator": BadgePercent,
-  "trading-risk-calculator": ShieldCheck,
+  "take-profit-calculator": Target,
+  "trading-risk-calculator": ShieldAlert,
   "margin-calculator": WalletCards,
-  "leverage-calculator": Scale,
+  "leverage-calculator": Gauge,
   "break-even-calculator": ReceiptText,
-  "average-entry-price-calculator": ChartNoAxesCombined,
-  "trading-expectancy-calculator": ChartNoAxesCombined,
-  "drawdown-calculator": ChartNoAxesCombined,
+  "average-entry-price-calculator": TrendingUp,
+  "trading-expectancy-calculator": ChartSpline,
+  "drawdown-calculator": Activity,
   "random-number-generator": Shuffle,
   "tip-calculator": Utensils,
   "bill-splitter": Split,
