@@ -111,7 +111,7 @@ assert.match(allToolsBrowser, /return live \? <Link/); assert.match(allToolsBrow
 const viewer = fs.readFileSync(path.join(root, "components/tools/developer-file-viewer.tsx"), "utf8");
 assert.match(viewer, /requestAnimationFrame/); assert.match(viewer, /setTimeout\(\(\) => \{[\s\S]*renderMarkdown/); assert.match(viewer, /kind === "markdown"/);
 const fileTools = fs.readFileSync(path.join(root, "components/tools/document-tools-suite.tsx"), "utf8");
-assert.match(fileTools, /MAX_FILE_SIZE|MAX_FILE/); assert.match(fileTools, /20 \* 1024 \* 1024/);
+assert.match(fileTools, /MAX_(?:FILE_)?SIZE/); assert.match(fileTools, /20 \* 1024 \* 1024/);
 const utilityTools = fs.readFileSync(path.join(root, "components/tools/file-utility-suite.tsx"), "utf8");
 assert.match(utilityTools, /25 \* 1024 \* 1024/); assert.match(utilityTools, /MAX_PDF_PAGES|100/);
 const base64Tools = fs.readFileSync(path.join(root, "components/tools/image-base64-suite.tsx"), "utf8");
