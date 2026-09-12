@@ -1,0 +1,15 @@
+{
+  "source": "Goodreturns",
+  "city": "Mumbai",
+  "updatedAt": "12 September 2026",
+  "fetchedAt": "2026-09-12T00:00:00.000Z",
+  "gold": {
+    "24k": 15442,
+    "22k": 14155,
+    "18k": 11582
+  },
+  "silver": {
+    "perGram": 245,
+    "perKg": 245000
+  }
+}

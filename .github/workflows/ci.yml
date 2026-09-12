@@ -27,6 +27,9 @@ jobs:
       - name: QA
         run: npm run qa
 
+      - name: India metal rate parser tests
+        run: node --experimental-strip-types --test scripts/test-india-metal-rates.mjs
+
       - name: Site audit
         run: npm run site-audit
 
