@@ -8,6 +8,11 @@ function formatNumber(value: number): string {
 }
 
 const quickPercentages = [5, 10, 15, 20, 25, 50];
+const modes = [
+  ["of", "X% of Y"],
+  ["increase", "Increase"],
+  ["decrease", "Decrease"],
+] as const;
 const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
 
 export default function PercentageCalculator() {
@@ -33,6 +38,14 @@ export default function PercentageCalculator() {
     setMode("of");
   }
 
+  function handleModeKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, currentIndex: number) {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? modes.length - 1 : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + modes.length) % modes.length;
+    setMode(modes[nextIndex][0]);
+    document.getElementById(`percentage-mode-${modes[nextIndex][0]}`)?.focus();
+  }
+
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]">
       <div className="border-b border-[#d8d4c9] bg-[#f4f1e9] px-5 py-4 md:px-7">
@@ -55,7 +68,7 @@ export default function PercentageCalculator() {
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
           <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Quick percentage</p><div className="mt-2 flex flex-wrap gap-2">{quickPercentages.map(option => <button key={option} type="button" onClick={() => setPercentage(String(option))} aria-pressed={percentage === String(option)} className={`min-h-10 rounded-full border px-3 text-xs font-bold transition ${focusRing} ${percentage === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{option}%</button>)}</div></div>
           <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">What do you want to calculate?</p><div className="mt-2 grid grid-cols-3 gap-1 rounded-xl border border-[#d8d4c9] bg-[#f4f1e9] p-1" role="radiogroup" aria-label="Percentage operation">
-            {([["of", "X% of Y"], ["increase", "Increase"], ["decrease", "Decrease"]] as const).map(([key, label]) => <button key={key} type="button" role="radio" aria-checked={mode === key} onClick={() => setMode(key)} className={`min-h-11 rounded-lg px-2 text-xs font-bold transition ${focusRing} ${mode === key ? "bg-[#171717] text-white" : "text-black/45 hover:bg-white hover:text-black"}`}>{label}</button>)}
+            {modes.map(([key, label], index) => <button id={`percentage-mode-${key}`} key={key} type="button" role="radio" aria-checked={mode === key} tabIndex={mode === key ? 0 : -1} onClick={() => setMode(key)} onKeyDown={(event) => handleModeKeyDown(event, index)} className={`min-h-11 rounded-lg px-2 text-xs font-bold transition ${focusRing} ${mode === key ? "bg-[#171717] text-white" : "text-black/45 hover:bg-white hover:text-black"}`}>{label}</button>)}
           </div></div>
         </div>
 
