@@ -1,10 +1,11 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Activity, BadgePercent, Banknote, Binary, Braces, CalendarDays, CandlestickChart, CaseSensitive,
-  ChartNoAxesCombined, ChartSpline, CircleDollarSign, Clock3, Code2, Coins, FileArchive, FileCode2, FileJson, FileOutput, FileText,
+  ChartNoAxesCombined, ChartSpline, CircleDollarSign, CirclePercent, Clock3, Code2, Coins, FileArchive, FileCode2, FileJson, FileOutput, FileText,
   Files, Gauge, GitCompare, Globe2, Hash, HeartPulse, Home, ImageIcon, Images, KeyRound, Landmark, Link2, ListX,
   LockKeyhole, MessageSquareText, Percent, PiggyBank, QrCode, ReceiptText, Regex, Ruler, ScanLine,
   ScanSearch, Scale, ShieldAlert, ShieldCheck, Shuffle, Split, Target, TextCursorInput, Timer, TrendingUp, Type, Utensils, WalletCards,
+  Weight, Thermometer, Hourglass, Calculator, Tags, HandCoins, UserRound, CalendarRange, CircleDollarSign as DollarSign,
 } from "lucide-react";
 import type { ToolCategory } from "@/lib/tools";
 
@@ -36,8 +37,8 @@ const categoryBase: Record<ToolCategory, number> = {
 
 const semanticIcons: Record<string, LucideIcon> = {
   "percentage-calculator": Percent,
-  "age-calculator": CalendarDays,
-  "discount-calculator": BadgePercent,
+  "age-calculator": UserRound,
+  "discount-calculator": Tags,
   "time-converter": Clock3,
   "time-zone-converter": Globe2,
   "emi-calculator": Banknote,
@@ -45,11 +46,11 @@ const semanticIcons: Record<string, LucideIcon> = {
   "bmi-calculator": HeartPulse,
   "sip-calculator": ChartNoAxesCombined,
   "unit-converter": Ruler,
-  "date-calculator": CalendarDays,
+  "date-calculator": CalendarRange,
   "fd-calculator": Landmark,
   "compound-interest-calculator": Coins,
   "income-tax-calculator": ReceiptText,
-  "salary-calculator": WalletCards,
+  "salary-calculator": HandCoins,
   "ppf-calculator": PiggyBank,
   "hra-calculator": Home,
   "currency-converter": Banknote,
