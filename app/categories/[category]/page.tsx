@@ -25,14 +25,19 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   if (!category) notFound();
   const categoryTools = tools.filter((tool) => tool.category === (slug as ToolCategory) && tool.status === "live");
   const Icon = category.icon;
-  const listJsonLd = { "@context": "https://schema.org", "@type": "ItemList", name: `${category.name} - Internet Toolbox`, numberOfItems: categoryTools.length, itemListElement: categoryTools.map((tool, index) => ({ "@type": "ListItem", position: index + 1, name: tool.name, url: `${siteUrl}/tools/${tool.slug}/` })) };
+  const categoryUrl = `${siteUrl}/categories/${slug}`;
+  const listJsonLd = { "@context": "https://schema.org", "@type": "ItemList", name: `${category.name} - Internet Toolbox`, description: category.description, numberOfItems: categoryTools.length, itemListElement: categoryTools.map((tool, index) => ({ "@type": "ListItem", position: index + 1, name: tool.name, url: `${siteUrl}/tools/${tool.slug}/` })) };
+  const pageJsonLd = [
+    { "@context": "https://schema.org", "@type": "CollectionPage", name: `${category.name} tools`, description: category.description, url: categoryUrl },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` }, { "@type": "ListItem", position: 2, name: "All tools", item: `${siteUrl}/tools/` }, { "@type": "ListItem", position: 3, name: category.name, item: categoryUrl }] },
+  ];
 
   return <main className="min-h-screen bg-[#faf9f6] text-[#171717]">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listJsonLd) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([listJsonLd, ...pageJsonLd]) }} />
     <SiteHeader />
     <section className="bg-white">
       <div className="container py-5 sm:py-6 md:py-8">
-        <nav aria-label="Breadcrumb" className="text-xs font-medium text-black/40"><Link href="/" className="rounded px-1 py-1 hover:text-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Home</Link><span className="mx-2">/</span><Link href="/tools" className="rounded px-1 py-1 hover:text-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]">All tools</Link><span className="mx-2">/</span><span className="text-black/70">{category.name}</span></nav>
+        <nav aria-label="Breadcrumb" className="text-xs font-medium text-black/40"><Link href="/" className="rounded px-1 py-1 hover:text-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Home</Link><span className="mx-2">/</span><Link href="/tools" className="rounded px-1 py-1 hover:text-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]">All tools</Link><span className="mx-2">/</span><span className="text-black/70" aria-current="page">{category.name}</span></nav>
         <div className="mt-5 flex flex-col gap-5 sm:mt-6 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
           <div className="flex min-w-0 items-start gap-4">
             <ToolIcon icon={Icon} slug={category.slug} category={category.slug} size={23} className="size-12 sm:size-14" />
