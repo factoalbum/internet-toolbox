@@ -1,4 +1,4 @@
-"use client";
+use client;
 
 import { CalendarDays, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -43,13 +43,16 @@ export default function AgeCalculator() {
   const [end, setEnd] = useState(() => localDateValue());
 
   const result = useMemo(() => age(parseDate(birth), parseDate(end)), [birth, end]);
+  const birthInvalid = Boolean(birth && end && birth > end);
+  const endInvalid = Boolean(birth && end && end < birth);
 
   const reset = () => {
     setBirth("2000-01-01");
     setEnd(localDateValue());
   };
 
-  const focusRing = "focus:outline-none focus:ring-4 focus:ring-[#c8f169]";
+  const useToday = () => setEnd(localDateValue());
+  const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]">
@@ -72,34 +75,49 @@ export default function AgeCalculator() {
       </div>
 
       <div className="p-5 md:p-7">
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-black">Your dates</p>
+            <p className="mt-1 text-xs leading-5 text-black/45">Pick a birth date and the date you want to measure against.</p>
+          </div>
+          <button type="button" onClick={useToday} className={`min-h-10 shrink-0 rounded-lg border border-[#d8d4c9] bg-white px-3 text-xs font-bold text-black/60 transition hover:border-[#171717] hover:text-black ${focusRing}`}>Use today</button>
+        </div>
+
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="rounded-2xl border border-[#e2dfd7] bg-white p-4">
+          <label className={`rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${birthInvalid ? "border-[#c77a6b]" : "border-[#e2dfd7]"}`}>
             <span className="text-sm font-bold">Date of birth</span>
             <span className="mt-1 block text-xs leading-5 text-black/40">The date you were born.</span>
-            <input id="age-birth-date" type="date" value={birth} max={end} onChange={e => setBirth(e.target.value)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] ${focusRing}`} />
+            <input id="age-birth-date" type="date" value={birth} max={end} aria-invalid={birthInvalid} onChange={e => setBirth(e.target.value)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] ${focusRing}`} />
           </label>
-          <label className="rounded-2xl border border-[#e2dfd7] bg-white p-4">
+          <label className={`rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${endInvalid ? "border-[#c77a6b]" : "border-[#e2dfd7]"}`}>
             <span className="text-sm font-bold">Calculate age on</span>
             <span className="mt-1 block text-xs leading-5 text-black/40">Use today or choose another date.</span>
-            <input id="age-end-date" type="date" value={end} min={birth} onChange={e => setEnd(e.target.value)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] ${focusRing}`} />
+            <input id="age-end-date" type="date" value={end} min={birth} aria-invalid={endInvalid} onChange={e => setEnd(e.target.value)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] ${focusRing}`} />
           </label>
         </div>
 
         {result ? (
           <div className="mt-7 space-y-4" aria-live="polite" aria-atomic="true">
             <div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5 md:p-6">
-              <p className="text-[11px] font-black uppercase tracking-[.15em] text-black/55">Exact age</p>
-              <p className="mt-2 text-2xl font-black leading-tight tracking-[-.035em] sm:text-3xl">{result.years} years, {result.months} months, {result.days} days</p>
-              <p className="mt-2 text-xs font-medium text-black/55">Calculated from {birth} to {end}</p>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-[.15em] text-black/55">Exact age</p>
+                  <p className="mt-2 text-2xl font-black leading-tight tracking-[-.035em] sm:text-3xl">{result.years} years, {result.months} months, {result.days} days</p>
+                </div>
+                <span className="rounded-full border border-black/15 bg-white/50 px-2.5 py-1 text-[11px] font-bold text-black/60">Age estimate</span>
+              </div>
+              <p className="mt-3 text-xs font-medium text-black/55">From {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(parseDate(birth))} to {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(parseDate(end))}.</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-2xl border border-[#d8d4c9] bg-white p-4">
                 <p className="text-xs font-semibold text-black/45">Total days</p>
                 <p className="mt-1 text-xl font-black">{result.totalDays.toLocaleString("en-IN")}</p>
+                <p className="mt-1 text-xs text-black/40">Calendar days between the two dates.</p>
               </div>
               <div className="rounded-2xl border border-[#d8d4c9] bg-white p-4">
                 <p className="text-xs font-semibold text-black/45">Date range</p>
                 <p className="mt-1 break-words text-sm font-bold">{birth} → {end}</p>
+                <p className="mt-1 text-xs text-black/40">The selected period used for this result.</p>
               </div>
             </div>
           </div>
