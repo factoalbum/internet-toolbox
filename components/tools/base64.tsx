@@ -90,7 +90,7 @@ export default function Base64Tool() {
             <button type="button" onClick={() => { setMode("encode"); setCopied(false); setCopyError(""); }} aria-pressed={mode === "encode"} className={`min-h-11 rounded-lg px-5 text-sm font-bold transition-colors ${mode === "encode" ? "bg-[#171717] text-white shadow-sm" : "text-black/55 hover:bg-[#f4f1e9] hover:text-[#171717]"} ${focusRing}`}>Encode</button>
             <button type="button" onClick={() => { setMode("decode"); setCopied(false); setCopyError(""); }} aria-pressed={mode === "decode"} className={`min-h-11 rounded-lg px-5 text-sm font-bold transition-colors ${mode === "decode" ? "bg-[#171717] text-white shadow-sm" : "text-black/55 hover:bg-[#f4f1e9] hover:text-[#171717]"} ${focusRing}`}>Decode</button>
           </div>
-          <span className="text-xs font-semibold text-black/40">{mode === "encode" ? "Text → Base64" : "Base64 → text"}</span>
+          <span className="text-xs font-semibold text-black/40">{mode === "encode" ? "Text to Base64" : "Base64 to text"}</span>
         </div>
       </header>
 
