@@ -125,7 +125,7 @@ export default function GoldSilverConverter() {
       {metal === "gold" && <section className="mt-5" aria-labelledby="purity-heading">
         <label htmlFor="purity" className="block text-sm font-bold" id="purity-heading">2. Gold purity</label>
         <select id="purity" value={purity} onChange={(event) => setPurity(event.target.value as keyof Rates["gold"])} className={`mt-2 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-4 text-sm outline-none transition focus:border-[#171717] ${focusRing}`}>
-          <option value="24k">24K · 999 fine</option><option value="22k">22K · 916 fine</option><option value="18k">18K · 750 fine</option>
+          <option value="24k">24K - 999 fine</option><option value="22k">22K - 916 fine</option><option value="18k">18K - 750 fine</option>
         </select>
       </section>}
 
@@ -146,19 +146,19 @@ export default function GoldSilverConverter() {
         </div>
         {quickWeights.length > 0 && <div className="mt-3 flex flex-wrap items-center gap-2" aria-label="Quick weight choices">
           <span className="mr-1 text-xs font-semibold text-black/40">Quick:</span>
-          {quickWeights.map((quick) => <button key={quick} type="button" aria-pressed={weight === String(quick)} onClick={() => setWeight(String(quick))} className={`min-h-10 rounded-full border px-3 text-xs font-bold transition ${focusRing} ${weight === String(quick) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-white text-black/55 hover:border-[#171717] hover:text-black"}`}>{quick}{unit === "g" ? "g" : " × 10g"}</button>)}
+          {quickWeights.map((quick) => <button key={quick} type="button" aria-pressed={weight === String(quick)} onClick={() => setWeight(String(quick))} className={`min-h-10 rounded-full border px-3 text-xs font-bold transition ${focusRing} ${weight === String(quick) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-white text-black/55 hover:border-[#171717] hover:text-black"}`}>{quick}{unit === "g" ? "g" : " x 10g"}</button>)}
         </div>}
       </section>
 
       <section className="mt-7" aria-labelledby="metal-result-heading" aria-live="polite" aria-atomic="true">
         <div className="flex items-center justify-between gap-3">
           <div><p className="text-xs font-black uppercase tracking-[.12em] text-black/45">Estimated value</p><h3 id="metal-result-heading" className="mt-1 text-base font-black">What your weight is worth</h3></div>
-          {loading && <span className="text-xs font-semibold text-black/40">Loading rates…</span>}
+          {loading && <span className="text-xs font-semibold text-black/40">Loading rates</span>}
         </div>
         <div className="mt-3 rounded-2xl border border-[#171717] bg-[#c8f169] p-5 md:p-6">
           <p className="break-all text-3xl font-black tracking-[-.035em] sm:text-4xl">{loading ? "Loading" : result === null ? "Not available" : money(result)}</p>
           {perGram !== null && <p className="mt-2 text-sm leading-5 text-black/60">{money(perGram)} per gram · {money(perGram * 10)} per 10g · {money(perGram * 1000)} per kg</p>}
-          {!loading && result !== null && <p className="mt-3 text-xs font-semibold text-black/50">Based on {weight || "0"} {unit === "10g" ? "× 10g" : unit} of {metal}{metal === "gold" ? ` (${purity.toUpperCase()})` : ""}.</p>}
+          {!loading && result !== null && <p className="mt-3 text-xs font-semibold text-black/50">Based on {weight || "0"} {unit === "10g" ? "x 10g" : unit} of {metal}{metal === "gold" ? ` (${purity.toUpperCase()})` : ""}.</p>}
         </div>
       </section>
 
