@@ -12,6 +12,13 @@ function escapeCsv(value: unknown) {
   return /[",\n\r]/.test(text) ? '"' + text.replaceAll('"', '""') + '"' : text;
 }
 
+function spreadsheetSafeValue(value: unknown) {
+  if (value === null || value === undefined || typeof value === "object") return value;
+  const text = String(value);
+  // Prevent CSV formula injection when users open downloaded output in a spreadsheet.
+  return /^[=+\-@]/.test(text) ? "'" + text : value;
+}
+
 function toCsv(value: unknown) {
   if (!Array.isArray(value) || value.length === 0 || value.some((row) => row === null || typeof row !== "object" || Array.isArray(row))) {
     throw new Error("Input must be a JSON array of objects.");
@@ -21,7 +28,7 @@ function toCsv(value: unknown) {
   const rows = value as Record<string, unknown>[];
   const columns = Array.from(new Set(rows.flatMap((row) => Object.keys(row))));
   if (columns.length === 0) throw new Error("The JSON objects do not contain any fields.");
-  return [columns.map(escapeCsv).join(","), ...rows.map((row) => columns.map((column) => escapeCsv(row[column])).join(","))].join("\n");
+  return [columns.map(escapeCsv).join(","), ...rows.map((row) => columns.map((column) => escapeCsv(spreadsheetSafeValue(row[column]))).join(","))].join("\n");
 }
 
 export default function JsonToCsv() {
@@ -123,7 +130,7 @@ export default function JsonToCsv() {
         </div>
 
         {(error || copyError) && <p id="json-csv-error" className="mt-4 rounded-xl border border-[#ead7d2] bg-[#fff7f5] px-4 py-3 text-sm leading-6 text-[#7b3d31]" role="alert">{error || copyError}</p>}
-        <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Only JSON arrays of objects can be converted. Columns follow the order in which unique fields first appear.</p>
+        <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Only JSON arrays of objects can be converted. Columns follow the order in which unique fields first appear. Values beginning with spreadsheet formula characters are prefixed with an apostrophe for safer spreadsheet use.</p>
       </div>
     </div>
   );
