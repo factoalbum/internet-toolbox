@@ -8,6 +8,8 @@ import { searchAliases } from "@/components/tool-search";
 import ToolIcon, { getToolAccent } from "@/components/tool-icon";
 
 const liveTools = tools.filter((tool) => tool.status === "live");
+const liveCategorySlugs = new Set(liveTools.map((tool) => tool.category));
+const liveCategories = categories.filter((category) => liveCategorySlugs.has(category.slug));
 
 export default function AllToolsBrowser() {
   const [query, setQuery] = useState("");
@@ -45,20 +47,20 @@ export default function AllToolsBrowser() {
         <SlidersHorizontal size={15} className="ml-1 shrink-0 text-black/35" aria-hidden="true" />
         <div className="scrollbar-none flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1 pt-1">
           <button type="button" onClick={() => setCategory("all")} aria-pressed={category === "all"} className={`min-h-10 shrink-0 rounded-full border px-4 text-xs font-bold transition ${category === "all" ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#fffdf8] hover:border-[#171717]"} focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]`}>All tools</button>
-          {categories.map((item) => { const accent = getToolAccent(item.slug, item.slug); const Icon = item.icon; return <button key={item.slug} type="button" onClick={() => setCategory(item.slug)} aria-pressed={category === item.slug} className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-3.5 text-xs font-bold transition ${category === item.slug ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#fffdf8] hover:border-[#171717]"} focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]`}><span className={`flex size-6 items-center justify-center rounded-lg ${accent.bg} ${accent.text}`}><Icon size={13} aria-hidden="true" /></span>{item.name}</button>; })}
+          {liveCategories.map((item) => { const accent = getToolAccent(item.slug, item.slug); const Icon = item.icon; return <button key={item.slug} type="button" onClick={() => setCategory(item.slug)} aria-pressed={category === item.slug} className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-3.5 text-xs font-bold transition ${category === item.slug ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#fffdf8] hover:border-[#171717]"} focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]`}><span className={`flex size-6 items-center justify-center rounded-lg ${accent.bg} ${accent.text}`}><Icon size={13} aria-hidden="true" /></span>{item.name}</button>; })}
         </div>
       </div>
     </div>
 
     <div className="mt-6 flex items-center justify-between gap-3">
-      <p className="text-sm text-black/45" aria-live="polite">Showing {filtered.length} {filtered.length === 1 ? "tool" : "tools"}{query.trim() ? ` matching "${query.trim()}"` : ""}.</p>
+      <p className="text-sm text-black/45" aria-live="polite">Showing {filtered.length} {filtered.length === 1 ? "tool" : "tools"}{query.trim() ? ` matching "${query.trim()}"` : ""}{category !== "all" ? ` in ${liveCategories.find((item) => item.slug === category)?.name ?? "this category"}` : ""}.</p>
       {(query || category !== "all") && <button type="button" onClick={clearFilters} className="shrink-0 rounded-md px-1 text-xs font-bold text-black/55 underline decoration-black/20 underline-offset-4 hover:text-black focus:outline-none focus:ring-2 focus:ring-[#c8f169]">Clear filters</button>}
     </div>
 
     {filtered.length === 0 ? <div id="all-tools-results" className="mt-5 border border-dashed border-[#bcb8ae] bg-[#fffdf8] px-6 py-12 text-center" role="status"><h2 className="font-bold">No matching tools</h2><p className="mt-2 text-sm text-black/50">Try a broader search such as tax, loan, date, PDF or text.</p><button type="button" onClick={clearFilters} className="mt-5 min-h-11 rounded-lg bg-[#171717] px-5 text-sm font-bold text-white hover:bg-black/80 focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Show all tools</button></div> : <div id="all-tools-results" className="mt-5 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">{filtered.map((tool) => {
       const live = tool.status === "live";
       const content = <><div className="flex items-start justify-between gap-2"><ToolIcon icon={tool.icon} slug={tool.slug} category={tool.category} size={17} className="size-9 sm:size-11" /><span className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] text-[#6d8e25] sm:text-[10px] sm:tracking-[0.14em]">Live</span></div><h2 className="mt-auto pt-3 break-words text-xs font-bold leading-4 sm:mt-5 sm:pt-0 sm:text-base sm:leading-normal">{tool.name}</h2><p className="mt-1 line-clamp-2 break-words text-[10px] leading-4 text-black/50 sm:mt-2 sm:text-sm sm:leading-6">{tool.description}</p><span className="mt-2 inline-flex items-center gap-1 text-[9px] font-bold sm:mt-5 sm:text-xs">Open tool <ArrowRight size={11} className="transition group-hover:translate-x-0.5 sm:size-[13px]" /></span></>;
-      return live ? <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group min-w-0 rounded-2xl border border-[#e1ded6] bg-white p-3.5 aspect-square hover:-translate-y-0.5 hover:border-[#171717] hover:shadow-[0_8px_24px_rgba(23,23,23,.07)] focus:outline-none focus:ring-4 focus:ring-[#c8f169] sm:aspect-auto sm:p-5">{content}</Link> : <div key={tool.slug} aria-label={`${tool.name}, coming soon`} className="group min-w-0 rounded-2xl border border-[#e1ded6] bg-white p-3.5 aspect-square opacity-60 sm:aspect-auto sm:p-5">{content}</div>;
+      return live ? <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group min-w-0 rounded-2xl border border-[#e1ded6] bg-white p-3.5 aspect-square hover:-translate-y-0.5 hover:border-[#171717] hover:shadow-[0_8px_24px_rgba(23,23,23,.07)] focus:outline-none focus:ring-4 focus:ring-[#c8f169]">{content}</Link> : <div key={tool.slug} aria-label={`${tool.name}, coming soon`} className="group min-w-0 rounded-2xl border border-[#e1ded6] bg-white p-3.5 aspect-square opacity-60">{content}</div>;
     })}</div>}
   </div>;
 }
