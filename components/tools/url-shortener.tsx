@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const inputClass = "mt-2 w-full rounded-lg border border-[#d8d4c9] bg-[#f8f5ed] px-4 py-3 text-base outline-none focus:border-[#171717]";
+const SHORTENER_TIMEOUT_MS = 10000;
 
 type ShortenResponse = { shorturl?: string; errorcode?: number; errormessage?: string };
 type ShortenerWindow = Window & { __internetToolboxShortener?: (response: ShortenResponse) => void };
@@ -15,11 +16,21 @@ export default function UrlShortener() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => {
     scriptRef.current?.remove();
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     delete (window as ShortenerWindow).__internetToolboxShortener;
   }, []);
+
+  const clearRequest = () => {
+    scriptRef.current?.remove();
+    scriptRef.current = null;
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = null;
+    delete (window as ShortenerWindow).__internetToolboxShortener;
+  };
 
   const shorten = () => {
     setError("");
@@ -40,15 +51,21 @@ export default function UrlShortener() {
       return;
     }
 
-    scriptRef.current?.remove();
+    clearRequest();
     setLoading(true);
     const callbackName = "__internetToolboxShortener";
     const win = window as ShortenerWindow;
-    win[callbackName] = (response) => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return false;
+      settled = true;
+      clearRequest();
       setLoading(false);
-      scriptRef.current?.remove();
-      scriptRef.current = null;
-      delete win[callbackName];
+      return true;
+    };
+
+    win[callbackName] = (response) => {
+      if (!finish()) return;
       if (response.shorturl) setShortUrl(response.shorturl);
       else setError(response.errormessage || "The shortening service could not create a short link.");
     };
@@ -59,12 +76,13 @@ export default function UrlShortener() {
     script.src = `https://is.gd/create.php?${params.toString()}`;
     script.async = true;
     script.onerror = () => {
-      setLoading(false);
-      script.remove();
-      scriptRef.current = null;
-      delete win[callbackName];
+      if (!finish()) return;
       setError("Could not reach the URL shortening service. Please try again.");
     };
+    timeoutRef.current = setTimeout(() => {
+      if (!finish()) return;
+      setError("The URL shortening service took too long to respond. Please try again.");
+    }, SHORTENER_TIMEOUT_MS);
     scriptRef.current = script;
     document.body.appendChild(script);
   };
@@ -81,9 +99,7 @@ export default function UrlShortener() {
   };
 
   const reset = () => {
-    scriptRef.current?.remove();
-    scriptRef.current = null;
-    delete (window as ShortenerWindow).__internetToolboxShortener;
+    clearRequest();
     setLoading(false);
     setUrl("");
     setAlias("");
