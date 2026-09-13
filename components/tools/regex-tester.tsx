@@ -3,6 +3,10 @@
 import { Braces, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
+const MAX_PATTERN_LENGTH = 300;
+const MAX_INPUT_LENGTH = 5_000;
+const MAX_MATCHES = 1_000;
+
 export default function RegexTester() {
   const [pattern, setPattern] = useState("\\b\\w+@\\w+\\.\\w+\\b");
   const [flags, setFlags] = useState("gi");
@@ -10,12 +14,15 @@ export default function RegexTester() {
 
   const result = useMemo(() => {
     if (!pattern) return { error: "Enter a regular expression to test.", matches: [] as RegExpExecArray[] };
+    if (pattern.length > MAX_PATTERN_LENGTH) return { error: `Keep the regular expression under ${MAX_PATTERN_LENGTH} characters.`, matches: [] as RegExpExecArray[] };
+    if (input.length > MAX_INPUT_LENGTH) return { error: `Keep the test text under ${MAX_INPUT_LENGTH.toLocaleString()} characters.`, matches: [] as RegExpExecArray[] };
+
     try {
       const regex = new RegExp(pattern, flags);
       const matches: RegExpExecArray[] = [];
       if (regex.global || regex.sticky) {
         let match = regex.exec(input);
-        while (match) {
+        while (match && matches.length < MAX_MATCHES) {
           matches.push(match);
           if (match[0] === "") regex.lastIndex += 1;
           match = regex.exec(input);
@@ -37,6 +44,7 @@ export default function RegexTester() {
   }
 
   const hasError = Boolean(result.error) && Boolean(pattern);
+  const matchLimitReached = result.matches.length === MAX_MATCHES;
 
   return (
     <section aria-labelledby="regex-tester-heading" className="overflow-hidden rounded-2xl border border-[#ddd9cf] bg-[#fffdf8] shadow-[0_8px_28px_rgba(23,23,23,.04)]">
@@ -60,8 +68,8 @@ export default function RegexTester() {
         <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_10rem]">
           <div>
             <label htmlFor="regex-pattern" className="mb-2 block text-sm font-black text-[#20283a]">Regular expression</label>
-            <input id="regex-pattern" value={pattern} onChange={(event) => setPattern(event.target.value)} spellCheck={false} autoComplete="off" aria-invalid={hasError} aria-describedby="regex-pattern-help" className="min-h-12 w-full rounded-xl border border-[#d2cec4] bg-[#faf8f2] px-4 font-mono text-sm text-[#101522] outline-none transition placeholder:text-[#9aa1ad] focus:border-[#101522] focus:ring-4 focus:ring-[#c8f169]" placeholder="e.g. \\d+" />
-            <p id="regex-pattern-help" className="mt-1.5 text-xs leading-5 text-[#7a8495]">JavaScript regular-expression syntax. Matching updates as you type.</p>
+            <input id="regex-pattern" value={pattern} onChange={(event) => setPattern(event.target.value)} maxLength={MAX_PATTERN_LENGTH} spellCheck={false} autoComplete="off" aria-invalid={hasError} aria-describedby="regex-pattern-help" className="min-h-12 w-full rounded-xl border border-[#d2cec4] bg-[#faf8f2] px-4 font-mono text-sm text-[#101522] outline-none transition placeholder:text-[#9aa1ad] focus:border-[#101522] focus:ring-4 focus:ring-[#c8f169]" placeholder="e.g. \\d+" />
+            <p id="regex-pattern-help" className="mt-1.5 text-xs leading-5 text-[#7a8495]">JavaScript regular-expression syntax. Maximum {MAX_PATTERN_LENGTH} characters.</p>
           </div>
           <div>
             <label htmlFor="regex-flags" className="mb-2 block text-sm font-black text-[#20283a]">Flags</label>
@@ -73,9 +81,9 @@ export default function RegexTester() {
         <div>
           <div className="mb-2 flex items-baseline justify-between gap-3">
             <label htmlFor="regex-input" className="text-sm font-black text-[#20283a]">Text to test</label>
-            <span className="text-xs text-[#8a93a1]">{input.length.toLocaleString()} characters</span>
+            <span className="text-xs text-[#8a93a1]">{input.length.toLocaleString()} / {MAX_INPUT_LENGTH.toLocaleString()} characters</span>
           </div>
-          <textarea id="regex-input" value={input} onChange={(event) => setInput(event.target.value)} spellCheck={false} className="min-h-44 w-full resize-y rounded-xl border border-[#d2cec4] bg-[#faf8f2] p-4 text-sm leading-6 text-[#101522] outline-none transition placeholder:text-[#9aa1ad] focus:border-[#101522] focus:ring-4 focus:ring-[#c8f169]" placeholder="Paste text here" />
+          <textarea id="regex-input" value={input} onChange={(event) => setInput(event.target.value)} maxLength={MAX_INPUT_LENGTH} spellCheck={false} className="min-h-44 w-full resize-y rounded-xl border border-[#d2cec4] bg-[#faf8f2] p-4 text-sm leading-6 text-[#101522] outline-none transition placeholder:text-[#9aa1ad] focus:border-[#101522] focus:ring-4 focus:ring-[#c8f169]" placeholder="Paste text here" />
         </div>
 
         <div className="border-t border-[#e3dfd5] pt-6" aria-live="polite">
@@ -114,6 +122,7 @@ export default function RegexTester() {
               <p className="mt-1 text-xs leading-5 text-[#80899a]">Try adjusting the pattern or adding text to test.</p>
             </div>
           )}
+          {matchLimitReached && <p className="mt-3 text-xs leading-5 text-[#7a8495]">Showing the first {MAX_MATCHES.toLocaleString()} matches to keep the tool responsive.</p>}
         </div>
 
         <div className="rounded-xl border border-[#e0dcd3] bg-[#f7f4ed] p-4">
