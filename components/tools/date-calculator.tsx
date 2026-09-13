@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type Mode = "difference" | "add" | "subtract";
@@ -53,17 +53,33 @@ export default function DateCalculator() {
     return { kind: "date" as const, date: resultDate, amount };
   }, [mode, start, end, days]);
 
+  const reset = () => {
+    const current = localDateInputValue();
+    setMode("difference");
+    setStart(current);
+    setEnd(current);
+    setDays("30");
+  };
+
+  const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
+
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]">
       <div className="border-b border-[#d8d4c9] bg-[#f4f1e9] px-5 py-4 md:px-7">
-        <div className="flex items-center gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#fff5cf] text-[#8a6410]" aria-hidden="true">
-            <CalendarDays size={20} />
-          </span>
-          <div className="min-w-0">
-            <p className="font-bold">Calculate with dates</p>
-            <p className="text-sm text-black/50">Find the difference between dates or move a date by days.</p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#fff5cf] text-[#8a6410]" aria-hidden="true">
+              <CalendarDays size={20} />
+            </span>
+            <div className="min-w-0">
+              <p className="font-bold">Calculate with dates</p>
+              <p className="mt-1 text-sm leading-5 text-black/50">Find the difference between dates or move a date by days.</p>
+            </div>
           </div>
+          <button type="button" onClick={reset} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black ${focusRing}`} aria-label="Reset date calculator">
+            <RotateCcw size={16} />
+            <span className="hidden sm:inline">Reset</span>
+          </button>
         </div>
       </div>
 
@@ -75,53 +91,65 @@ export default function DateCalculator() {
               type="button"
               role="tab"
               aria-selected={mode === value}
+              tabIndex={mode === value ? 0 : -1}
               onClick={() => setMode(value)}
-              className={`min-h-11 rounded-lg border px-3 text-sm font-semibold transition focus:outline-none focus:ring-4 focus:ring-[#c8f169] ${mode === value ? "border-[#171717] bg-[#171717] text-white" : "border-transparent bg-transparent text-black/50 hover:border-[#d8d4c9] hover:bg-white hover:text-black"}`}
+              className={`min-h-11 rounded-lg border px-3 text-sm font-semibold transition ${focusRing} ${mode === value ? "border-[#171717] bg-[#171717] text-white" : "border-transparent bg-transparent text-black/50 hover:border-[#d8d4c9] hover:bg-white hover:text-black"}`}
             >
               {label}
             </button>
           ))}
         </div>
 
-        <div className="mt-6 grid gap-5 md:grid-cols-2">
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
-            <span className="text-sm font-semibold">{mode === "difference" ? "Start date" : "Starting date"}</span>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
+            <span className="text-sm font-bold">{mode === "difference" ? "Start date" : "Starting date"}</span>
+            <span className="mt-1 block text-xs leading-5 text-black/40">{mode === "difference" ? "The first date in your range." : "The date you want to move."}</span>
             <input
+              id="date-calculator-start"
               type="date"
               value={start}
+              aria-label={mode === "difference" ? "Start date" : "Starting date"}
               onChange={(event) => setStart(event.target.value)}
-              className="mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"
+              className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
             />
           </label>
 
           {mode === "difference" ? (
-            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
-              <span className="text-sm font-semibold">End date</span>
+            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
+              <span className="text-sm font-bold">End date</span>
+              <span className="mt-1 block text-xs leading-5 text-black/40">The second date in your range.</span>
               <input
+                id="date-calculator-end"
                 type="date"
                 value={end}
+                min={start}
+                aria-label="End date"
                 onChange={(event) => setEnd(event.target.value)}
-                className="mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"
+                className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
               />
             </label>
           ) : (
-            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
-              <span className="text-sm font-semibold">Number of days</span>
+            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
+              <span className="text-sm font-bold">Number of days</span>
+              <span className="mt-1 block text-xs leading-5 text-black/40">Whole calendar days to move the date.</span>
               <input
+                id="date-calculator-days"
                 type="number"
                 min="0"
                 step="1"
                 inputMode="numeric"
                 value={days}
+                aria-label="Number of days"
+                aria-invalid={days !== "" && (!Number.isInteger(Number(days)) || Number(days) < 0)}
                 onChange={(event) => setDays(event.target.value)}
-                className="mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"
+                className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
               />
             </label>
           )}
         </div>
 
         {result && result.kind === "difference" ? (
-          <div className="mt-7 rounded-2xl border border-[#171717] bg-[#c8f169] p-5 sm:p-6" aria-live="polite">
+          <div className="mt-7 rounded-2xl border border-[#171717] bg-[#c8f169] p-5 sm:p-6" aria-live="polite" aria-atomic="true">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-black/55">Date difference</p>
             <p className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{result.absolute.toLocaleString("en-IN")} days</p>
             <p className="mt-2 text-sm text-black/60">
@@ -129,7 +157,7 @@ export default function DateCalculator() {
             </p>
           </div>
         ) : result ? (
-          <div className="mt-7 rounded-2xl border border-[#171717] bg-[#c8f169] p-5 sm:p-6" aria-live="polite">
+          <div className="mt-7 rounded-2xl border border-[#171717] bg-[#c8f169] p-5 sm:p-6" aria-live="polite" aria-atomic="true">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-black/55">Result date</p>
             <p className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{formatDate(result.date)}</p>
             <p className="mt-2 text-sm text-black/60">{result.amount.toLocaleString("en-IN")} days {mode === "add" ? "after" : "before"} {formatDate(parseDate(start))}.</p>
