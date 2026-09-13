@@ -17,6 +17,12 @@ export default function QrCodeGenerator() {
     let cancelled = false;
     async function render() {
       const trimmed = value.trim();
+      const canvas = canvasRef.current;
+
+      if (canvas) {
+        canvas.getContext("2d")?.clearRect(0, 0, SIZE, SIZE);
+      }
+
       if (!trimmed) {
         setError("Enter a URL or text to generate a QR code.");
         setIsRendering(false);
