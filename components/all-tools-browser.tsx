@@ -39,7 +39,20 @@ export default function AllToolsBrowser() {
       <div className="flex min-h-12 min-w-0 items-center gap-3 rounded-xl border border-[#d8d4c9] bg-[#fffdf8] px-4 transition focus-within:border-[#171717] focus-within:ring-4 focus-within:ring-[#c8f169]">
         <Search size={18} className="shrink-0 text-black/40" aria-hidden="true" />
         <label htmlFor="all-tools-search" className="sr-only">Search all tools</label>
-        <input id="all-tools-search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by tool or task" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/35" autoComplete="off" enterKeyHint="search" aria-controls="all-tools-results" />
+        <input
+          id="all-tools-search"
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Escape" && query) setQuery(""); }}
+          placeholder="Search by tool or task"
+          aria-label="Search all tools by name or task"
+          className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/35"
+          autoComplete="off"
+          enterKeyHint="search"
+          aria-controls="all-tools-results"
+          aria-keyshortcuts="Escape"
+        />
         {query && <button type="button" onClick={() => setQuery("")} aria-label="Clear search" className="flex size-8 shrink-0 items-center justify-center rounded-lg text-black/40 hover:bg-black/5 hover:text-black focus:outline-none focus:ring-2 focus:ring-[#c8f169]"><X size={16} /></button>}
       </div>
 
