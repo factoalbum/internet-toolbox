@@ -93,6 +93,19 @@ export default function CsvToJson() {
     }
   };
 
+  const download = () => {
+    if (!output || parsed.error) return;
+    const blob = new Blob([`${output}\n`], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "converted.json";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  };
+
   const changeInput = (value: string) => {
     setInput(value);
     setError("");
@@ -115,6 +128,7 @@ export default function CsvToJson() {
           {error && <p role="alert" className="mt-2 text-sm font-semibold text-red-700">{error}</p>}
           <div className="mt-4 flex flex-wrap gap-3">
             <button type="button" onClick={copy} disabled={!output || !!parsed.error} className="min-h-11 rounded-lg bg-[#171717] px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40">{copied ? "Copied" : "Copy JSON"}</button>
+            <button type="button" onClick={download} disabled={!output || !!parsed.error} className="min-h-11 rounded-lg border border-[#d8d4c9] px-5 text-sm font-semibold hover:bg-black/5 disabled:cursor-not-allowed disabled:opacity-40">Download JSON</button>
             <button type="button" onClick={() => changeInput("")} className="min-h-11 rounded-lg border border-[#d8d4c9] px-5 text-sm font-semibold hover:bg-black/5">Clear</button>
           </div>
         </div>
