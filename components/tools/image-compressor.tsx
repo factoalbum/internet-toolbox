@@ -48,7 +48,7 @@ export default function ImageCompressor() {
       context.drawImage(bitmap, 0, 0);
       bitmap.close();
 
-      const type = selected.type === "image/png" ? "image/png" : "image/jpeg";
+      const type = selected.type === "image/png" ? "image/png" : selected.type === "image/webp" ? "image/webp" : "image/jpeg";
       const blob = await new Promise<Blob | null>((resolve) => {
         canvas.toBlob(resolve, type, selectedQuality / 100);
       });
@@ -106,11 +106,13 @@ export default function ImageCompressor() {
   const download = () => {
     if (!outputUrl || !file) return;
     const link = document.createElement("a");
-    const extension = file.type === "image/png" ? "png" : "jpg";
+    const extension = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
     link.href = outputUrl;
     link.download = `${file.name.replace(/\.[^.]+$/, "")}-compressed.${extension}`;
     link.click();
   };
+
+  const qualityIsRelevant = file?.type !== "image/png";
 
   return (
     <div className="border border-[#d8d4c9] bg-[#fffdf8] p-6 md:p-8">
@@ -129,8 +131,8 @@ export default function ImageCompressor() {
             <label htmlFor="quality" className="text-sm font-bold">Compression quality</label>
             <output htmlFor="quality" className="font-mono text-sm font-bold">{quality}%</output>
           </div>
-          <input id="quality" type="range" min="20" max="95" step="5" value={quality} onChange={(e) => changeQuality(Number(e.target.value))} className="mt-3 w-full" aria-describedby="quality-help" />
-          <p id="quality-help" className="mt-1 text-xs text-black/45">Higher quality keeps more detail but may produce a larger file.</p>
+          <input id="quality" type="range" min="20" max="95" step="5" value={quality} onChange={(e) => changeQuality(Number(e.target.value))} disabled={!qualityIsRelevant} className="mt-3 w-full disabled:cursor-not-allowed disabled:opacity-45" aria-describedby="quality-help" />
+          <p id="quality-help" className="mt-1 text-xs text-black/45">{qualityIsRelevant ? "Higher quality keeps more detail but may produce a larger file." : "PNG encoding does not use this quality setting; the image is re-encoded in the same PNG format."}</p>
         </div>}
 
         {error && <p role="alert" className="border border-[#171717] bg-[#f3f0e8] p-3 text-sm font-medium">{error}</p>}
