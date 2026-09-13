@@ -108,6 +108,20 @@ const semanticIcons: Record<string, LucideIcon> = {
   "character-counter": Hash,
   "case-converter": CaseSensitive,
   "text-cleaner": ListX,
+  "remove-duplicate-lines": ListX,
+  "url-slug-generator": Link2,
+  "text-diff-checker": GitCompare,
+  "image-compressor": Gauge,
+  "image-resizer": Ruler,
+  "image-cropper": ScanLine,
+  "image-rotate-flip": Images,
+  "image-format-converter": FileOutput,
+  "image-to-base64": Binary,
+  "base64-to-image": ImageIcon,
+  "svg-to-png": FileCode2,
+  "pdf-page-organizer": ListX,
+  "pdf-page-rotator": ScanLine,
+  "structured-file-export": FileCode2,
 };
 
 function accentIndex(slug = "", category: ToolCategory = "everyday") {
