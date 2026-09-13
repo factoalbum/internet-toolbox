@@ -5,6 +5,11 @@ import { useMemo, useState } from "react";
 
 const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
 
+const toAmount = (value: string) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+};
+
 export default function HraCalculator() {
   const [basic, setBasic] = useState("600000");
   const [da, setDa] = useState("0");
@@ -13,10 +18,10 @@ export default function HraCalculator() {
   const [metro, setMetro] = useState(true);
 
   const result = useMemo(() => {
-    const annualBasic = Math.max(0, Number(basic) || 0);
-    const annualDa = Math.max(0, Number(da) || 0);
-    const hraReceived = Math.max(0, Number(hra) || 0);
-    const annualRent = Math.max(0, Number(rent) || 0);
+    const annualBasic = toAmount(basic);
+    const annualDa = toAmount(da);
+    const hraReceived = toAmount(hra);
+    const annualRent = toAmount(rent);
     const salaryForHra = annualBasic + annualDa;
     const rentExcess = Math.max(0, annualRent - salaryForHra * 0.1);
     const salaryLimit = salaryForHra * (metro ? 0.5 : 0.4);
