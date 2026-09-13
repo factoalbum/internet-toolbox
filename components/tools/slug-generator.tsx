@@ -9,7 +9,7 @@ function slugify(value: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/[^\p{L}\p{N}\s-]/gu, "")
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
@@ -67,7 +67,7 @@ export default function SlugGenerator() {
         <div className="grid gap-4 md:grid-cols-[minmax(0,1.15fr)_minmax(0,.85fr)]">
           <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgba(200,241,105,.3)]">
             <span className="text-sm font-bold">Page title or text</span>
-            <span className="mt-1 block text-xs leading-5 text-black/45">Spaces become hyphens; punctuation and accents are removed.</span>
+            <span className="mt-1 block text-xs leading-5 text-black/45">Spaces become hyphens; punctuation is removed while letters from other languages are preserved.</span>
             <textarea
               id="slug-input"
               value={text}
