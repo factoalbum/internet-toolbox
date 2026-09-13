@@ -1,7 +1,7 @@
 "use client";
 
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Download, Image as ImageIcon, Upload } from "lucide-react";
+import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
+import { Check, Download, Image as ImageIcon, Upload } from "lucide-react";
 import { imageExtension, outputMimeForEdit } from "../../lib/image-edit";
 
 type Variant = "image-resizer" | "image-cropper" | "image-rotate-flip" | "image-format-converter";
@@ -45,12 +45,24 @@ function download(blob: Blob, name: string) {
 }
 
 function FileDrop({ file, onChange }: { file: File | null; onChange: (file: File) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
   const handle = (event: ChangeEvent<HTMLInputElement>) => { const next = event.target.files?.[0]; if (next) onChange(next); };
-  return <label className="block cursor-pointer rounded-2xl border-2 border-dashed border-[#d3d0c6] bg-[#faf8f2] p-5 transition hover:border-[#171717] hover:bg-white focus-within:ring-4 focus-within:ring-[#c8f169]"><input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={handle} /><div className="flex items-center gap-4"><span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#536b1c] shadow-sm"><Upload size={19} /></span><div className="min-w-0"><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">Choose an image</p><p className="mt-1 truncate text-sm font-bold">{file?.name ?? "Click here or drop an image"}</p><p className="mt-1 text-xs text-black/35">JPG, PNG or WebP - up to 20 MB - processed locally</p></div></div></label>;
+  const handleDrop = (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); setDragging(false); const next = event.dataTransfer.files?.[0]; if (next) onChange(next); };
+  return (
+    <div className={`rounded-2xl border-2 border-dashed p-5 transition focus-within:ring-4 focus-within:ring-[#c8f169] ${dragging ? "border-[#171717] bg-white" : "border-[#d3d0c6] bg-[#faf8f2] hover:border-[#171717] hover:bg-white"}`} onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={handleDrop}>
+      <input ref={inputRef} id="image-edit-file" className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={handle} />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-4"><span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#536b1c] shadow-sm" aria-hidden="true"><Upload size={19} /></span><div className="min-w-0"><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">Choose an image</p><p className="mt-1 truncate text-sm font-bold">{file?.name ?? "Select or drop an image"}</p><p className="mt-1 text-xs leading-5 text-black/35">JPG, PNG or WebP · up to 20 MB · processed locally</p></div></div>
+        <button type="button" onClick={() => inputRef.current?.click()} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg border border-[#171717] bg-white px-4 text-sm font-bold transition hover:bg-[#171717] hover:text-white focus:outline-none focus:ring-4 focus:ring-[#c8f169]">{file ? "Choose another" : "Browse files"}</button>
+      </div>
+    </div>
+  );
 }
 
-function NumberField({ label, value, onChange, min = 1, max = 40000 }: { label: string; value: number; onChange: (value: number) => void; min?: number; max?: number }) {
-  return <label className="block"><span className="text-xs font-black uppercase tracking-[.1em] text-black/45">{label}</span><input type="number" min={min} max={max} value={value} onChange={(e) => onChange(Math.max(min, Math.min(max, Number(e.target.value) || min)))} className="mt-2 min-h-11 w-full rounded-lg border border-[#d8d4c9] bg-white px-3 font-mono text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" /></label>;
+function NumberField({ label, value, onChange, min = 1, max = 40000, help }: { label: string; value: number; onChange: (value: number) => void; min?: number; max?: number; help?: string }) {
+  const id = `image-edit-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+  return <label htmlFor={id} className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_30%)]"><span className="text-sm font-bold">{label}</span>{help && <span className="mt-1 block text-xs leading-5 text-black/40">{help}</span>}<input id={id} type="number" min={min} max={max} value={value} onChange={(e) => onChange(Math.max(min, Math.min(max, Number(e.target.value) || min)))} className="mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 font-mono text-sm outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" /></label>;
 }
 
 export default function ImageEditSuite({ variant }: { variant: Variant }) {
@@ -61,6 +73,7 @@ export default function ImageEditSuite({ variant }: { variant: Variant }) {
   const [outputUrl, setOutputUrl] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [downloaded, setDownloaded] = useState(false);
   const [width, setWidth] = useState(1200);
   const [height, setHeight] = useState(800);
   const [lockRatio, setLockRatio] = useState(true);
@@ -74,14 +87,9 @@ export default function ImageEditSuite({ variant }: { variant: Variant }) {
   useEffect(() => () => { if (outputUrl) URL.revokeObjectURL(outputUrl); }, [outputUrl]);
 
   const choose = async (next: File) => {
-    setError(""); setOutput(null); if (outputUrl) URL.revokeObjectURL(outputUrl); setOutputUrl("");
-    try {
-      const bitmap = await readImage(next);
-      setFile(next); setImageSize({ width: bitmap.width, height: bitmap.height });
-      setWidth(bitmap.width); setHeight(bitmap.height);
-      setCrop({ x: 0, y: 0, width: bitmap.width, height: bitmap.height });
-      bitmap.close();
-    } catch (err) { setFile(null); setError(err instanceof Error ? err.message : "The image could not be read."); }
+    setError(""); setDownloaded(false); setOutput(null); if (outputUrl) URL.revokeObjectURL(outputUrl); setOutputUrl("");
+    try { const bitmap = await readImage(next); setFile(next); setImageSize({ width: bitmap.width, height: bitmap.height }); setWidth(bitmap.width); setHeight(bitmap.height); setCrop({ x: 0, y: 0, width: bitmap.width, height: bitmap.height }); bitmap.close(); }
+    catch (err) { setFile(null); setError(err instanceof Error ? err.message : "The image could not be read."); }
   };
 
   const changeWidth = (next: number) => { setWidth(next); if (lockRatio && imageSize.width) setHeight(Math.max(1, Math.round(next * imageSize.height / imageSize.width))); };
@@ -89,43 +97,41 @@ export default function ImageEditSuite({ variant }: { variant: Variant }) {
 
   async function run() {
     if (!file) { setError("Choose an image first."); return; }
-    setBusy(true); setError("");
+    setBusy(true); setError(""); setDownloaded(false);
     try {
-      const bitmap = await readImage(file);
-      const rad = (rotation * Math.PI) / 180;
-      const quarterTurn = rotation === 90 || rotation === 270;
+      const bitmap = await readImage(file); const rad = (rotation * Math.PI) / 180; const quarterTurn = rotation === 90 || rotation === 270;
       let outWidth = bitmap.width; let outHeight = bitmap.height;
-      if (variant === "image-resizer") { outWidth = width; outHeight = height; }
-      else if (variant === "image-cropper") { outWidth = crop.width; outHeight = crop.height; }
-      else if (variant === "image-rotate-flip") { outWidth = quarterTurn ? bitmap.height : bitmap.width; outHeight = quarterTurn ? bitmap.width : bitmap.height; }
+      if (variant === "image-resizer") { outWidth = width; outHeight = height; } else if (variant === "image-cropper") { outWidth = crop.width; outHeight = crop.height; } else if (variant === "image-rotate-flip") { outWidth = quarterTurn ? bitmap.height : bitmap.width; outHeight = quarterTurn ? bitmap.width : bitmap.height; }
       const canvas = document.createElement("canvas"); canvas.width = Math.max(1, Math.round(outWidth)); canvas.height = Math.max(1, Math.round(outHeight));
       const ctx = canvas.getContext("2d"); if (!ctx) throw new Error("Canvas is not available in this browser.");
       if (variant === "image-cropper") ctx.drawImage(bitmap, crop.x, crop.y, crop.width, crop.height, 0, 0, canvas.width, canvas.height);
       else if (variant === "image-rotate-flip") { ctx.translate(canvas.width / 2, canvas.height / 2); ctx.rotate(rad); ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1); ctx.drawImage(bitmap, -bitmap.width / 2, -bitmap.height / 2); }
-      else { ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height); }
-      bitmap.close();
-      const type = outputMimeForEdit(variant, file.type, format);
-      const blob = await canvasBlob(canvas, type, type === "image/png" ? undefined : 0.92);
-      setOutput(blob); setOutputUrl(URL.createObjectURL(blob));
-    } catch (err) { setError(err instanceof Error ? err.message : "The image could not be processed."); }
-    finally { setBusy(false); }
+      else ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close(); const type = outputMimeForEdit(variant, file.type, format); const blob = await canvasBlob(canvas, type, type === "image/png" ? undefined : 0.92); setOutput(blob); setOutputUrl(URL.createObjectURL(blob));
+    } catch (err) { setError(err instanceof Error ? err.message : "The image could not be processed."); } finally { setBusy(false); }
   }
 
-  const reset = () => { if (outputUrl) URL.revokeObjectURL(outputUrl); setFile(null); setOutput(null); setOutputUrl(""); setError(""); if (inputRef.current) inputRef.current.value = ""; };
-  const extension = variant === "image-format-converter" ? imageExtension(outputMimeForEdit(variant, file?.type ?? "", format)) : imageExtension(outputMimeForEdit(variant, file?.type ?? "", format));
+  const reset = () => { if (outputUrl) URL.revokeObjectURL(outputUrl); setFile(null); setOutput(null); setOutputUrl(""); setError(""); setDownloaded(false); if (inputRef.current) inputRef.current.value = ""; };
+  const extension = imageExtension(outputMimeForEdit(variant, file?.type ?? "", format));
   const outputName = file ? `${file.name.replace(/\.[^.]+$/, "")}-${variant.replace("image-", "")}.${extension}` : "edited-image";
 
-  return <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-8"><div className="mx-auto flex max-w-3xl flex-col gap-5"><div className="flex items-start justify-between gap-4"><div><div className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[.14em] text-black/40"><ImageIcon size={15} /> File & Image Tools</div><h2 className="text-2xl font-black tracking-tight">{meta.title}</h2><p className="mt-2 text-sm leading-6 text-black/55">{meta.description}</p></div><button type="button" onClick={reset} disabled={!file && !error} className="min-h-10 shrink-0 rounded-md border border-[#d8d4c9] px-3 text-xs font-bold hover:bg-black/5 disabled:opacity-35 focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Reset</button></div>
-    <FileDrop file={file} onChange={choose} />
-    {file && <div className="rounded-xl border border-[#d8d4c9] bg-white p-4"><p className="text-sm font-bold">{imageSize.width} × {imageSize.height}px <span className="font-normal text-black/40">· {formatBytes(file.size)}</span></p></div>}
-    {file && variant === "image-resizer" && <div className="grid gap-4 sm:grid-cols-2"><NumberField label="Width (px)" value={width} onChange={changeWidth} /><NumberField label="Height (px)" value={height} onChange={changeHeight} /><label className="flex items-center gap-2 text-sm font-semibold sm:col-span-2"><input type="checkbox" checked={lockRatio} onChange={(e) => setLockRatio(e.target.checked)} className="size-4" /> Keep aspect ratio</label></div>}
-    {file && variant === "image-cropper" && <div className="grid gap-4 sm:grid-cols-2"><NumberField label="X" value={crop.x} onChange={(v) => setCrop({ ...crop, x: Math.min(v, Math.max(0, imageSize.width - 1)) })} min={0} max={Math.max(0, imageSize.width - 1)} /><NumberField label="Y" value={crop.y} onChange={(v) => setCrop({ ...crop, y: Math.min(v, Math.max(0, imageSize.height - 1)) })} min={0} max={Math.max(0, imageSize.height - 1)} /><NumberField label="Crop width" value={crop.width} onChange={(v) => setCrop({ ...crop, width: Math.min(v, imageSize.width - crop.x) })} /><NumberField label="Crop height" value={crop.height} onChange={(v) => setCrop({ ...crop, height: Math.min(v, imageSize.height - crop.y) })} /><p className="text-xs leading-5 text-black/45 sm:col-span-2">Coordinates start at the image&apos;s top-left corner. The crop stays inside the original image.</p></div>}
-    {file && variant === "image-rotate-flip" && <div className="grid gap-4 sm:grid-cols-3"><label className="block"><span className="text-xs font-black uppercase tracking-[.1em] text-black/45">Rotation</span><select value={rotation} onChange={(e) => setRotation(Number(e.target.value))} className="mt-2 min-h-11 w-full rounded-lg border border-[#d8d4c9] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value={0}>0°</option><option value={90}>90°</option><option value={180}>180°</option><option value={270}>270°</option></select></label><label className="flex items-center gap-2 self-end pb-2 text-sm font-semibold"><input type="checkbox" checked={flipH} onChange={(e) => setFlipH(e.target.checked)} className="size-4" /> Flip horizontal</label><label className="flex items-center gap-2 self-end pb-2 text-sm font-semibold"><input type="checkbox" checked={flipV} onChange={(e) => setFlipV(e.target.checked)} className="size-4" /> Flip vertical</label></div>}
-    {file && variant === "image-format-converter" && <label className="block"><span className="text-xs font-black uppercase tracking-[.1em] text-black/45">Output format</span><select value={format} onChange={(e) => setFormat(e.target.value)} className="mt-2 min-h-11 w-full rounded-lg border border-[#d8d4c9] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select><p className="mt-2 text-xs text-black/40">Converting to JPG removes transparency. PNG keeps lossless quality.</p></label>}
-    {error && <p role="alert" className="border border-[#171717] bg-[#f3f0e8] p-3 text-sm font-medium">{error}</p>}
-    <button type="button" onClick={run} disabled={!file || busy} className="min-h-12 rounded-lg bg-[#c8f169] px-5 text-sm font-black text-[#171717] transition hover:bg-[#b9e85b] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#c8f169]">{busy ? "Processing..." : meta.action}</button>
-    {output && outputUrl && <div className="flex flex-col gap-3 border-t border-[#d8d4c9] pt-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">Ready</p><p className="mt-1 text-sm font-semibold">{formatBytes(output.size)} · processed in your browser</p></div><button type="button" onClick={() => download(output, outputName)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[#171717] px-4 text-sm font-bold transition hover:bg-black hover:text-white focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><Download size={16} /> Download</button></div>}
-  </div></div>;
+  return (
+    <section className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]" aria-labelledby="image-edit-title">
+      <div className="border-b border-[#d8d4c9] bg-[#f4f1e9] px-5 py-5 md:px-7"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><div className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[.14em] text-black/40"><ImageIcon size={15} aria-hidden="true" /> File &amp; Image Tools</div><h2 id="image-edit-title" className="text-2xl font-black tracking-tight">{meta.title}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-black/55">{meta.description}</p></div><button type="button" onClick={reset} disabled={!file && !error && !output} className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/60 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Reset</button></div></div>
+      <div className="space-y-5 p-5 md:p-7">
+        <FileDrop file={file} onChange={choose} />
+        {file && <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#d8d4c9] bg-white p-4" aria-label="Selected image details"><div><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">Selected image</p><p className="mt-1 break-all text-sm font-bold">{file.name}</p></div><span className="rounded-full bg-[#f4f1e9] px-3 py-1.5 text-xs font-bold text-black/55">{imageSize.width} × {imageSize.height}px · {formatBytes(file.size)}</span></div>}
+        {file && variant === "image-resizer" && <div className="rounded-2xl border border-[#e2dfd7] bg-[#faf8f2] p-4 md:p-5"><div className="mb-4"><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">New dimensions</p><p className="mt-1 text-sm text-black/50">Set the output size in pixels.</p></div><div className="grid gap-4 sm:grid-cols-2"><NumberField label="Width (px)" value={width} onChange={changeWidth} help="Output width" /><NumberField label="Height (px)" value={height} onChange={changeHeight} help="Output height" /></div><label className="mt-4 flex min-h-11 items-center gap-3 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-semibold"><input type="checkbox" checked={lockRatio} onChange={(e) => setLockRatio(e.target.checked)} className="size-4 accent-[#171717]" /> Keep aspect ratio</label></div>}
+        {file && variant === "image-cropper" && <div className="rounded-2xl border border-[#e2dfd7] bg-[#faf8f2] p-4 md:p-5"><div className="mb-4"><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">Crop area</p><p className="mt-1 text-sm text-black/50">Coordinates start at the image&apos;s top-left corner.</p></div><div className="grid gap-4 sm:grid-cols-2"><NumberField label="X" value={crop.x} onChange={(v) => setCrop({ ...crop, x: Math.min(v, Math.max(0, imageSize.width - 1)), width: Math.min(crop.width, imageSize.width - Math.min(v, Math.max(0, imageSize.width - 1))) })} min={0} max={Math.max(0, imageSize.width - 1)} help="Left offset" /><NumberField label="Y" value={crop.y} onChange={(v) => setCrop({ ...crop, y: Math.min(v, Math.max(0, imageSize.height - 1)), height: Math.min(crop.height, imageSize.height - Math.min(v, Math.max(0, imageSize.height - 1))) })} min={0} max={Math.max(0, imageSize.height - 1)} help="Top offset" /><NumberField label="Crop width" value={crop.width} onChange={(v) => setCrop({ ...crop, width: Math.min(v, imageSize.width - crop.x) })} max={Math.max(1, imageSize.width - crop.x)} help="Output width" /><NumberField label="Crop height" value={crop.height} onChange={(v) => setCrop({ ...crop, height: Math.min(v, imageSize.height - crop.y) })} max={Math.max(1, imageSize.height - crop.y)} help="Output height" /></div></div>}
+        {file && variant === "image-rotate-flip" && <div className="rounded-2xl border border-[#e2dfd7] bg-[#faf8f2] p-4 md:p-5"><div className="mb-4"><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">Edit direction</p><p className="mt-1 text-sm text-black/50">Choose a rotation and optional flip.</p></div><div className="grid gap-4 sm:grid-cols-3"><label className="block"><span className="text-sm font-bold">Rotation</span><select value={rotation} onChange={(e) => setRotation(Number(e.target.value))} className="mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value={0}>0°</option><option value={90}>90°</option><option value={180}>180°</option><option value={270}>270°</option></select></label><label className="flex min-h-12 items-center gap-3 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-semibold sm:self-end"><input type="checkbox" checked={flipH} onChange={(e) => setFlipH(e.target.checked)} className="size-4 accent-[#171717]" /> Flip horizontally</label><label className="flex min-h-12 items-center gap-3 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-semibold sm:self-end"><input type="checkbox" checked={flipV} onChange={(e) => setFlipV(e.target.checked)} className="size-4 accent-[#171717]" /> Flip vertically</label></div></div>}
+        {file && variant === "image-format-converter" && <div className="rounded-2xl border border-[#e2dfd7] bg-[#faf8f2] p-4 md:p-5"><div className="mb-4"><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">Output format</p><p className="mt-1 text-sm text-black/50">Choose the format for the downloaded image.</p></div><select value={format} onChange={(e) => setFormat(e.target.value)} className="min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" aria-label="Output image format"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select><p className="mt-2 text-xs leading-5 text-black/40">Converting to JPG removes transparency. PNG keeps lossless quality.</p></div>}
+        {error && <p role="alert" className="rounded-2xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm font-medium leading-6 text-[#7b3d31]">{error}</p>}
+        <button type="button" onClick={run} disabled={!file || busy} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#c8f169] px-5 text-sm font-black text-[#171717] transition hover:bg-[#b9e85b] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#c8f169]" aria-busy={busy}>{busy ? "Processing image…" : meta.action}</button>
+        {output && outputUrl && <div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5" aria-live="polite"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><p className="text-xs font-black uppercase tracking-[.12em] text-black/50">Ready to download</p><p className="mt-1 break-words text-sm font-bold">{formatBytes(output.size)} · processed in your browser</p><p className="mt-1 text-xs text-black/50">Your source image was {imageSize.width} × {imageSize.height}px.</p></div><button type="button" onClick={() => { download(output, outputName); setDownloaded(true); }} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#171717] bg-white px-4 text-sm font-bold transition hover:bg-[#171717] hover:text-white focus:outline-none focus:ring-4 focus:ring-white/70">{downloaded ? <Check size={16} aria-hidden="true" /> : <Download size={16} aria-hidden="true" />}{downloaded ? "Downloaded" : "Download image"}</button></div></div>}
+        <p className="border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Images stay on your device and are processed in your browser. The 20 MB file and 40-million-pixel limits help keep browser processing responsive.</p>
+      </div>
+    </section>
+  );
 }
 
 export const ImageResizer = () => <ImageEditSuite variant="image-resizer" />;
