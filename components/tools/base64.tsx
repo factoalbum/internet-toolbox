@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeftRight, Check, Clipboard, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 function encode(value: string) {
@@ -19,6 +20,8 @@ function decode(value: string) {
   const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
   return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
 }
+
+const focusRing = "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
 
 export default function Base64Tool() {
   const [input, setInput] = useState("");
@@ -64,58 +67,80 @@ export default function Base64Tool() {
   }
 
   const inputPlaceholder = mode === "encode" ? "Hello, world!" : "SGVsbG8sIHdvcmxkIQ==";
+  const inputLength = input.length;
+  const outputLength = result.value.length;
 
   return (
-    <div className="border border-[#d8d4c9] bg-[#fffdf8] p-5 md:p-7" aria-labelledby="base64-workspace-title">
-      <header className="border-b border-[#d8d4c9] pb-5">
+    <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]" aria-labelledby="base64-workspace-title">
+      <header className="border-b border-[#d8d4c9] bg-[#f4f1e9] px-5 py-5 md:px-7">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Developer utility</p>
-            <h2 id="base64-workspace-title" className="mt-1 text-xl font-bold tracking-tight text-[#171717] md:text-2xl">Base64 encoder & decoder</h2>
-            <p className="mt-1.5 max-w-2xl text-sm leading-6 text-black/55">Convert text to Base64 or turn an encoded value back into readable text. Everything runs locally in your browser.</p>
+          <div className="flex min-w-0 items-start gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f1ff] text-[#315fba]" aria-hidden="true"><ArrowLeftRight size={20} /></span>
+            <div className="min-w-0">
+              <p className="text-[11px] font-black uppercase tracking-[.14em] text-black/45">Developer utility</p>
+              <h2 id="base64-workspace-title" className="mt-1 text-xl font-black tracking-[-.025em] text-[#171717] md:text-2xl">Base64 encoder & decoder</h2>
+              <p className="mt-1.5 max-w-2xl text-sm leading-6 text-black/55">Convert text to Base64 or decode an encoded value. Everything runs locally in your browser.</p>
+            </div>
           </div>
-          <span aria-hidden="true" className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#dff4bd] text-lg font-black text-[#171717] sm:flex">B64</span>
+          <button type="button" onClick={reset} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black ${focusRing}`} aria-label="Reset Base64 converter"><RotateCcw size={16} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex rounded-lg bg-black/[0.045] p-1" role="group" aria-label="Base64 operation">
-            <button type="button" onClick={() => { setMode("encode"); setCopied(false); setCopyError(""); }} aria-pressed={mode === "encode"} className={`min-h-11 rounded-md px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 ${mode === "encode" ? "bg-[#171717] text-white shadow-sm" : "text-black/60 hover:bg-white hover:text-[#171717]"}`}>Encode</button>
-            <button type="button" onClick={() => { setMode("decode"); setCopied(false); setCopyError(""); }} aria-pressed={mode === "decode"} className={`min-h-11 rounded-md px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 ${mode === "decode" ? "bg-[#171717] text-white shadow-sm" : "text-black/60 hover:bg-white hover:text-[#171717]"}`}>Decode</button>
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="inline-flex w-fit rounded-xl border border-[#d8d4c9] bg-white p-1" role="group" aria-label="Base64 operation">
+            <button type="button" onClick={() => { setMode("encode"); setCopied(false); setCopyError(""); }} aria-pressed={mode === "encode"} className={`min-h-11 rounded-lg px-5 text-sm font-bold transition-colors ${mode === "encode" ? "bg-[#171717] text-white shadow-sm" : "text-black/55 hover:bg-[#f4f1e9] hover:text-[#171717]"} ${focusRing}`}>Encode</button>
+            <button type="button" onClick={() => { setMode("decode"); setCopied(false); setCopyError(""); }} aria-pressed={mode === "decode"} className={`min-h-11 rounded-lg px-5 text-sm font-bold transition-colors ${mode === "decode" ? "bg-[#171717] text-white shadow-sm" : "text-black/55 hover:bg-[#f4f1e9] hover:text-[#171717]"} ${focusRing}`}>Decode</button>
           </div>
-          <button type="button" onClick={reset} className="min-h-11 rounded-md border border-[#c9c5ba] bg-white px-4 text-sm font-semibold text-[#171717] transition-colors hover:bg-black/[0.035] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60">Reset</button>
+          <span className="text-xs font-semibold text-black/40">{mode === "encode" ? "Text → Base64" : "Base64 → text"}</span>
         </div>
       </header>
 
-      <div className="grid gap-5 pt-6 md:grid-cols-2" aria-live="polite">
-        <section className="rounded-xl border border-[#ddd9cf] bg-white p-4 md:p-5" aria-labelledby="base64-input-label">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <label id="base64-input-label" htmlFor="base64-input" className="block text-sm font-bold text-[#171717]">Input</label>
-              <p className="mt-1 text-xs leading-5 text-black/45">{mode === "encode" ? "Plain text to encode" : "Base64 value to decode"}</p>
+      <div className="p-5 md:p-7">
+        <div className="grid gap-5 lg:grid-cols-2">
+          <section className="rounded-2xl border border-[#e2dfd7] bg-white p-4 md:p-5" aria-labelledby="base64-input-heading">
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <h3 id="base64-input-heading" className="text-sm font-black text-[#171717]">Input</h3>
+                <p className="mt-1 text-xs leading-5 text-black/45">{mode === "encode" ? "Plain text to encode" : "Base64 value to decode"}</p>
+              </div>
+              <span className="rounded-full bg-[#e9f1d8] px-2.5 py-1 text-[11px] font-bold text-[#52691f]">Local only</span>
             </div>
-            <span className="rounded-full bg-[#f2efe7] px-2.5 py-1 text-[11px] font-semibold text-black/50">Local only</span>
-          </div>
-          <textarea id="base64-input" value={input} onChange={(event) => { setInput(event.target.value); setCopied(false); setCopyError(""); }} spellCheck={false} placeholder={inputPlaceholder} aria-describedby="base64-input-help" className="mt-4 min-h-56 w-full resize-y rounded-lg border border-[#c9c5ba] bg-[#fffdf8] p-4 font-mono text-sm leading-6 text-[#171717] outline-none transition-shadow placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
-          <p id="base64-input-help" className="mt-2 text-xs leading-5 text-black/45">Tip: whitespace is ignored when decoding.</p>
-        </section>
-
-        <section className="rounded-xl border border-[#ddd9cf] bg-[#f6f3eb] p-4 md:p-5" aria-labelledby="base64-output-label">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <label id="base64-output-label" htmlFor="base64-output" className="block text-sm font-bold text-[#171717]">Result</label>
-              <p className="mt-1 text-xs leading-5 text-black/45">Your converted value appears here</p>
+            <textarea id="base64-input" value={input} onChange={(event) => { setInput(event.target.value); setCopied(false); setCopyError(""); }} spellCheck={false} placeholder={inputPlaceholder} aria-describedby="base64-input-help" aria-invalid={Boolean(result.error)} className={`mt-4 min-h-56 w-full resize-y rounded-xl border bg-[#fffdf8] p-4 font-mono text-sm leading-6 text-[#171717] outline-none transition placeholder:text-black/25 ${result.error ? "border-[#b95c4b]" : "border-[#c9c5ba]"} focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40`} />
+            <div className="mt-2 flex items-start justify-between gap-3">
+              <p id="base64-input-help" className="text-xs leading-5 text-black/45">Whitespace is ignored when decoding.</p>
+              <span className="shrink-0 text-xs font-semibold tabular-nums text-black/40">{inputLength.toLocaleString("en-IN")} chars</span>
             </div>
-            <button type="button" onClick={copy} disabled={!result.value} aria-label={copied ? "Result copied" : "Copy result"} className="min-h-11 rounded-md border border-[#bcb8ae] bg-white px-3.5 text-xs font-bold text-[#171717] transition-colors hover:bg-black/[0.035] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 disabled:cursor-not-allowed disabled:opacity-35">{copied ? "Copied" : "Copy"}</button>
-          </div>
-          <textarea id="base64-output" readOnly value={result.value} spellCheck={false} placeholder="Your result will appear here" aria-describedby="base64-status" className="mt-4 min-h-56 w-full resize-y rounded-lg border border-[#d8d4c9] bg-white p-4 font-mono text-sm leading-6 text-[#171717] outline-none placeholder:text-black/25" />
-        </section>
-      </div>
+          </section>
 
-      <div id="base64-status" className="mt-5 flex flex-col gap-3 border-t border-[#d8d4c9] pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-1">
-          <p className={`text-xs leading-5 ${result.error ? "font-semibold text-red-700" : copyError ? "font-semibold text-[#7b4a20]" : "text-black/45"}`} role={result.error || copyError ? "alert" : undefined}>{result.error || copyError || "Processed locally in your browser. Nothing is uploaded."}</p>
+          <section className="rounded-2xl border border-[#d8d4c9] bg-[#f4f1e9] p-4 md:p-5" aria-labelledby="base64-output-heading" aria-live="polite" aria-atomic="true">
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <h3 id="base64-output-heading" className="text-sm font-black text-[#171717]">Result</h3>
+                <p className="mt-1 text-xs leading-5 text-black/45">Your converted value appears here</p>
+              </div>
+              <button type="button" onClick={copy} disabled={!result.value} aria-label={copied ? "Result copied" : "Copy result"} className={`min-h-11 rounded-xl border border-[#bcb8ae] bg-white px-4 text-xs font-black text-[#171717] transition hover:border-[#171717] hover:bg-white ${focusRing} disabled:cursor-not-allowed disabled:opacity-35`}>{copied ? <span className="inline-flex items-center gap-1.5"><Check size={15} aria-hidden="true" />Copied</span> : <span className="inline-flex items-center gap-1.5"><Clipboard size={15} aria-hidden="true" />Copy</span>}</button>
+            </div>
+
+            <textarea id="base64-output" readOnly value={result.value} spellCheck={false} placeholder="Your result will appear here" aria-label="Base64 conversion result" className="mt-4 min-h-56 w-full resize-y rounded-xl border border-[#d8d4c9] bg-white p-4 font-mono text-sm leading-6 text-[#171717] outline-none placeholder:text-black/25" />
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <span className="text-xs font-semibold text-black/40">{outputLength ? `${outputLength.toLocaleString("en-IN")} chars` : "Waiting for input"}</span>
+              {result.value && <span className="rounded-full bg-[#e9f1d8] px-2.5 py-1 text-[11px] font-bold text-[#52691f]">Ready</span>}
+            </div>
+          </section>
         </div>
-        <button type="button" onClick={useResult} disabled={!result.value || !!result.error} className="min-h-11 rounded-md border border-[#171717] bg-[#171717] px-4 text-sm font-semibold text-white transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 disabled:cursor-not-allowed disabled:opacity-35">Use result as input</button>
+
+        {result.error ? (
+          <p className="mt-5 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">{result.error}</p>
+        ) : copyError ? (
+          <p className="mt-5 rounded-xl border border-[#ead9c8] bg-[#fff7ed] p-4 text-sm leading-6 text-[#7b4a20]" role="alert">{copyError}</p>
+        ) : null}
+
+        <div className="mt-5 flex flex-col gap-3 border-t border-[#d8d4c9] pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-bold text-black/55">Local browser processing</p>
+            <p className="mt-1 text-xs leading-5 text-black/45">Your text is converted on this device and is not uploaded.</p>
+          </div>
+          <button type="button" onClick={useResult} disabled={!result.value || !!result.error} className={`min-h-11 rounded-xl bg-[#171717] px-5 text-sm font-bold text-white transition hover:bg-black/80 ${focusRing} disabled:cursor-not-allowed disabled:opacity-35`}>Use result as input</button>
+        </div>
       </div>
     </div>
   );
