@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Copy, Link2, RotateCcw } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function UrlEncoder() {
   const [input, setInput] = useState("");
@@ -20,10 +20,17 @@ export default function UrlEncoder() {
 
   const hasError = input.length > 0 && output === "Invalid encoded URL text.";
 
-  useEffect(() => {
+  function updateInput(value: string) {
+    setInput(value);
     setCopied(false);
     setCopyError("");
-  }, [input, mode]);
+  }
+
+  function updateMode(nextMode: "encode" | "decode") {
+    setMode(nextMode);
+    setCopied(false);
+    setCopyError("");
+  }
 
   async function copy() {
     if (!output || hasError) return;
@@ -82,7 +89,7 @@ export default function UrlEncoder() {
             <div className="flex rounded-xl border border-[#d8d4c9] bg-[#f3f0e8] p-1" role="group" aria-label="URL conversion mode">
               <button
                 type="button"
-                onClick={() => setMode("encode")}
+                onClick={() => updateMode("encode")}
                 aria-pressed={mode === "encode"}
                 className={`min-h-11 rounded-lg px-4 text-sm font-bold transition ${focusRing} ${mode === "encode" ? "bg-[#171717] text-white shadow-sm" : "text-black/55 hover:bg-white hover:text-black"}`}
               >
@@ -90,7 +97,7 @@ export default function UrlEncoder() {
               </button>
               <button
                 type="button"
-                onClick={() => setMode("decode")}
+                onClick={() => updateMode("decode")}
                 aria-pressed={mode === "decode"}
                 className={`min-h-11 rounded-lg px-4 text-sm font-bold transition ${focusRing} ${mode === "decode" ? "bg-[#171717] text-white shadow-sm" : "text-black/55 hover:bg-white hover:text-black"}`}
               >
@@ -112,7 +119,7 @@ export default function UrlEncoder() {
             <textarea
               id="url-input"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => updateInput(e.target.value)}
               placeholder={mode === "encode" ? "https://example.com/search?q=hello world" : "https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dhello%20world"}
               spellCheck={false}
               aria-describedby="url-input-help"
