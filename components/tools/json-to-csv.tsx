@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Download, RotateCcw, Table2 } from "lucide-react";
+import { Check, Copy, Download, RotateCcw, Table2 } from "lucide-react";
 import { useState } from "react";
 
 const sample = '[{"name":"Alice","age":30,"city":"Mumbai"},{"name":"Bob","age":28,"city":"Pune"}]';
@@ -42,27 +42,38 @@ export default function JsonToCsv() {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState("");
 
   function convert() {
     try {
       setOutput(toCsv(JSON.parse(input)));
       setError("");
+      setCopyError("");
+      setCopied(false);
     } catch (err) {
       setOutput("");
       setError(err instanceof Error ? err.message : "Could not convert the JSON.");
+      setCopyError("");
+      setCopied(false);
     }
   }
 
   async function copyOutput() {
     if (!output) return;
-    await navigator.clipboard.writeText(output);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1400);
+    setCopyError("");
+    try {
+      await navigator.clipboard.writeText(output);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
+      setCopyError("Copying was blocked by your browser. Select the CSV output and copy it manually.");
+    }
   }
 
   function download() {
     if (!output) return;
-    const url = URL.createObjectURL(new Blob([output], { type: "text/csv;charset=utf-8" }));
+    const url = URL.createObjectURL(new Blob(["\uFEFF", output], { type: "text/csv;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
     link.download = "converted.csv";
@@ -75,6 +86,7 @@ export default function JsonToCsv() {
     setOutput("");
     setError("");
     setCopied(false);
+    setCopyError("");
   }
 
   return (
@@ -96,7 +108,7 @@ export default function JsonToCsv() {
             className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-black/45 transition hover:bg-white hover:text-black"
             aria-label="Reset JSON to CSV converter"
           >
-            <RotateCcw size={16} />
+            <RotateCcw size={16} aria-hidden="true" />
             <span className="hidden sm:inline">Reset</span>
           </button>
         </div>
@@ -110,7 +122,7 @@ export default function JsonToCsv() {
           <textarea
             id="json-csv-input"
             value={input}
-            onChange={(event) => setInput(event.target.value)}
+            onChange={(event) => { setInput(event.target.value); setError(""); setCopyError(""); setCopied(false); }}
             spellCheck={false}
             className="min-h-80 w-full resize-y border border-[#cfcabf] bg-[#f8f5ed] p-4 font-mono text-sm leading-6 outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40"
           />
@@ -127,8 +139,9 @@ export default function JsonToCsv() {
                 onClick={copyOutput}
                 disabled={!output}
                 className="inline-flex min-h-9 items-center gap-2 rounded-lg border border-[#d8d4c9] px-3 text-xs font-bold transition hover:bg-[#c8f169] disabled:cursor-not-allowed disabled:opacity-30"
+                aria-label={copied ? "CSV output copied" : "Copy CSV output"}
               >
-                <Copy size={14} />
+                {copied ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
                 {copied ? "Copied" : "Copy"}
               </button>
               <button
@@ -137,7 +150,7 @@ export default function JsonToCsv() {
                 disabled={!output}
                 className="inline-flex min-h-9 items-center gap-2 rounded-lg border border-[#d8d4c9] px-3 text-xs font-bold transition hover:bg-[#c8f169] disabled:cursor-not-allowed disabled:opacity-30"
               >
-                <Download size={14} />
+                <Download size={14} aria-hidden="true" />
                 Download
               </button>
             </div>
@@ -161,9 +174,9 @@ export default function JsonToCsv() {
         >
           Convert to CSV
         </button>
-        {error && (
+        {(error || copyError) && (
           <p className="w-full text-sm font-medium text-red-700 md:w-auto" role="alert">
-            {error}
+            {error || copyError}
           </p>
         )}
       </div>
