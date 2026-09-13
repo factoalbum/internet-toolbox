@@ -1,6 +1,6 @@
 "use client";
 
-import { RotateCcw, Search } from "lucide-react";
+import { Braces, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export default function RegexTester() {
@@ -36,30 +36,95 @@ export default function RegexTester() {
     setInput("");
   }
 
+  const hasError = Boolean(result.error) && Boolean(pattern);
+
   return (
-    <div className="overflow-hidden border border-[#d8d4c9] bg-[#fffdf8]">
-      <div className="border-b border-[#d8d4c9] bg-[#e8e4d9] px-5 py-4 md:px-7">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3"><span className="flex size-10 items-center justify-center rounded-lg bg-[#c8f169]"><Search size={20} /></span><div><p className="font-bold">Test a regular expression</p><p className="text-sm text-black/45">Matching runs locally in your browser.</p></div></div>
-          <button type="button" onClick={reset} className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-black/45 transition hover:bg-white hover:text-black" aria-label="Reset regex tester"><RotateCcw size={16} /><span className="hidden sm:inline">Reset</span></button>
+    <section aria-labelledby="regex-tester-heading" className="overflow-hidden rounded-2xl border border-[#ddd9cf] bg-[#fffdf8] shadow-[0_8px_28px_rgba(23,23,23,.04)]">
+      <header className="border-b border-[#e3dfd5] bg-[#f3f0e8] px-5 py-5 sm:px-7">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 items-start gap-3">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#c8f169] text-[#171717]" aria-hidden="true"><Braces size={20} /></span>
+            <div className="min-w-0">
+              <p className="text-[11px] font-black uppercase tracking-[.14em] text-[#65748d]">Developer utility</p>
+              <h2 id="regex-tester-heading" className="mt-1 text-xl font-black tracking-tight">Test a regular expression</h2>
+              <p className="mt-1 text-sm leading-5 text-[#657083]">Write a pattern, paste some text, and inspect every match locally.</p>
+            </div>
+          </div>
+          <button type="button" onClick={reset} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d7d3ca] bg-white px-3.5 text-sm font-bold text-[#58657b] transition hover:border-[#101522] hover:text-[#101522] focus:outline-none focus:ring-4 focus:ring-[#c8f169]" aria-label="Reset regex tester">
+            <RotateCcw size={15} aria-hidden="true" /><span className="hidden sm:inline">Reset</span>
+          </button>
+        </div>
+      </header>
+
+      <div className="space-y-6 p-5 sm:p-7">
+        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_10rem]">
+          <div>
+            <label htmlFor="regex-pattern" className="mb-2 block text-sm font-black text-[#20283a]">Regular expression</label>
+            <input id="regex-pattern" value={pattern} onChange={(event) => setPattern(event.target.value)} spellCheck={false} autoComplete="off" aria-invalid={hasError} aria-describedby="regex-pattern-help" className="min-h-12 w-full rounded-xl border border-[#d2cec4] bg-[#faf8f2] px-4 font-mono text-sm text-[#101522] outline-none transition placeholder:text-[#9aa1ad] focus:border-[#101522] focus:ring-4 focus:ring-[#c8f169]" placeholder="e.g. \\d+" />
+            <p id="regex-pattern-help" className="mt-1.5 text-xs leading-5 text-[#7a8495]">JavaScript regular-expression syntax. Matching updates as you type.</p>
+          </div>
+          <div>
+            <label htmlFor="regex-flags" className="mb-2 block text-sm font-black text-[#20283a]">Flags</label>
+            <input id="regex-flags" value={flags} onChange={(event) => setFlags(event.target.value)} spellCheck={false} autoComplete="off" aria-describedby="regex-flags-help" className="min-h-12 w-full rounded-xl border border-[#d2cec4] bg-[#faf8f2] px-4 font-mono text-sm uppercase text-[#101522] outline-none transition placeholder:text-[#9aa1ad] focus:border-[#101522] focus:ring-4 focus:ring-[#c8f169]" placeholder="gim" />
+            <p id="regex-flags-help" className="mt-1.5 text-xs leading-5 text-[#7a8495]">Common: g, i, m, s, u</p>
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-2 flex items-baseline justify-between gap-3">
+            <label htmlFor="regex-input" className="text-sm font-black text-[#20283a]">Text to test</label>
+            <span className="text-xs text-[#8a93a1]">{input.length.toLocaleString()} characters</span>
+          </div>
+          <textarea id="regex-input" value={input} onChange={(event) => setInput(event.target.value)} spellCheck={false} className="min-h-44 w-full resize-y rounded-xl border border-[#d2cec4] bg-[#faf8f2] p-4 text-sm leading-6 text-[#101522] outline-none transition placeholder:text-[#9aa1ad] focus:border-[#101522] focus:ring-4 focus:ring-[#c8f169]" placeholder="Paste text here" />
+        </div>
+
+        <div className="border-t border-[#e3dfd5] pt-6" aria-live="polite">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-[.14em] text-[#71809a]">Output</p>
+              <h3 className="mt-1 text-xl font-black tracking-tight">Matches</h3>
+            </div>
+            {!result.error && <p className="rounded-full bg-[#f0f8dc] px-3 py-1.5 text-xs font-black text-[#526b1d]">{result.matches.length} {result.matches.length === 1 ? "match" : "matches"}</p>}
+          </div>
+
+          {result.error ? (
+            <div className="mt-4 rounded-xl border border-[#efcaca] bg-[#fff6f6] p-4" role="alert">
+              <p className="text-sm font-black text-[#a43d3d]">Couldn’t test this pattern</p>
+              <p className="mt-1 text-sm leading-5 text-[#a43d3d]/80">{result.error}</p>
+            </div>
+          ) : result.matches.length > 0 ? (
+            <ol className="mt-4 space-y-2.5" aria-label="Regular expression matches">
+              {result.matches.map((match, index) => (
+                <li key={`${match.index}-${index}`} className="rounded-xl border border-[#ddd9cf] bg-[#faf8f2] p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <code className="min-w-0 break-all font-mono text-sm font-bold text-[#101522]">{match[0]}</code>
+                    <span className="shrink-0 rounded-full border border-[#ddd9cf] bg-white px-2.5 py-1 text-[11px] font-bold text-[#6f7889]">position {match.index}</span>
+                  </div>
+                  {match.length > 1 && (
+                    <div className="mt-3 flex flex-wrap gap-2" aria-label={`Capture groups for match ${index + 1}`}>
+                      {match.slice(1).map((group, groupIndex) => <span key={groupIndex} className="rounded-lg border border-[#e0dcd3] bg-white px-2.5 py-1.5 font-mono text-xs text-[#4d5668]">Group {groupIndex + 1}: {group ?? "(empty)"}</span>)}
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div className="mt-4 rounded-xl border border-dashed border-[#cfcac0] bg-[#faf8f2] p-6 text-center">
+              <p className="text-sm font-bold text-[#4d5668]">No matches found</p>
+              <p className="mt-1 text-xs leading-5 text-[#80899a]">Try adjusting the pattern or adding text to test.</p>
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-xl border border-[#e0dcd3] bg-[#f7f4ed] p-4">
+          <p className="text-xs font-black uppercase tracking-[.12em] text-[#71809a]">Quick reference</p>
+          <div className="mt-3 grid gap-2 text-xs text-[#596477] sm:grid-cols-3">
+            <span><code className="font-bold text-[#101522]">\\d</code> digit</span>
+            <span><code className="font-bold text-[#101522]">\\w</code> word character</span>
+            <span><code className="font-bold text-[#101522]">.</code> any character</span>
+          </div>
         </div>
       </div>
-
-      <div className="space-y-5 p-5 md:p-7">
-        <div className="grid gap-4 sm:grid-cols-[1fr_10rem]">
-          <div><label htmlFor="regex-pattern" className="mb-2 block text-sm font-bold">Regular expression</label><input id="regex-pattern" value={pattern} onChange={(event) => setPattern(event.target.value)} spellCheck={false} className="min-h-12 w-full border border-[#cfcabf] bg-[#f8f5ed] px-4 font-mono text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" placeholder="e.g. \\d+" /></div>
-          <div><label htmlFor="regex-flags" className="mb-2 block text-sm font-bold">Flags</label><input id="regex-flags" value={flags} onChange={(event) => setFlags(event.target.value)} spellCheck={false} className="min-h-12 w-full border border-[#cfcabf] bg-[#f8f5ed] px-4 font-mono text-sm uppercase outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" placeholder="gim" aria-describedby="regex-flags-help" /><p id="regex-flags-help" className="mt-1 text-xs text-black/40">Common: g, i, m, s, u</p></div>
-        </div>
-
-        <div><label htmlFor="regex-input" className="mb-2 block text-sm font-bold">Text to test</label><textarea id="regex-input" value={input} onChange={(event) => setInput(event.target.value)} spellCheck={false} className="min-h-40 w-full resize-y border border-[#cfcabf] bg-[#f8f5ed] p-4 text-sm leading-6 outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" placeholder="Paste text here" /></div>
-
-        <div className="border-t border-[#d8d4c9] pt-5">
-          {result.error ? <p className="text-sm font-medium text-red-700" role="alert">{result.error}</p> : <>
-            <div className="flex flex-wrap items-baseline justify-between gap-2"><h2 className="text-lg font-black">Matches</h2><p className="text-sm text-black/45">{result.matches.length} {result.matches.length === 1 ? "match" : "matches"}</p></div>
-            {result.matches.length > 0 ? <ol className="mt-4 space-y-2" aria-label="Regular expression matches">{result.matches.map((match, index) => <li key={`${match.index}-${index}`} className="border border-[#d8d4c9] bg-[#f8f5ed] p-3 text-sm"><div className="flex flex-wrap justify-between gap-3"><code className="break-all font-mono font-bold">{match[0]}</code><span className="shrink-0 text-xs text-black/40">position {match.index}</span></div>{match.length > 1 && <div className="mt-2 flex flex-wrap gap-2">{match.slice(1).map((group, groupIndex) => <span key={groupIndex} className="rounded-full border border-[#d8d4c9] bg-[#fffdf8] px-2.5 py-1 font-mono text-xs">Group {groupIndex + 1}: {group ?? "(empty)"}</span>)}</div>}</li>)}</ol> : <p className="mt-4 border border-dashed border-[#bcb8ae] p-5 text-sm text-black/50">No matches found in the text.</p>}
-          </>}
-        </div>
-      </div>
-    </div>
+    </section>
   );
 }
