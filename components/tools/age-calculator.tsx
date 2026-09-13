@@ -11,8 +11,16 @@ function localDateValue(date = new Date()) {
 }
 
 function parseDate(value: string) {
-  const [year, month, day] = value.split("-").map(Number);
-  return new Date(year, month - 1, day);
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return null;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day) || month < 1 || month > 12 || day < 1 || day > 31) return null;
+
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day ? date : null;
 }
 
 function calendarDayNumber(date: Date) {
@@ -35,16 +43,21 @@ function age(birth: Date, end: Date) {
   }
 
   const totalDays = calendarDayNumber(end) - calendarDayNumber(birth);
-  return { years, months, days, totalDays };
+  return Number.isSafeInteger(totalDays) ? { years, months, days, totalDays } : null;
 }
 
 export default function AgeCalculator() {
   const [birth, setBirth] = useState("2000-01-01");
   const [end, setEnd] = useState(() => localDateValue());
 
-  const result = useMemo(() => age(parseDate(birth), parseDate(end)), [birth, end]);
-  const birthInvalid = Boolean(birth && end && birth > end);
-  const endInvalid = Boolean(birth && end && end < birth);
+  const result = useMemo(() => {
+    const birthDate = parseDate(birth);
+    const endDate = parseDate(end);
+    return birthDate && endDate ? age(birthDate, endDate) : null;
+  }, [birth, end]);
+  const birthInvalid = Boolean(parseDate(birth) && parseDate(end) && birth > end);
+  const endInvalid = Boolean(parseDate(birth) && parseDate(end) && end < birth);
+  const invalidInput = !parseDate(birth) || !parseDate(end);
 
   const reset = () => {
     setBirth("2000-01-01");
@@ -87,12 +100,12 @@ export default function AgeCalculator() {
           <label className={`rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${birthInvalid ? "border-[#c77a6b]" : "border-[#e2dfd7]"}`}>
             <span className="text-sm font-bold">Date of birth</span>
             <span className="mt-1 block text-xs leading-5 text-black/40">The date you were born.</span>
-            <input id="age-birth-date" type="date" value={birth} max={end} aria-invalid={birthInvalid} onChange={e => setBirth(e.target.value)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] ${focusRing}`} />
+            <input id="age-birth-date" type="date" value={birth} max={end} aria-invalid={birthInvalid || invalidInput} onChange={e => setBirth(e.target.value)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] ${focusRing}`} />
           </label>
           <label className={`rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${endInvalid ? "border-[#c77a6b]" : "border-[#e2dfd7]"}`}>
             <span className="text-sm font-bold">Calculate age on</span>
             <span className="mt-1 block text-xs leading-5 text-black/40">Use today or choose another date.</span>
-            <input id="age-end-date" type="date" value={end} min={birth} aria-invalid={endInvalid} onChange={e => setEnd(e.target.value)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] ${focusRing}`} />
+            <input id="age-end-date" type="date" value={end} min={birth} aria-invalid={endInvalid || invalidInput} onChange={e => setEnd(e.target.value)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition focus:border-[#171717] ${focusRing}`} />
           </label>
         </div>
 
@@ -106,7 +119,7 @@ export default function AgeCalculator() {
                 </div>
                 <span className="rounded-full border border-black/15 bg-white/50 px-2.5 py-1 text-[11px] font-bold text-black/60">Age estimate</span>
               </div>
-              <p className="mt-3 text-xs font-medium text-black/55">From {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(parseDate(birth))} to {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(parseDate(end))}.</p>
+              <p className="mt-3 text-xs font-medium text-black/55">From {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(parseDate(birth)!)} to {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(parseDate(end)!)}.</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-2xl border border-[#d8d4c9] bg-white p-4">
@@ -122,7 +135,7 @@ export default function AgeCalculator() {
             </div>
           </div>
         ) : (
-          <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">Choose a valid birth date before the calculation date.</p>
+          <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">Choose two valid calendar dates, with the birth date on or before the calculation date.</p>
         )}
 
         <p className="mt-7 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/50">Age uses calendar years, months and days. Total days is calculated from the calendar dates, avoiding daylight-saving-time hour differences.</p>
