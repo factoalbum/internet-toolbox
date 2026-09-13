@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 type Mode = "difference" | "add" | "subtract";
 
 const DAY = 24 * 60 * 60 * 1000;
+const MAX_DAYS = 1_000_000;
 
 function localDateInputValue(date = new Date()) {
   const year = date.getFullYear();
@@ -16,6 +17,10 @@ function localDateInputValue(date = new Date()) {
 
 function parseDate(value: string) {
   return new Date(`${value}T00:00:00`);
+}
+
+function isValidDate(date: Date) {
+  return Number.isFinite(date.getTime());
 }
 
 function formatDate(date: Date) {
@@ -39,17 +44,20 @@ export default function DateCalculator() {
 
   const result = useMemo(() => {
     const startDate = parseDate(start);
+    if (!isValidDate(startDate)) return null;
 
     if (mode === "difference") {
       const endDate = parseDate(end);
+      if (!isValidDate(endDate)) return null;
       const difference = wholeDaysBetween(startDate, endDate);
       return { kind: "difference" as const, difference, absolute: Math.abs(difference) };
     }
 
     const amount = Number(days);
-    if (!Number.isInteger(amount) || amount < 0) return null;
+    if (!Number.isSafeInteger(amount) || amount < 0 || amount > MAX_DAYS) return null;
     const resultDate = new Date(startDate);
     resultDate.setDate(resultDate.getDate() + (mode === "add" ? amount : -amount));
+    if (!isValidDate(resultDate)) return null;
     return { kind: "date" as const, date: resultDate, amount };
   }, [mode, start, end, days]);
 
@@ -62,6 +70,7 @@ export default function DateCalculator() {
   };
 
   const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
+  const daysInputInvalid = days !== "" && (!Number.isSafeInteger(Number(days)) || Number(days) < 0 || Number(days) > MAX_DAYS);
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]">
@@ -131,16 +140,17 @@ export default function DateCalculator() {
           ) : (
             <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
               <span className="text-sm font-bold">Number of days</span>
-              <span className="mt-1 block text-xs leading-5 text-black/40">Whole calendar days to move the date.</span>
+              <span className="mt-1 block text-xs leading-5 text-black/40">Whole calendar days to move the date. Maximum {MAX_DAYS.toLocaleString("en-IN")}.</span>
               <input
                 id="date-calculator-days"
                 type="number"
                 min="0"
+                max={MAX_DAYS}
                 step="1"
                 inputMode="numeric"
                 value={days}
                 aria-label="Number of days"
-                aria-invalid={days !== "" && (!Number.isInteger(Number(days)) || Number(days) < 0)}
+                aria-invalid={daysInputInvalid}
                 onChange={(event) => setDays(event.target.value)}
                 className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
               />
@@ -163,7 +173,9 @@ export default function DateCalculator() {
             <p className="mt-2 text-sm text-black/60">{result.amount.toLocaleString("en-IN")} days {mode === "add" ? "after" : "before"} {formatDate(parseDate(start))}.</p>
           </div>
         ) : (
-          <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">Enter a whole number of days.</p>
+          <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">
+            {mode === "difference" ? "Enter valid start and end dates." : `Enter a whole number of days from 0 to ${MAX_DAYS.toLocaleString("en-IN")}.`}
+          </p>
         )}
 
         <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Date differences count full calendar days. Results do not account for time zones or business days.</p>
