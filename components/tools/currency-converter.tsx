@@ -147,7 +147,7 @@ export default function CurrencyConverter() {
         <section className="mt-6" aria-labelledby="currency-result-heading" aria-live="polite">
           <div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5 md:p-6">
             <div className="flex flex-wrap items-start justify-between gap-3">
-              <div><p id="currency-result-heading" className="text-xs font-black uppercase tracking-[0.12em] text-black/50">Converted amount</p><p className="mt-2 break-all text-3xl font-black tracking-[-.03em] md:text-4xl">{loading ? "Loading rates…" : result === null ? "Not available" : format(result, target)}</p></div>
+              <div><p id="currency-result-heading" className="text-xs font-black uppercase tracking-[0.12em] text-black/50">Converted amount</p><p className="mt-2 break-all text-3xl font-black tracking-[-.03em] md:text-4xl">{loading ? "Loading rates" : result === null ? "Not available" : format(result, target)}</p></div>
               <span className="rounded-full bg-white/60 px-3 py-1.5 text-[11px] font-black text-black/60">{base} → {target}</span>
             </div>
             {result !== null && <p className="mt-3 text-sm font-semibold text-black/60">1 {base} = {format(rates![target] / rates![base], target)}</p>}
