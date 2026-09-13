@@ -18,7 +18,9 @@ export default function TipCalculator() {
     if (!Number.isFinite(amount) || !Number.isFinite(tipRate) || !Number.isFinite(count) || amount < 0 || tipRate < 0 || tipRate > 100 || count < 1 || count > 100 || !Number.isInteger(count)) return null;
     const tipAmount = amount * tipRate / 100;
     const total = amount + tipAmount;
-    return { tipAmount, total, perPerson: total / count };
+    const perPerson = total / count;
+    if (!Number.isFinite(tipAmount) || !Number.isFinite(total) || !Number.isFinite(perPerson)) return null;
+    return { tipAmount, total, perPerson };
   }, [bill, tip, people]);
 
   const reset = () => { setBill("1000"); setTip("10"); setPeople("2"); };
