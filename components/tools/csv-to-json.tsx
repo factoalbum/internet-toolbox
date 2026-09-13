@@ -8,6 +8,29 @@ const MAX_INPUT_CHARS = 2_000_000;
 
 type Row = Record<string, string>;
 
+function makeUniqueHeaders(rawHeaders: string[]): string[] {
+  const used = new Set<string>();
+  const nextSuffix = new Map<string, number>();
+
+  return rawHeaders.map((header) => {
+    if (!used.has(header)) {
+      used.add(header);
+      nextSuffix.set(header, 2);
+      return header;
+    }
+
+    let suffix = nextSuffix.get(header) ?? 2;
+    let candidate = `${header}_${suffix}`;
+    while (used.has(candidate)) {
+      suffix += 1;
+      candidate = `${header}_${suffix}`;
+    }
+    used.add(candidate);
+    nextSuffix.set(header, suffix + 1);
+    return candidate;
+  });
+}
+
 function parseCsv(input: string): { headers: string[]; rows: Row[] } {
   const rows: string[][] = [];
   let row: string[] = [];
@@ -53,10 +76,7 @@ function parseCsv(input: string): { headers: string[]; rows: Row[] } {
 
   const rawHeaders = rows[0].map((value) => value.trim());
   if (rawHeaders.some((header) => !header)) throw new Error("The header row contains an empty column name.");
-  const headers = rawHeaders.map((header, index) => {
-    if (rawHeaders.slice(0, index).includes(header)) return `${header}_${index + 1}`;
-    return header;
-  });
+  const headers = makeUniqueHeaders(rawHeaders);
   const data = rows.slice(1).map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""])));
   return { headers, rows: data };
 }
