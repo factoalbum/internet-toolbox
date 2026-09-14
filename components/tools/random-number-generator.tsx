@@ -1,6 +1,6 @@
 "use client";
 
-import { Dices, RotateCcw } from "lucide-react";
+import { Check, Copy, Dices, RotateCcw } from "lucide-react";
 import { useState } from "react";
 
 const DEFAULT_MIN = 1;
@@ -35,11 +35,13 @@ export default function RandomNumberGenerator() {
   const [unique, setUnique] = useState(false);
   const [numbers, setNumbers] = useState<number[]>([]);
   const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
 
   function generate() {
     const lower = Number(min);
     const upper = Number(max);
     const amount = Number(count);
+    setCopied(false);
     if (![lower, upper, amount].every(Number.isInteger)) {
       setError("Enter whole numbers in all fields."); setNumbers([]); return;
     }
@@ -55,8 +57,19 @@ export default function RandomNumberGenerator() {
     setNumbers(generateNumbers(lower, upper, amount, unique)); setError("");
   }
 
+  async function copyNumbers() {
+    if (!numbers.length) return;
+    try {
+      await navigator.clipboard.writeText(numbers.join("\n"));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setError("Could not copy the results. Your browser may block clipboard access.");
+    }
+  }
+
   function reset() {
-    setMin(String(DEFAULT_MIN)); setMax(String(DEFAULT_MAX)); setCount(String(DEFAULT_COUNT)); setUnique(false); setNumbers([]); setError("");
+    setMin(String(DEFAULT_MIN)); setMax(String(DEFAULT_MAX)); setCount(String(DEFAULT_COUNT)); setUnique(false); setNumbers([]); setError(""); setCopied(false);
   }
 
   return (
@@ -92,7 +105,7 @@ export default function RandomNumberGenerator() {
         </div>
 
         <aside className="flex min-h-full flex-col rounded-2xl border border-[#d8d4c9] bg-[#f6f3eb] p-5 md:p-6" aria-labelledby="random-result-title">
-          <div className="flex items-center justify-between gap-3"><div><p className="text-[11px] font-black uppercase tracking-[.15em] text-[#6d8e25]">2. Your result</p><h3 id="random-result-title" className="mt-1 text-lg font-black">Generated numbers</h3></div><span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-black/50" aria-live="polite">{numbers.length ? `${numbers.length} generated` : "Waiting"}</span></div>
+          <div className="flex items-center justify-between gap-3"><div><p className="text-[11px] font-black uppercase tracking-[.15em] text-[#6d8e25]">2. Your result</p><h3 id="random-result-title" className="mt-1 text-lg font-black">Generated numbers</h3></div><div className="flex items-center gap-2"><span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-black/50" aria-live="polite">{numbers.length ? `${numbers.length} generated` : "Waiting"}</span>{numbers.length > 0 && <button type="button" onClick={copyNumbers} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-xs font-bold text-black/60 transition hover:border-[#171717] hover:text-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]" aria-label="Copy generated numbers">{copied ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}{copied ? "Copied" : "Copy"}</button>}</div></div>
           <div className={`mt-4 flex min-h-40 flex-1 items-start rounded-2xl border p-4 transition ${numbers.length ? "border-[#171717] bg-[#c8f169]" : "border-dashed border-[#d8d4c9] bg-white"}`} aria-live="polite" aria-atomic="true">
             {numbers.length > 0 ? <div className="flex flex-wrap content-start gap-2">{numbers.map((number, index) => <output key={`${number}-${index}`} className="rounded-xl border border-black/10 bg-white px-4 py-3 font-mono text-xl font-black shadow-sm">{number.toLocaleString()}</output>)}</div> : <div><p className="text-sm font-bold">Nothing generated yet</p><p className="mt-1 text-sm leading-6 text-black/45">Set your range, then choose Generate numbers.</p></div>}
           </div>
