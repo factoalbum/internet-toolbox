@@ -3,7 +3,14 @@
 import { Clipboard, Copy, KeyRound, RotateCcw } from "lucide-react";
 import { useState } from "react";
 
+const MAX_TOKEN_LENGTH = 20_000;
+const BASE64URL_PATTERN = /^[A-Za-z0-9_-]+$/;
+
 function decodePart(value: string) {
+  if (!BASE64URL_PATTERN.test(value) || value.length % 4 === 1) {
+    throw new Error("invalid base64url");
+  }
+
   const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
   const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
   return decodeURIComponent(
@@ -35,7 +42,18 @@ export default function JwtDecoder() {
     setPayload("");
     setCopied(null);
 
-    const parts = token.trim().split(".");
+    const trimmedToken = token.trim();
+    if (!trimmedToken) {
+      setError("Paste a JWT before decoding it.");
+      return;
+    }
+
+    if (trimmedToken.length > MAX_TOKEN_LENGTH) {
+      setError(`For a responsive browser experience, JWTs are limited to ${MAX_TOKEN_LENGTH.toLocaleString()} characters.`);
+      return;
+    }
+
+    const parts = trimmedToken.split(".");
     if (parts.length !== 3 || parts.some((part) => !part)) {
       setError("A JWT should contain three dot-separated parts: header, payload and signature.");
       return;
