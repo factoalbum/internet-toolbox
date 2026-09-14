@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Activity, Banknote, Binary, Braces, CalendarRange, CandlestickChart, CaseSensitive,
-  ChartNoAxesCombined, ChartSpline, CircleDollarSign, Clock3, Code2, Coins, FileArchive, FileCode2, FileJson, FileOutput, FileText,
+  ChartNoAxesCombined, ChartSpline, CircleDollarSign, Clock3, Code2, Coins, FileArchive, FileCode2, FileJson, FileOutput, FileSpreadsheet, FileText,
   Files, Gauge, GitCompare, Globe2, Hash, HeartPulse, Home, ImageIcon, Images, KeyRound, Landmark, Link2, ListX,
   LockKeyhole, MessageSquareText, Percent, PiggyBank, QrCode, ReceiptText, Regex, Ruler, ScanLine,
   ScanSearch, Scale, ShieldAlert, ShieldCheck, Shuffle, Split, Target, TextCursorInput, Timer, TrendingUp, Type, Utensils, WalletCards,
@@ -75,6 +75,7 @@ const semanticIcons: Record<string, LucideIcon> = {
   "message-writer": MessageSquareText,
   "json-formatter": Braces,
   "json-to-csv": FileJson,
+  "csv-to-json": FileSpreadsheet,
   "uuid-generator": KeyRound,
   "password-generator": LockKeyhole,
   "hash-generator": Hash,
