@@ -1,1 +1,5 @@
-export { ImageCropper as default } from "./image-edit-suite";
+import ImageEditSuite from "./image-edit-suite";
+
+export default function ImageCropper() {
+  return <ImageEditSuite variant="image-cropper" />;
+}
