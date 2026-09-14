@@ -52,6 +52,22 @@ const toolsSection = registry.slice(toolsStart, featuredStart);
 const registryEntries = [...toolsSection.matchAll(/\{\s*slug:\s*["']([^"']+)["'][\s\S]*?status:\s*["'](live|coming-soon)["']\s*\}/g)];
 const registrySlugs = registryEntries.map((match) => match[1]);
 const liveSlugs = registryEntries.filter((match) => match[2] === "live").map((match) => match[1]);
+const liveEntries = registryEntries.filter((match) => match[2] === "live");
+const liveNames = liveEntries.map((match) => {
+  const block = match[0];
+  return block.match(/name:\s*["']([^"']+)["']/)?.[1] ?? "";
+});
+const liveDescriptions = liveEntries.map((match) => {
+  const block = match[0];
+  return block.match(/description:\s*["']([^"']+)["']/)?.[1] ?? "";
+});
+assert.equal(new Set(liveNames).size, liveNames.length, "Live tools must have unique names for distinct search results");
+assert.equal(new Set(liveDescriptions.map((value) => value.trim().toLowerCase())).size, liveDescriptions.length, "Live tools must have unique descriptions for distinct search snippets");
+for (const [index, description] of liveDescriptions.entries()) {
+  assert.ok(description.length >= 20, `Live tool description is too short for ${liveSlugs[index]}`);
+  assert.ok(description.length <= 160, `Live tool description is too long for ${liveSlugs[index]}`);
+}
+
 const contentSlugs = new Set([...toolContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm), ...extraContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
 const tradingSlugs = new Set([...tradingContent.matchAll(/^\s*["']([^"']+)["']:\s*\{/gm)].map((match) => match[1]));
 for (const slug of registrySlugs) assert.match(toolRouter, new RegExp(`\"${slug}\"\\s*:`), `Tool router mapping missing for ${slug}`);
@@ -111,7 +127,7 @@ assert.match(allToolsBrowser, /return live \? <Link/); assert.match(allToolsBrow
 const viewer = fs.readFileSync(path.join(root, "components/tools/developer-file-viewer.tsx"), "utf8");
 assert.match(viewer, /requestAnimationFrame/); assert.match(viewer, /setTimeout\(\(\) => \{[\s\S]*renderMarkdown/); assert.match(viewer, /kind === "markdown"/);
 const fileTools = fs.readFileSync(path.join(root, "components/tools/document-tools-suite.tsx"), "utf8");
-assert.match(fileTools, /MAX_(?:FILE_)?SIZE/); assert.match(fileTools, /20 \* 1024 \* 1024/);
+assert.match(fileTools, /MAX_(?:FILE_)?SIZE/); assert.match(fileTools /20 \* 1024 \* 1024/);
 const utilityTools = fs.readFileSync(path.join(root, "components/tools/file-utility-suite.tsx"), "utf8");
 const utilityLibrary = fs.readFileSync(path.join(root, "lib/file-utility.ts"), "utf8");
 assert.match(`${utilityTools}\n${utilityLibrary}`, /25 \* 1024 \* 1024/); assert.match(utilityLibrary, /MAX_PDF_PAGES\s*=\s*100/);
