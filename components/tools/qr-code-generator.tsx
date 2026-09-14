@@ -90,7 +90,7 @@ export default function QrCodeGenerator() {
           <p className="mt-2 text-xs leading-5 text-black/40">Up to {MAX_LENGTH.toLocaleString()} characters. Very long content may produce a dense QR code that is harder to scan.</p>
 
           <div id="qr-status" className="mt-4 min-h-6" aria-live="polite" aria-atomic="true">
-            {error ? <p className="text-sm font-semibold text-red-700" role="alert">{error}</p> : isRendering ? <p className="text-sm font-medium text-black/45">Updating your QR code…</p> : <p className="text-sm font-medium text-black/45">Ready to download.</p>}
+            {error ? <p className="text-sm font-semibold text-red-700" role="alert">{error}</p> : isRendering ? <p className="text-sm font-medium text-black/45">Updating your QR code</p> : <p className="text-sm font-medium text-black/45">Ready to download.</p>}
           </div>
 
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
