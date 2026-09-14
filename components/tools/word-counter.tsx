@@ -3,6 +3,8 @@
 import { RotateCcw, Type } from "lucide-react";
 import { useMemo, useState } from "react";
 
+const MAX_TEXT_LENGTH = 500_000;
+
 export default function WordCounter() {
   const [text, setText] = useState("");
 
@@ -45,10 +47,14 @@ export default function WordCounter() {
             value={text}
             onChange={(event) => setText(event.target.value)}
             placeholder="Start typing or paste text here..."
-            aria-describedby="word-counter-help"
+            aria-describedby="word-counter-help word-counter-limit"
+            maxLength={MAX_TEXT_LENGTH}
             className="mt-3 min-h-72 w-full resize-y rounded-xl border border-[#cfcabf] bg-[#faf9f6] p-4 text-base leading-7 text-[#171717] outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/45"
           />
-          <p id="word-counter-help" className="mt-2 text-xs leading-5 text-black/40">Tip: keep punctuation in place for a more useful sentence count.</p>
+          <div className="mt-2 flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+            <p id="word-counter-help" className="text-xs leading-5 text-black/40">Tip: keep punctuation in place for a more useful sentence count.</p>
+            <p id="word-counter-limit" className="shrink-0 text-xs font-medium tabular-nums text-black/40" aria-live="polite">{text.length.toLocaleString()} / {MAX_TEXT_LENGTH.toLocaleString()} characters</p>
+          </div>
         </section>
 
         <section className="mt-6" aria-labelledby="word-counter-results-heading" aria-live="polite" aria-atomic="true">
