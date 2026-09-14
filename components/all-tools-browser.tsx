@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, Search, SlidersHorizontal, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { categories, tools, type ToolCategory } from "@/lib/tools";
 import { searchAliases } from "@/components/tool-search";
 import ToolIcon, { getToolAccent } from "@/components/tool-icon";
@@ -14,6 +14,7 @@ const liveCategories = categories.filter((category) => liveCategorySlugs.has(cat
 export default function AllToolsBrowser() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
+  const inputRef = useRef<HTMLInputElement>(null);
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const aliases = searchAliases[q] ?? [];
@@ -32,6 +33,18 @@ export default function AllToolsBrowser() {
       .map(({ tool }) => tool);
   }, [query, category]);
 
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   const clearFilters = () => { setQuery(""); setCategory("all"); };
 
   return <div className="min-w-0">
@@ -40,6 +53,7 @@ export default function AllToolsBrowser() {
         <Search size={18} className="shrink-0 text-black/40" aria-hidden="true" />
         <label htmlFor="all-tools-search" className="sr-only">Search all tools</label>
         <input
+          ref={inputRef}
           id="all-tools-search"
           type="search"
           value={query}
@@ -51,9 +65,9 @@ export default function AllToolsBrowser() {
           autoComplete="off"
           enterKeyHint="search"
           aria-controls="all-tools-results"
-          aria-keyshortcuts="Escape"
+          aria-keyshortcuts="Control+K Meta+K Escape"
         />
-        {query && <button type="button" onClick={() => setQuery("")} aria-label="Clear search" className="flex size-8 shrink-0 items-center justify-center rounded-lg text-black/40 hover:bg-black/5 hover:text-black focus:outline-none focus:ring-2 focus:ring-[#c8f169]"><X size={16} aria-hidden="true" /></button>}
+        {query ? <button type="button" onClick={() => setQuery("")} aria-label="Clear search" className="flex size-8 shrink-0 items-center justify-center rounded-lg text-black/40 hover:bg-black/5 hover:text-black focus:outline-none focus:ring-2 focus:ring-[#c8f169]"><X size={16} aria-hidden="true" /></button> : <span className="hidden rounded-md bg-black/5 px-2 py-1 font-mono text-[10px] text-black/35 sm:block">Ctrl K</span>}
       </div>
 
       <div className="flex min-w-0 items-center gap-2" aria-label="Filter tools by category" role="group">
