@@ -66,8 +66,15 @@ export default function UnitConverter() {
     setTo("ft");
   }
 
+  function swap() {
+    setFrom(to);
+    setTo(from);
+  }
+
   const options = units[category];
   const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
+  const fromLabel = options.find((unit) => unit.value === from)?.label ?? from;
+  const toLabel = options.find((unit) => unit.value === to)?.label ?? to;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]">
@@ -91,16 +98,35 @@ export default function UnitConverter() {
           </div>
         </fieldset>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-[1.2fr_1fr_1fr] md:items-end">
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4"><span className="text-sm font-bold">Value</span><input id="unit-value" value={value} onChange={(event) => setValue(event.target.value)} inputMode="decimal" placeholder="1" aria-label="Value to convert" className={`mt-2 min-h-14 w-full rounded-xl border border-[#bcb8ae] bg-white px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} /></label>
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4"><span className="text-sm font-bold">From</span><select id="unit-from" value={from} onChange={(event) => setFrom(event.target.value)} aria-label="Convert from unit" className={`mt-2 min-h-14 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}>{options.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}</select></label>
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4"><span className="text-sm font-bold">Convert to</span><select id="unit-to" value={to} onChange={(event) => setTo(event.target.value)} aria-label="Convert to unit" className={`mt-2 min-h-14 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}>{options.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}</select></label>
+        <div className="mt-6 grid gap-4 md:grid-cols-[1.2fr_1fr_auto_1fr] md:items-end">
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
+            <span className="text-sm font-bold">Value</span>
+            <span className="mt-1 block text-xs leading-5 text-black/40">Enter the amount you want to convert.</span>
+            <input id="unit-value" value={value} onChange={(event) => setValue(event.target.value)} inputMode="decimal" placeholder="1" aria-label="Value to convert" className={`mt-3 min-h-14 w-full rounded-xl border border-[#bcb8ae] bg-white px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
+          </label>
+
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
+            <span className="text-sm font-bold">From</span>
+            <span className="mt-1 block text-xs leading-5 text-black/40">The current unit.</span>
+            <select id="unit-from" value={from} onChange={(event) => setFrom(event.target.value)} aria-label="Convert from unit" className={`mt-2 min-h-14 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}>{options.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}</select>
+          </label>
+
+          <button type="button" onClick={swap} disabled={from === to} aria-label={`Swap ${fromLabel} and ${toLabel}`} title="Swap units" className={`mx-auto flex size-11 shrink-0 items-center justify-center rounded-xl border border-[#d8d4c9] bg-white text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 md:mb-1 ${focusRing}`}>
+            <ArrowRightLeft size={17} aria-hidden="true" />
+          </button>
+
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
+            <span className="text-sm font-bold">Convert to</span>
+            <span className="mt-1 block text-xs leading-5 text-black/40">The unit you want back.</span>
+            <select id="unit-to" value={to} onChange={(event) => setTo(event.target.value)} aria-label="Convert to unit" className={`mt-2 min-h-14 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}>{options.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}</select>
+          </label>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-[#171717] bg-[#171717] p-5 text-white md:p-7" aria-live="polite" aria-atomic="true">
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-white/40">Converted result</p>
-          <p className={`mt-2 break-words text-4xl font-black tracking-tight md:text-5xl ${error ? "text-2xl md:text-3xl" : ""}`}>{error ?? (result === null ? "Enter a value" : formatNumber(result))}</p>
-          {result !== null && <p className="mt-2 text-sm text-white/45">{formatNumber(Number(value))} {options.find((unit) => unit.value === from)?.label} → {formatNumber(result)} {options.find((unit) => unit.value === to)?.label}</p>}
+        <div className={`mt-6 rounded-2xl border p-5 md:p-7 ${error ? "border-[#ead7d2] bg-[#fff7f5] text-[#7b3d31]" : "border-[#171717] bg-[#c8f169] text-[#171717]"}`} aria-live="polite" aria-atomic="true">
+          <p className="text-xs font-black uppercase tracking-[.16em] opacity-55">Converted result</p>
+          <p className={`mt-2 break-words font-black tracking-tight ${error ? "text-2xl md:text-3xl" : "text-4xl md:text-5xl"}`}>{error ?? (result === null ? "Enter a value" : formatNumber(result))}</p>
+          {result !== null && <p className="mt-2 text-sm font-medium opacity-55">{formatNumber(Number(value))} {fromLabel} → {formatNumber(result)} {toLabel}</p>}
+          {error && <p className="mt-2 text-xs font-semibold opacity-75">Choose a valid value and try again.</p>}
         </div>
 
         <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Conversions use standard measurement relationships. Results are rounded to a practical number of decimal places for readability.</p>
