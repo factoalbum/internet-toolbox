@@ -54,13 +54,13 @@ export default function AgeCalculator() {
   }, [birthDate, endDate]);
   const formattedBirthDate = birthDate ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(birthDate) : "";
   const formattedEndDate = endDate ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(endDate) : "";
-  const birthInvalid = !birthDate || (Boolean(endDate) && birthDate > endDate);
-  const endInvalid = !endDate || (Boolean(birthDate) && endDate < birthDate);
+  const birthInvalid = !birthDate || (Boolean(endDate) && birthDate > endDate!);
+  const endInvalid = !endDate || (Boolean(birthDate) && endDate! < birthDate);
   const hasInvalidInput = birthInvalid || endInvalid;
   const reset = () => { setBirth("2000-01-01"); setEnd(localDateValue()); setCopied(false); };
   const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
   const copyResult = async () => {
-    if (!result || !birthDate || !endDate) return;
+    if (!result) return;
     const text = `Exact age: ${result.years} years, ${result.months} months, ${result.days} days. From ${formattedBirthDate} to ${formattedEndDate}. Total days: ${result.totalDays.toLocaleString("en-IN")}.`;
     try {
       await navigator.clipboard.writeText(text);
