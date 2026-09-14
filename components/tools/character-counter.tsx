@@ -102,7 +102,7 @@ export default function CharacterCounter() {
             </button>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Text statistics">
             {[
               ["Characters", stats.characters],
               ["Without spaces", stats.withoutSpaces],
@@ -110,11 +110,11 @@ export default function CharacterCounter() {
               ["Lines", stats.lines],
             ].map(([label, value]) => (
               <div key={label as string} className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-4 transition sm:p-5">
-                <p className="text-[10px] font-black uppercase tracking-[.12em] text-black/45">{label}</p>
-                <p className="mt-2 break-words text-3xl font-black tracking-[-.04em] tabular-nums text-[#171717]">{value}</p>
+                <dt className="text-[10px] font-black uppercase tracking-[.12em] text-black/45">{label}</dt>
+                <dd className="mt-2 break-words text-3xl font-black tracking-[-.04em] tabular-nums text-[#171717]">{value}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </section>
 
         <div className="mt-6 rounded-2xl border border-dashed border-[#d8d4c9] bg-[#faf9f6] p-4">
