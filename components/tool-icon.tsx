@@ -1,11 +1,11 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  Activity, BadgePercent, Banknote, Binary, Braces, CalendarDays, CandlestickChart, CaseSensitive,
+  Activity, Banknote, Binary, Braces, CalendarRange, CandlestickChart, CaseSensitive,
   ChartNoAxesCombined, ChartSpline, CircleDollarSign, Clock3, Code2, Coins, FileArchive, FileCode2, FileJson, FileOutput, FileText,
   Files, Gauge, GitCompare, Globe2, Hash, HeartPulse, Home, ImageIcon, Images, KeyRound, Landmark, Link2, ListX,
   LockKeyhole, MessageSquareText, Percent, PiggyBank, QrCode, ReceiptText, Regex, Ruler, ScanLine,
   ScanSearch, Scale, ShieldAlert, ShieldCheck, Shuffle, Split, Target, TextCursorInput, Timer, TrendingUp, Type, Utensils, WalletCards,
-  Tags, HandCoins, UserRound, CalendarRange,
+  Tags, HandCoins, UserRound,
 } from "lucide-react";
 import type { ToolCategory } from "@/lib/tools";
 
