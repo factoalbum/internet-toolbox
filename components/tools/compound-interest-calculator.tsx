@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 const money = (value: number) => value.toLocaleString("en-IN", { maximumFractionDigits: 0 });
 const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
 const MAX_INPUT = 1e15;
+const FREQUENCIES = new Set([1, 2, 4, 12]);
 
 export default function CompoundInterestCalculator() {
   const [principal, setPrincipal] = useState("100000");
@@ -13,16 +14,23 @@ export default function CompoundInterestCalculator() {
   const [years, setYears] = useState("5");
   const [frequency, setFrequency] = useState("4");
 
-  const result = useMemo(() => {
-    const p = Number(principal), annual = Number(rate), y = Number(years), n = Number(frequency);
-    if (!Number.isFinite(p) || !Number.isFinite(annual) || !Number.isFinite(y) || !Number.isFinite(n) || p <= 0 || annual < 0 || y <= 0 || n <= 0) return null;
-    if (p > MAX_INPUT || annual > 100 || y > 100) return null;
-    const amount = p * Math.pow(1 + annual / 100 / n, n * y);
-    if (!Number.isFinite(amount) || amount > Number.MAX_SAFE_INTEGER) return null;
-    return { interest: amount - p, amount };
-  }, [principal, rate, years, frequency]);
+  const principalValue = Number(principal);
+  const rateValue = Number(rate);
+  const yearsValue = Number(years);
+  const frequencyValue = Number(frequency);
+  const principalInvalid = principal.trim() === "" || !Number.isFinite(principalValue) || principalValue <= 0 || principalValue > MAX_INPUT;
+  const rateInvalid = rate.trim() === "" || !Number.isFinite(rateValue) || rateValue < 0 || rateValue > 100;
+  const yearsInvalid = years.trim() === "" || !Number.isFinite(yearsValue) || yearsValue <= 0 || yearsValue > 100;
+  const frequencyInvalid = !FREQUENCIES.has(frequencyValue);
 
-  const invalid = Number(principal) <= 0 || Number(principal) > MAX_INPUT || Number(rate) < 0 || Number(rate) > 100 || Number(years) <= 0 || Number(years) > 100;
+  const result = useMemo(() => {
+    if (principalInvalid || rateInvalid || yearsInvalid || frequencyInvalid) return null;
+    const amount = principalValue * Math.pow(1 + rateValue / 100 / frequencyValue, frequencyValue * yearsValue);
+    if (!Number.isFinite(amount) || amount > Number.MAX_SAFE_INTEGER) return null;
+    return { interest: amount - principalValue, amount };
+  }, [principalValue, rateValue, yearsValue, frequencyValue, principalInvalid, rateInvalid, yearsInvalid, frequencyInvalid]);
+
+  const invalid = principalInvalid || rateInvalid || yearsInvalid || frequencyInvalid;
 
   const reset = () => {
     setPrincipal("100000");
@@ -54,21 +62,21 @@ export default function CompoundInterestCalculator() {
             <h3 id="compound-inputs-heading" className="mt-1 text-base font-black text-[#171717]">Set your starting numbers</h3>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
-            <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${Number(principal) <= 0 || Number(principal) > MAX_INPUT ? "border-[#c46b5c]" : "border-[#e2dfd7]"}`}>
+            <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${principalInvalid ? "border-[#c46b5c]" : "border-[#e2dfd7]"}`}>
               <span className="text-sm font-bold">Principal amount</span><span className="mt-1 block text-xs text-black/40">Starting balance in rupees</span>
-              <input aria-label="Principal amount in rupees" aria-invalid={Number(principal) <= 0 || Number(principal) > MAX_INPUT} value={principal} onChange={e=>setPrincipal(e.target.value)} type="number" min="0.01" max={MAX_INPUT} step="any" inputMode="decimal" className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
+              <input aria-label="Principal amount in rupees" aria-invalid={principalInvalid} value={principal} onChange={e=>setPrincipal(e.target.value)} type="number" min="0.01" max={MAX_INPUT} step="any" inputMode="decimal" className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
             </label>
-            <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${Number(rate) < 0 || Number(rate) > 100 ? "border-[#c46b5c]" : "border-[#e2dfd7]"}`}>
+            <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${rateInvalid ? "border-[#c46b5c]" : "border-[#e2dfd7]"}`}>
               <span className="text-sm font-bold">Interest rate</span><span className="mt-1 block text-xs text-black/40">Annual rate, from 0% to 100%</span>
-              <div className="relative mt-3"><input aria-label="Annual interest rate percentage" aria-invalid={Number(rate) < 0 || Number(rate) > 100} value={rate} onChange={e=>setRate(e.target.value)} type="number" min="0" max="100" step="0.01" inputMode="decimal" className={`h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 pr-12 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} /><span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-bold text-black/35" aria-hidden="true">%</span></div>
+              <div className="relative mt-3"><input aria-label="Annual interest rate percentage" aria-invalid={rateInvalid} value={rate} onChange={e=>setRate(e.target.value)} type="number" min="0" max="100" step="0.01" inputMode="decimal" className={`h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 pr-12 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} /><span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-bold text-black/35" aria-hidden="true">%</span></div>
             </label>
-            <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${Number(years) <= 0 || Number(years) > 100 ? "border-[#c46b5c]" : "border-[#e2dfd7]"}`}>
+            <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${yearsInvalid ? "border-[#c46b5c]" : "border-[#e2dfd7]"}`}>
               <span className="text-sm font-bold">Time period</span><span className="mt-1 block text-xs text-black/40">How long the money stays invested, up to 100 years</span>
-              <input aria-label="Time period in years" aria-invalid={Number(years) <= 0 || Number(years) > 100} value={years} onChange={e=>setYears(e.target.value)} type="number" min="0.01" max="100" step="0.25" inputMode="decimal" className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
+              <input aria-label="Time period in years" aria-invalid={yearsInvalid} value={years} onChange={e=>setYears(e.target.value)} type="number" min="0.01" max="100" step="0.25" inputMode="decimal" className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
             </label>
-            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
+            <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${frequencyInvalid ? "border-[#c46b5c]" : "border-[#e2dfd7]"}`}>
               <span className="text-sm font-bold">Compounding frequency</span><span className="mt-1 block text-xs text-black/40">How often interest is added</span>
-              <select aria-label="Compounding frequency" value={frequency} onChange={e=>setFrequency(e.target.value)} className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-base font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4">Quarterly</option><option value="12">Monthly</option></select>
+              <select aria-label="Compounding frequency" aria-invalid={frequencyInvalid} value={frequency} onChange={e=>setFrequency(e.target.value)} className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-base font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4">Quarterly</option><option value="12">Monthly</option></select>
             </label>
           </div>
           {invalid && <p className="mt-4 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-3 text-xs font-semibold leading-5 text-[#7b3d31]" role="alert">Check your inputs: principal must be above ₹0, the rate must be 0–100%, and the time period must be 0–100 years.</p>}
