@@ -47,7 +47,12 @@ export default function AgeCalculator() {
   const [end, setEnd] = useState(() => localDateValue());
   const birthDate = useMemo(() => parseDate(birth), [birth]);
   const endDate = useMemo(() => parseDate(end), [end]);
-  const result = useMemo(() => birthDate && endDate ? age(birthDate, endDate) : null, [birthDate, endDate]);
+  const result = useMemo(() => {
+    if (!birthDate || !endDate) return null;
+    return age(birthDate, endDate);
+  }, [birthDate, endDate]);
+  const formattedBirthDate = birthDate ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(birthDate) : "";
+  const formattedEndDate = endDate ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(endDate) : "";
   const birthInvalid = !birthDate || (Boolean(endDate) && birthDate > endDate);
   const endInvalid = !endDate || (Boolean(birthDate) && endDate < birthDate);
   const hasInvalidInput = birthInvalid || endInvalid;
@@ -81,7 +86,7 @@ export default function AgeCalculator() {
 
         <section className="mt-7" aria-labelledby="age-results-heading" aria-live="polite" aria-atomic="true">
           <div className="mb-3"><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">2. Your result</p><h3 id="age-results-heading" className="mt-1 text-base font-black text-[#171717]">Exact age</h3></div>
-          {result ? <div className="space-y-4"><div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5 md:p-6"><p className="text-[11px] font-black uppercase tracking-[.15em] text-black/55">Age on selected date</p><p className="mt-2 text-2xl font-black leading-tight sm:text-3xl">{result.years} years, {result.months} months, {result.days} days</p><p className="mt-3 text-xs font-medium text-black/55">From {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(birthDate!)} to {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(endDate!)}.</p></div><div className="grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-[#d8d4c9] bg-white p-4"><p className="text-xs font-semibold text-black/45">Total days</p><p className="mt-1 text-xl font-black">{result.totalDays.toLocaleString("en-IN")}</p><p className="mt-1 text-xs text-black/40">Calendar days between the two dates.</p></div><div className="rounded-2xl border border-[#d8d4c9] bg-white p-4"><p className="text-xs font-semibold text-black/45">Date range</p><p className="mt-1 break-words text-sm font-bold">{birth} to {end}</p></div></div></div> : <div className="rounded-2xl border border-dashed border-[#d8d4c9] bg-white p-5"><p className="text-sm font-bold">Enter valid dates to calculate</p><p className="mt-1 text-sm leading-5 text-black/50">Your exact age and total calendar days will appear here.</p></div>}
+          {result ? <div className="space-y-4"><div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5 md:p-6"><p className="text-[11px] font-black uppercase tracking-[.15em] text-black/55">Age on selected date</p><p className="mt-2 text-2xl font-black leading-tight sm:text-3xl">{result.years} years, {result.months} months, {result.days} days</p><p className="mt-3 text-xs font-medium text-black/55">From {formattedBirthDate} to {formattedEndDate}.</p></div><div className="grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-[#d8d4c9] bg-white p-4"><p className="text-xs font-semibold text-black/45">Total days</p><p className="mt-1 text-xl font-black">{result.totalDays.toLocaleString("en-IN")}</p><p className="mt-1 text-xs text-black/40">Calendar days between the two dates.</p></div><div className="rounded-2xl border border-[#d8d4c9] bg-white p-4"><p className="text-xs font-semibold text-black/45">Date range</p><p className="mt-1 break-words text-sm font-bold">{birth} to {end}</p></div></div></div> : <div className="rounded-2xl border border-dashed border-[#d8d4c9] bg-white p-5"><p className="text-sm font-bold">Enter valid dates to calculate</p><p className="mt-1 text-sm leading-5 text-black/50">Your exact age and total calendar days will appear here.</p></div>}
         </section>
         <p className="mt-7 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/50">Age uses calendar years, months and days. Total days is calculated from calendar dates.</p>
       </div>
