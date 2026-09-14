@@ -1,1 +1,5 @@
-export { ImageResizer as default } from "./image-edit-suite";
+import ImageEditSuite from "./image-edit-suite";
+
+export default function ImageResizer() {
+  return <ImageEditSuite variant="image-resizer" />;
+}
