@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Copy, RotateCcw, Sparkles } from "lucide-react";
+import { Copy, MessageSquareText, RotateCcw } from "lucide-react";
 import { hasEnoughContext, type MessageKind, type MessageLength, type MessageTone } from "@/lib/message-writer";
 
 const options: Array<{ value: MessageKind; label: string }> = [
@@ -153,36 +153,43 @@ export default function MessageWriter() {
   }
 
   const hint = contextHints[kind];
+  const contextHelpId = "message-context-help";
 
   return (
     <div className="grid gap-5 lg:grid-cols-[.9fr_1.1fr]">
-      <section className="border border-[#d8d4c9] bg-[#fffdf8] p-5 sm:p-6" aria-labelledby="writer-input-heading">
-        <div className="flex items-start gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#c8f169]"><Sparkles size={19} aria-hidden="true" /></span>
-          <div><h2 id="writer-input-heading" className="font-bold">Give a little context</h2><p className="mt-1 text-sm leading-5 text-black/50">Write the details in your own words. You do not need to format them first.</p></div>
+      <section className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.035)]" aria-labelledby="writer-input-heading">
+        <div className="border-b border-[#e3dfd5] bg-[#f4f1e9] p-5 sm:p-6">
+          <div className="flex items-start gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e9f1d8] text-[#5d7c21]" aria-hidden="true"><MessageSquareText size={19} /></span>
+            <div><p className="text-[10px] font-black uppercase tracking-[.14em] text-[#6d8e25]">Writing utility</p><h2 id="writer-input-heading" className="mt-1 text-lg font-black tracking-[-.02em]">Give a little context</h2><p className="mt-1 text-sm leading-6 text-black/50">Write the details in your own words. You do not need to format them first.</p></div>
+          </div>
         </div>
 
-        <label className="mt-6 block text-sm font-semibold" htmlFor="message-type">What are you writing?</label>
-        <select id="message-type" value={kind} onChange={(event) => { setKind(event.target.value as MessageKind); setResult(""); }} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]">
-          {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-        </select>
+        <div className="p-5 sm:p-6">
+          <label className="block text-sm font-bold" htmlFor="message-type">What are you writing?</label>
+          <select id="message-type" value={kind} onChange={(event) => { setKind(event.target.value as MessageKind); setResult(""); }} className="mt-2 min-h-11 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]">
+            {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
 
-        <label className="mt-5 block text-sm font-semibold" htmlFor="message-context">What happened?</label>
-        <textarea id="message-context" value={context} onChange={(event) => { setContext(event.target.value); setResult(""); }} rows={7} maxLength={1200} placeholder={hint.placeholder} className="mt-2 w-full resize-y rounded-lg border border-[#bcb8ae] bg-white p-3 text-sm leading-6 outline-none placeholder:text-black/30 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" />
-        <div className="mt-1 flex justify-between gap-3 text-xs text-black/35"><span>{hint.help}</span><span className="shrink-0">{context.length}/1200</span></div>
+          <label className="mt-5 block text-sm font-bold" htmlFor="message-context">What happened?</label>
+          <textarea id="message-context" aria-describedby={contextHelpId} value={context} onChange={(event) => { setContext(event.target.value); setResult(""); }} rows={7} maxLength={1200} placeholder={hint.placeholder} className="mt-2 w-full resize-y rounded-xl border border-[#bcb8ae] bg-white p-3.5 text-sm leading-6 outline-none placeholder:text-black/30 transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" />
+          <div className="mt-2 flex items-start justify-between gap-3 text-xs leading-5 text-black/40"><span id={contextHelpId} className="max-w-[38rem]">{hint.help}</span><span className="shrink-0 tabular-nums">{context.length}/1200</span></div>
 
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div><label className="text-sm font-semibold" htmlFor="message-tone">Tone</label><select id="message-tone" value={tone} onChange={(event) => { setTone(event.target.value as MessageTone); setResult(""); }} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="professional">Professional</option><option value="friendly">Friendly</option><option value="warm">Warm</option><option value="confident">Confident</option><option value="simple">Simple</option></select></div>
-          <div><label className="text-sm font-semibold" htmlFor="message-length">Length</label><select id="message-length" value={length} onChange={(event) => { setLength(event.target.value as MessageLength); setResult(""); }} className="mt-2 min-h-11 w-full rounded-lg border border-[#bcb8ae] bg-white px-3 text-sm outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="short">Short</option><option value="medium">Medium</option><option value="long">Long</option></select></div>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div><label className="text-sm font-bold" htmlFor="message-tone">Tone</label><select id="message-tone" value={tone} onChange={(event) => { setTone(event.target.value as MessageTone); setResult(""); }} className="mt-2 min-h-11 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="professional">Professional</option><option value="friendly">Friendly</option><option value="warm">Warm</option><option value="confident">Confident</option><option value="simple">Simple</option></select></div>
+            <div><label className="text-sm font-bold" htmlFor="message-length">Length</label><select id="message-length" value={length} onChange={(event) => { setLength(event.target.value as MessageLength); setResult(""); }} className="mt-2 min-h-11 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"><option value="short">Short</option><option value="medium">Medium</option><option value="long">Long</option></select></div>
+          </div>
+
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row"><button type="button" onClick={generate} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-[#171717] px-5 text-sm font-bold text-white transition hover:bg-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Create message</button><button type="button" onClick={reset} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#bcb8ae] bg-white px-4 text-sm font-semibold text-black/70 transition hover:border-[#171717] hover:text-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><RotateCcw size={15} aria-hidden="true" />Reset</button></div>
         </div>
-
-        <div className="mt-5 flex flex-wrap gap-2"><button type="button" onClick={generate} className="min-h-11 flex-1 rounded-lg bg-[#171717] px-5 text-sm font-bold text-white transition hover:bg-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]">Create message</button><button type="button" onClick={reset} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[#bcb8ae] bg-white px-4 text-sm font-semibold hover:border-[#171717] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><RotateCcw size={15} aria-hidden="true" />Reset</button></div>
       </section>
 
-      <section className="border border-[#d8d4c9] bg-[#171717] p-5 text-white sm:p-6" aria-labelledby="writer-output-heading">
-        <div className="flex items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-white/40">Ready to use</p><h2 id="writer-output-heading" className="mt-1 text-xl font-black">Your message</h2></div><button type="button" onClick={copyResult} disabled={!result} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/15 px-3 text-xs font-bold text-white disabled:cursor-not-allowed disabled:opacity-30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-[#c8f169]" aria-label="Copy generated message"><Copy size={14} aria-hidden="true" />{copied ? "Copied" : "Copy"}</button></div>
-        <div className="mt-5 min-h-[360px] whitespace-pre-wrap rounded-lg border border-white/10 bg-white/[0.06] p-4 text-sm leading-7 text-white/85 sm:p-5">{result || "Your finished message will appear here."}</div>
-        <p className="mt-3 text-xs leading-5 text-white/35">Review the result before sending, especially for work or formal requests.</p>
+      <section className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.035)]" aria-labelledby="writer-output-heading">
+        <div className="flex items-start justify-between gap-3 border-b border-[#e3dfd5] bg-[#f4f1e9] p-5 sm:p-6"><div><p className="text-[10px] font-black uppercase tracking-[.14em] text-[#6d8e25]">Ready to use</p><h2 id="writer-output-heading" className="mt-1 text-lg font-black tracking-[-.02em]">Your message</h2><p className="mt-1 text-sm leading-5 text-black/45">Review it once, then copy it wherever you need it.</p></div><button type="button" onClick={copyResult} disabled={!result} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#bcb8ae] bg-white px-3.5 text-xs font-bold text-black/65 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-40 focus:outline-none focus:ring-4 focus:ring-[#c8f169]" aria-label="Copy generated message"><Copy size={14} aria-hidden="true" />{copied ? "Copied" : "Copy"}</button></div>
+        <div className="p-5 sm:p-6">
+          <div className="min-h-[360px] whitespace-pre-wrap rounded-2xl border border-[#dedbd3] bg-[#faf9f6] p-4 text-sm leading-7 text-black/75 sm:p-5" aria-live="polite" aria-atomic="true">{result || <><p className="font-bold text-black/65">Your finished message will appear here.</p><p className="mt-1 text-black/40">Add some context on the left, choose a tone and length, then create your message.</p></>}</div>
+          <div className="mt-4 rounded-xl border border-[#dfe7c8] bg-[#f3f8e7] px-3.5 py-3 text-xs leading-5 text-[#52691f]">Review the result before sending, especially for work or formal requests.</div>
+        </div>
       </section>
     </div>
   );
