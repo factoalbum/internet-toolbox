@@ -53,6 +53,8 @@ export default function PasswordGenerator() {
     return "Basic";
   }, [length, useUpper, useNumbers, useSymbols]);
 
+  const strengthPercent = strength === "Strong" ? 100 : strength === "Good" ? 68 : 36;
+
   function generate() {
     setPassword(createPassword(length, useUpper, useNumbers, useSymbols));
     setCopied(false);
@@ -118,7 +120,15 @@ export default function PasswordGenerator() {
               {password || "Your password will appear here"}
             </output>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-black/50" aria-live="polite">Strength: <span className="font-bold text-black">{strength}</span></p>
+              <div className="min-w-0 flex-1" aria-label={`Password strength: ${strength}`}>
+                <div className="flex items-center justify-between gap-3 text-xs text-black/50">
+                  <span>Strength</span>
+                  <span className="font-bold text-black">{strength}</span>
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#dedbd2]" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={strengthPercent} aria-valuetext={strength}>
+                  <div className="h-full rounded-full bg-[#9fcf48] transition-[width] duration-200" style={{ width: `${strengthPercent}%` }} />
+                </div>
+              </div>
               <button type="button" onClick={copyPassword} disabled={!password} className="min-h-11 rounded-lg border border-[#171717] bg-[#171717] px-4 text-sm font-bold text-white transition hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60" aria-label={copied ? "Password copied" : "Copy generated password"}>
                 {copied ? "Copied" : "Copy password"}
               </button>
