@@ -7,6 +7,7 @@ const money = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR
 const investmentOptions = [1000, 5000, 10000, 25000];
 const tenureOptions = [5, 10, 15, 20];
 const MAX_MONTHLY = 10_000_000;
+const MIN_YEARS = 1 / 12;
 const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
 
 export default function SipCalculator() {
@@ -16,12 +17,12 @@ export default function SipCalculator() {
 
   const monthlyInvalid = !monthly.trim() || !Number.isFinite(Number(monthly)) || Number(monthly) <= 0 || Number(monthly) > MAX_MONTHLY;
   const rateInvalid = !rate.trim() || !Number.isFinite(Number(rate)) || Number(rate) < 0 || Number(rate) > 100;
-  const yearsInvalid = !years.trim() || !Number.isFinite(Number(years)) || Number(years) <= 0 || Number(years) > 100;
+  const yearsInvalid = !years.trim() || !Number.isFinite(Number(years)) || Number(years) < MIN_YEARS || Number(years) > 100;
 
   const result = useMemo(() => {
     const p = Number(monthly), annual = Number(rate), y = Number(years);
     if (monthlyInvalid || rateInvalid || yearsInvalid) return null;
-    const months = Math.round(y * 12), r = annual / 12 / 100;
+    const months = Math.max(1, Math.round(y * 12)), r = annual / 12 / 100;
     const invested = p * months;
     const future = r === 0 ? invested : p * ((Math.pow(1 + r, months) - 1) / r) * (1 + r);
     if (!Number.isFinite(invested) || !Number.isFinite(future)) return null;
@@ -49,7 +50,7 @@ export default function SipCalculator() {
           <div className="grid gap-4 md:grid-cols-3">
             <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4" htmlFor="sip-monthly"><span className="text-sm font-semibold">Monthly investment (₹)</span><span className="mt-1 block text-xs leading-5 text-black/40">Up to ₹1 crore per month for this estimate.</span><input id="sip-monthly" aria-label="Monthly investment in rupees" aria-invalid={monthlyInvalid} aria-describedby={monthlyInvalid ? "sip-monthly-error" : undefined} value={monthly} onChange={e => setMonthly(e.target.value)} type="number" min="1" max={MAX_MONTHLY} step="100" inputMode="decimal" className={inputClass(monthlyInvalid)} />{monthlyInvalid && <span id="sip-monthly-error" className="mt-2 block text-xs font-semibold text-[#9b4c3e]">Enter an amount from ₹1 to ₹1 crore.</span>}</label>
             <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4" htmlFor="sip-rate"><span className="text-sm font-semibold">Expected return (%/year)</span><span className="mt-1 block text-xs leading-5 text-black/40">Illustrative annual return, not guaranteed.</span><input id="sip-rate" aria-label="Expected annual return" aria-invalid={rateInvalid} aria-describedby={rateInvalid ? "sip-rate-error" : undefined} value={rate} onChange={e => setRate(e.target.value)} type="number" min="0" max="100" step="0.1" inputMode="decimal" className={inputClass(rateInvalid)} />{rateInvalid && <span id="sip-rate-error" className="mt-2 block text-xs font-semibold text-[#9b4c3e]">Enter an expected return from 0% to 100%.</span>}</label>
-            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4" htmlFor="sip-years"><span className="text-sm font-semibold">Investment period (years)</span><span className="mt-1 block text-xs leading-5 text-black/40">Choose from 0.01 to 100 years.</span><input id="sip-years" aria-label="Investment period in years" aria-invalid={yearsInvalid} aria-describedby={yearsInvalid ? "sip-years-error" : undefined} value={years} onChange={e => setYears(e.target.value)} type="number" min="0.01" max="100" step="1" inputMode="decimal" className={inputClass(yearsInvalid)} />{yearsInvalid && <span id="sip-years-error" className="mt-2 block text-xs font-semibold text-[#9b4c3e]">Enter an investment period from 0.01 to 100 years.</span>}</label>
+            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4" htmlFor="sip-years"><span className="text-sm font-semibold">Investment period (years)</span><span className="mt-1 block text-xs leading-5 text-black/40">Minimum 1 month, up to 100 years. Periods are converted to whole months.</span><input id="sip-years" aria-label="Investment period in years" aria-invalid={yearsInvalid} aria-describedby={yearsInvalid ? "sip-years-error" : undefined} value={years} onChange={e => setYears(e.target.value)} type="number" min={MIN_YEARS} max="100" step="0.01" inputMode="decimal" className={inputClass(yearsInvalid)} />{yearsInvalid && <span id="sip-years-error" className="mt-2 block text-xs font-semibold text-[#9b4c3e]">Enter an investment period from 1 month to 100 years.</span>}</label>
           </div>
         </section>
 
@@ -59,7 +60,7 @@ export default function SipCalculator() {
         </div>
 
         {result ? <section className="mt-7" aria-labelledby="sip-result-heading" aria-live="polite" aria-atomic="true"><div className="mb-3"><p className="text-xs font-black uppercase tracking-[0.14em] text-black/40">Your estimate</p><h3 id="sip-result-heading" className="mt-1 text-sm font-bold">Projected value after {years} years</h3></div><div className="grid gap-3 sm:grid-cols-3"><div className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Invested</p><p className="mt-2 break-words text-2xl font-black tracking-tight">{money.format(result.invested)}</p></div><div className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Est. returns</p><p className="mt-2 break-words text-2xl font-black tracking-tight">{money.format(result.returns)}</p></div><div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/50">Future value</p><p className="mt-2 break-words text-3xl font-black tracking-tight">{money.format(result.future)}</p></div></div></section> : <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">Check the investment details above. Enter a valid monthly investment, expected return and investment period to see the estimate.</p>}
-        <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Estimate only. This illustration assumes monthly contributions and a constant monthly return based on the annual rate. Actual mutual fund returns are market-linked, vary over time and are not guaranteed. Taxes, fees and exit loads are not included.</p>
+        <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Estimate only. This illustration assumes monthly contributions at the start of each month and a constant monthly return based on the annual rate. Actual mutual fund returns are market-linked, vary over time and are not guaranteed. Taxes, fees and exit loads are not included.</p>
       </div>
     </div>
   );
