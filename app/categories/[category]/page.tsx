@@ -15,8 +15,18 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
   const { category: slug } = await params;
   const category = categories.find((item) => item.slug === slug);
-  if (!category) return { title: "Category | Internet Toolbox" };
-  return { title: `${category.name} | Internet Toolbox`, description: `${category.description} Browse simple free tools from Internet Toolbox.`, alternates: { canonical: `${siteUrl}/categories/${slug}` }, openGraph: { title: `${category.name} | Internet Toolbox`, description: `${category.description} Browse simple free tools from Internet Toolbox.`, url: `${siteUrl}/categories/${slug}`, type: "website" } };
+  if (!category) return { title: "Category | Internet Toolbox", robots: { index: false, follow: false } };
+  const title = `${category.name} | Internet Toolbox`;
+  const description = `${category.description} Browse simple free tools from Internet Toolbox.`;
+  const url = `${siteUrl}/categories/${slug}/`;
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    robots: { index: true, follow: true },
+    openGraph: { title, description, url, type: "website" },
+    twitter: { card: "summary", title, description },
+  };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
@@ -25,7 +35,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   if (!category) notFound();
   const categoryTools = tools.filter((tool) => tool.category === (slug as ToolCategory) && tool.status === "live");
   const Icon = category.icon;
-  const categoryUrl = `${siteUrl}/categories/${slug}`;
+  const categoryUrl = `${siteUrl}/categories/${slug}/`;
   const listJsonLd = { "@context": "https://schema.org", "@type": "ItemList", name: `${category.name} - Internet Toolbox`, description: category.description, numberOfItems: categoryTools.length, itemListElement: categoryTools.map((tool, index) => ({ "@type": "ListItem", position: index + 1, name: tool.name, url: `${siteUrl}/tools/${tool.slug}/` })) };
   const pageJsonLd = [
     { "@context": "https://schema.org", "@type": "CollectionPage", name: `${category.name} tools`, description: category.description, url: categoryUrl },
