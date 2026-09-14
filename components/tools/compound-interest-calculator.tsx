@@ -66,7 +66,7 @@ export default function CompoundInterestCalculator() {
               <span className="text-sm font-bold">Time period</span><span className="mt-1 block text-xs text-black/40">How long the money stays invested, up to 100 years</span>
               <input aria-label="Time period in years" aria-invalid={Number(years) <= 0 || Number(years) > 100} value={years} onChange={e=>setYears(e.target.value)} type="number" min="0.01" max="100" step="0.25" inputMode="decimal" className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
             </label>
-            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200,241,105,/_35%)]">
+            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
               <span className="text-sm font-bold">Compounding frequency</span><span className="mt-1 block text-xs text-black/40">How often interest is added</span>
               <select aria-label="Compounding frequency" value={frequency} onChange={e=>setFrequency(e.target.value)} className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-base font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4">Quarterly</option><option value="12">Monthly</option></select>
             </label>
