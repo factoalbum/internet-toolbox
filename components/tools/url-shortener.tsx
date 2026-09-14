@@ -156,7 +156,7 @@ export default function UrlShortener() {
 
           <div className="mt-5 flex flex-col gap-2 sm:flex-row">
             <button type="button" onClick={shorten} disabled={loading} className="min-h-12 flex-1 rounded-xl bg-[#171717] px-5 text-sm font-black text-white transition hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60">
-              {loading ? "Shortening…" : "Shorten URL"}
+              {loading ? "Shortening" : "Shorten URL"}
             </button>
             <button type="button" onClick={reset} className="min-h-12 rounded-xl border border-[#d8d4c9] bg-white px-5 text-sm font-bold text-[#171717] transition hover:border-[#171717] hover:bg-[#f7f5ef] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60">Clear</button>
           </div>
