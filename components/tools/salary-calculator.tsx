@@ -4,6 +4,8 @@ import { Banknote, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
+const MAX_CTC = 100_000_000;
+const MAX_MONTHLY_PROFESSIONAL_TAX = 100_000;
 
 function slabTax(income: number) {
   const slabs = [
@@ -41,15 +43,20 @@ export default function SalaryCalculator() {
   const [pfMode, setPfMode] = useState<"capped" | "full">("capped");
 
   const result = useMemo(() => {
-    const annualCtc = Math.max(0, Number(ctc) || 0);
-    const basic = annualCtc * (Math.min(100, Math.max(0, Number(basicPercent) || 0)) / 100);
+    const parsedCtc = Number(ctc);
+    const parsedBasicPercent = Number(basicPercent);
+    const parsedProfessionalTax = Number(professionalTax);
+    const annualCtc = Number.isFinite(parsedCtc) ? Math.min(MAX_CTC, Math.max(0, parsedCtc)) : 0;
+    const basicPercentValue = Number.isFinite(parsedBasicPercent) ? Math.min(100, Math.max(0, parsedBasicPercent)) : 0;
+    const monthlyProfessionalTax = Number.isFinite(parsedProfessionalTax) ? Math.min(MAX_MONTHLY_PROFESSIONAL_TAX, Math.max(0, parsedProfessionalTax)) : 0;
+    const basic = annualCtc * (basicPercentValue / 100);
     const pfWage = pfMode === "capped" ? Math.min(basic, 15000 * 12) : basic;
     const employerPf = pfWage * 0.12;
     const gratuity = basic * (15 / 26 / 12);
     const gross = Math.max(0, annualCtc - employerPf - gratuity);
     const employeePf = pfWage * 0.12;
     const tax = incomeTax(gross);
-    const pt = Math.max(0, Number(professionalTax) || 0) * 12;
+    const pt = monthlyProfessionalTax * 12;
     const annualTakeHome = Math.max(0, gross - employeePf - pt - tax.total);
     return { annualCtc, basic, employerPf, gratuity, gross, employeePf, pt, tax, annualTakeHome, monthlyTakeHome: annualTakeHome / 12 };
   }, [ctc, basicPercent, professionalTax, pfMode]);
@@ -82,7 +89,7 @@ export default function SalaryCalculator() {
             <div className="rounded-2xl border border-[#e2dfd7] bg-white p-4">
               <label className="block text-sm font-black" htmlFor="salary-ctc">Annual CTC</label>
               <p className="mt-1 text-xs leading-5 text-black/45">Your total Cost to Company for the year.</p>
-              <input id="salary-ctc" className={inputClass} type="number" min="0" step="10000" inputMode="decimal" value={ctc} onChange={e => setCtc(e.target.value)} placeholder="e.g. 1200000" aria-describedby="salary-ctc-help" />
+              <input id="salary-ctc" className={inputClass} type="number" min="0" max={MAX_CTC} step="10000" inputMode="decimal" value={ctc} onChange={e => setCtc(e.target.value)} placeholder="e.g. 1200000" aria-describedby="salary-ctc-help" />
               <p id="salary-ctc-help" className="mt-2 text-xs text-black/40">Include employer-side benefits that are part of your package.</p>
             </div>
 
@@ -96,7 +103,7 @@ export default function SalaryCalculator() {
               <div className="rounded-2xl border border-[#e2dfd7] bg-white p-4">
                 <label className="block text-sm font-black" htmlFor="salary-pt">Professional tax</label>
                 <p className="mt-1 text-xs leading-5 text-black/45">Tax deducted each month.</p>
-                <div className="relative"><input id="salary-pt" className={`${inputClass} pl-9`} type="number" min="0" step="50" inputMode="decimal" value={professionalTax} onChange={e => setProfessionalTax(e.target.value)} aria-describedby="salary-pt-help" /><span className="pointer-events-none absolute left-4 top-[25px] text-sm font-bold text-black/40">₹</span></div>
+                <div className="relative"><input id="salary-pt" className={`${inputClass} pl-9`} type="number" min="0" max={MAX_MONTHLY_PROFESSIONAL_TAX} step="50" inputMode="decimal" value={professionalTax} onChange={e => setProfessionalTax(e.target.value)} aria-describedby="salary-pt-help" /><span className="pointer-events-none absolute left-4 top-[25px] text-sm font-bold text-black/40">₹</span></div>
                 <p id="salary-pt-help" className="mt-2 text-xs text-black/40">Use the amount on your payslip.</p>
               </div>
             </div>
