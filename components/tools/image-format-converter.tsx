@@ -1,1 +1,5 @@
-export { ImageFormatConverter as default } from "./image-edit-suite";
+import ImageEditSuite from "./image-edit-suite";
+
+export default function ImageFormatConverter() {
+  return <ImageEditSuite variant="image-format-converter" />;
+}
