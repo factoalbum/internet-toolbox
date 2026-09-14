@@ -7,6 +7,7 @@ const MAX_ROWS = 5000;
 const MAX_INPUT_CHARS = 2_000_000;
 
 type Row = Record<string, string>;
+type ParseResult = { headers: string[]; rows: Row[]; error?: string };
 
 function makeUniqueHeaders(rawHeaders: string[]): string[] {
   const used = new Set<string>();
@@ -31,7 +32,7 @@ function makeUniqueHeaders(rawHeaders: string[]): string[] {
   });
 }
 
-function parseCsv(input: string): { headers: string[]; rows: Row[] } {
+function parseCsv(input: string): ParseResult {
   const rows: string[][] = [];
   let row: string[] = [];
   let field = "";
@@ -87,8 +88,8 @@ export default function CsvToJson() {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const parsed = useMemo(() => {
-    if (!input.trim()) return { headers: [], rows: [] as Row[] };
+  const parsed = useMemo<ParseResult>(() => {
+    if (!input.trim()) return { headers: [], rows: [] };
     try {
       if (input.length > MAX_INPUT_CHARS) throw new Error("CSV is too large. Keep the input below 2 MB.");
       const result = parseCsv(input.replace(/^\uFEFF/, ""));
