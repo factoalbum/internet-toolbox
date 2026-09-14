@@ -46,9 +46,10 @@ export default function PasswordGenerator() {
   const [copyError, setCopyError] = useState("");
 
   const strength = useMemo(() => {
-    const score = Number(length >= 12) + Number(length >= 16) + Number(useUpper) + Number(useNumbers) + Number(useSymbols);
-    if (score >= 5) return "Strong";
-    if (score >= 3) return "Good";
+    const poolSize = LOWER.length + (useUpper ? UPPER.length : 0) + (useNumbers ? NUMBERS.length : 0) + (useSymbols ? SYMBOLS.length : 0);
+    const entropyBits = length * Math.log2(poolSize);
+    if (entropyBits >= 80) return "Strong";
+    if (entropyBits >= 50) return "Good";
     return "Basic";
   }, [length, useUpper, useNumbers, useSymbols]);
 
