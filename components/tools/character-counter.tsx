@@ -1,10 +1,11 @@
 "use client";
 
-import { BarChart3, RotateCcw } from "lucide-react";
+import { BarChart3, Check, Clipboard, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export default function CharacterCounter() {
   const [text, setText] = useState("");
+  const [copied, setCopied] = useState(false);
   const stats = useMemo(
     () => ({
       characters: [...text].length,
@@ -16,6 +17,24 @@ export default function CharacterCounter() {
   );
 
   const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
+
+  const copyStats = async () => {
+    if (!text) return;
+    const summary = [
+      `Characters: ${stats.characters}`,
+      `Characters without spaces: ${stats.withoutSpaces}`,
+      `Words: ${stats.words}`,
+      `Lines: ${stats.lines}`,
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(summary);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]" aria-labelledby="character-counter-title">
@@ -33,7 +52,7 @@ export default function CharacterCounter() {
           </div>
           <button
             type="button"
-            onClick={() => setText("")}
+            onClick={() => { setText(""); setCopied(false); }}
             disabled={!text}
             className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-40 ${focusRing}`}
             aria-label="Clear text"
@@ -56,7 +75,7 @@ export default function CharacterCounter() {
             <textarea
               id="character-input"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => { setText(e.target.value); setCopied(false); }}
               rows={10}
               placeholder="Type or paste text here..."
               aria-describedby="character-input-help"
@@ -71,7 +90,16 @@ export default function CharacterCounter() {
               <p className="text-[11px] font-black uppercase tracking-[.13em] text-black/40">2. Your result</p>
               <h3 id="character-results-heading" className="mt-1 text-base font-black text-[#171717]">Live text counts</h3>
             </div>
-            <span className="text-xs font-semibold text-black/40">Updates as you type</span>
+            <button
+              type="button"
+              onClick={copyStats}
+              disabled={!text}
+              className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#171717] bg-white px-3.5 text-xs font-bold text-[#171717] transition hover:bg-[#f7f5ef] disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`}
+              aria-label={copied ? "Text counts copied" : "Copy text counts"}
+            >
+              {copied ? <Check size={15} aria-hidden="true" /> : <Clipboard size={15} aria-hidden="true" />}
+              {copied ? "Copied" : "Copy counts"}
+            </button>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
