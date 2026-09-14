@@ -98,8 +98,8 @@ export default function JsonFormatter() {
             </div>
             <span className="rounded-full bg-[#f2efe7] px-2.5 py-1 text-[11px] font-semibold text-black/50">Local only</span>
           </div>
-          <textarea id="json-input" value={input} onChange={(event) => { setInput(event.target.value); setError(""); setCopyError(""); setCopied(false); }} spellCheck={false} aria-describedby="json-input-help" aria-invalid={!!error} className="mt-4 min-h-72 w-full resize-y rounded-lg border border-[#c9c5ba] bg-[#fffdf8] p-4 font-mono text-sm leading-6 text-[#171717] outline-none transition-shadow placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40 aria-[invalid=true]:border-red-400 aria-[invalid=true]:focus:ring-red-100" />
-          <p id="json-input-help" className="mt-2 text-xs leading-5 text-black/45">Formatting preserves the JSON data; it only changes whitespace and indentation.</p>
+          <textarea id="json-input" value={input} onChange={(event) => { setInput(event.target.value); setError(""); setCopyError(""); setCopied(false); }} onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); formatJson(); } }} spellCheck={false} aria-describedby="json-input-help" aria-keyshortcuts="Control+Enter Meta+Enter" aria-invalid={!!error} className="mt-4 min-h-72 w-full resize-y rounded-lg border border-[#c9c5ba] bg-[#fffdf8] p-4 font-mono text-sm leading-6 text-[#171717] outline-none transition-shadow placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40 aria-[invalid=true]:border-red-400 aria-[invalid=true]:focus:ring-red-100" />
+          <p id="json-input-help" className="mt-2 text-xs leading-5 text-black/45">Formatting preserves the JSON data; it only changes whitespace and indentation. Press Ctrl/Cmd + Enter to format.</p>
         </section>
 
         <section className="rounded-xl border border-[#ddd9cf] bg-[#f6f3eb] p-4 md:p-5" aria-labelledby="json-output-label">
