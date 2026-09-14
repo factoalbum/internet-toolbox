@@ -18,11 +18,7 @@ export default function QrCodeGenerator() {
     async function render() {
       const trimmed = value.trim();
       const canvas = canvasRef.current;
-
-      if (canvas) {
-        canvas.getContext("2d")?.clearRect(0, 0, SIZE, SIZE);
-      }
-
+      if (canvas) canvas.getContext("2d")?.clearRect(0, 0, SIZE, SIZE);
       if (!trimmed) {
         setError("Enter a URL or text to generate a QR code.");
         setIsRendering(false);
@@ -77,7 +73,6 @@ export default function QrCodeGenerator() {
           </div>
           <span className="hidden size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f1ff] text-[#315fba] sm:flex" aria-hidden="true"><QrCode size={20} /></span>
         </div>
-
         <div className="pt-6">
           <div className="flex items-end justify-between gap-3">
             <div>
@@ -88,18 +83,15 @@ export default function QrCodeGenerator() {
           </div>
           <textarea id="qr-value" value={value} onChange={(event) => setValue(event.target.value)} rows={7} maxLength={MAX_LENGTH} placeholder="https://example.com" aria-describedby="qr-value-help qr-status" aria-invalid={Boolean(error)} className="mt-3 min-h-40 w-full resize-y rounded-xl border border-[#bcb8ae] bg-white p-4 text-sm leading-6 text-[#171717] outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" />
           <p className="mt-2 text-xs leading-5 text-black/40">Up to {MAX_LENGTH.toLocaleString()} characters. Very long content may produce a dense QR code that is harder to scan.</p>
-
           <div id="qr-status" className="mt-4 min-h-6" aria-live="polite" aria-atomic="true">
             {error ? <p className="text-sm font-semibold text-red-700" role="alert">{error}</p> : isRendering ? <p className="text-sm font-medium text-black/45">Updating your QR code</p> : <p className="text-sm font-medium text-black/45">Ready to download.</p>}
           </div>
-
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <button type="button" onClick={download} disabled={!canDownload} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#171717] px-5 text-sm font-bold text-white transition hover:bg-black/80 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] disabled:cursor-not-allowed disabled:opacity-40"><Download size={16} aria-hidden="true" /> Download PNG</button>
             <button type="button" onClick={reset} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-5 text-sm font-bold text-black/65 transition hover:border-[#171717] hover:text-black focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]"><RotateCcw size={15} aria-hidden="true" /> Reset</button>
           </div>
         </div>
       </div>
-
       <div className="flex min-w-0 flex-col items-center justify-center rounded-2xl border border-[#dedbd3] bg-[#f6f3eb] p-5 md:min-w-[320px] md:p-6" aria-label="QR code preview">
         <div className="rounded-2xl border border-[#d8d4c9] bg-white p-4 shadow-[0_6px_18px_rgba(23,23,23,.05)]">
           <canvas ref={canvasRef} width={SIZE} height={SIZE} aria-label={error ? "QR code unavailable" : `QR code for ${value.trim() || "empty input"}`} className="block size-56 max-w-full sm:size-64" />
