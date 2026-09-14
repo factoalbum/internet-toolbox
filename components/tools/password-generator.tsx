@@ -48,12 +48,12 @@ export default function PasswordGenerator() {
   const strength = useMemo(() => {
     const poolSize = LOWER.length + (useUpper ? UPPER.length : 0) + (useNumbers ? NUMBERS.length : 0) + (useSymbols ? SYMBOLS.length : 0);
     const entropyBits = length * Math.log2(poolSize);
-    if (entropyBits >= 80) return "Strong";
-    if (entropyBits >= 50) return "Good";
-    return "Basic";
+    if (entropyBits >= 80) return { label: "Strong", entropyBits };
+    if (entropyBits >= 50) return { label: "Good", entropyBits };
+    return { label: "Basic", entropyBits };
   }, [length, useUpper, useNumbers, useSymbols]);
 
-  const strengthPercent = strength === "Strong" ? 100 : strength === "Good" ? 68 : 36;
+  const strengthPercent = Math.min(100, Math.max(0, ((strength.entropyBits - 32) / 48) * 100));
 
   function generate() {
     setPassword(createPassword(length, useUpper, useNumbers, useSymbols));
@@ -120,14 +120,15 @@ export default function PasswordGenerator() {
               {password || "Your password will appear here"}
             </output>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0 flex-1" aria-label={`Password strength: ${strength}`}>
+              <div className="min-w-0 flex-1" aria-label={`Password strength: ${strength.label}`}>
                 <div className="flex items-center justify-between gap-3 text-xs text-black/50">
                   <span>Strength</span>
-                  <span className="font-bold text-black">{strength}</span>
+                  <span className="font-bold text-black">{strength.label}</span>
                 </div>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#dedbd2]" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={strengthPercent} aria-valuetext={strength}>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#dedbd2]" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(strengthPercent)} aria-valuetext={`${strength.label}, estimated ${Math.round(strength.entropyBits)} bits`}>
                   <div className="h-full rounded-full bg-[#9fcf48] transition-[width] duration-200" style={{ width: `${strengthPercent}%` }} />
                 </div>
+                <p className="mt-1.5 text-[11px] text-black/40">Estimated {Math.round(strength.entropyBits)} bits from length and character choices.</p>
               </div>
               <button type="button" onClick={copyPassword} disabled={!password} className="min-h-11 rounded-lg border border-[#171717] bg-[#171717] px-4 text-sm font-bold text-white transition hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60" aria-label={copied ? "Password copied" : "Copy generated password"}>
                 {copied ? "Copied" : "Copy password"}
