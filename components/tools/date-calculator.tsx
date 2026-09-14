@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, RotateCcw } from "lucide-react";
+import { CalendarDays, Check, Copy, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type Mode = "difference" | "add" | "subtract";
@@ -41,6 +41,7 @@ export default function DateCalculator() {
   const [start, setStart] = useState(today);
   const [end, setEnd] = useState(today);
   const [days, setDays] = useState("30");
+  const [copied, setCopied] = useState(false);
 
   const result = useMemo(() => {
     const startDate = parseDate(start);
@@ -67,6 +68,22 @@ export default function DateCalculator() {
     setStart(current);
     setEnd(current);
     setDays("30");
+    setCopied(false);
+  };
+
+  const copyResult = async () => {
+    if (!result) return;
+    const text = result.kind === "difference"
+      ? `${result.absolute.toLocaleString("en-IN")} days between ${formatDate(parseDate(start))} and ${formatDate(parseDate(end))}`
+      : `${formatDate(result.date)} — ${result.amount.toLocaleString("en-IN")} days ${mode === "add" ? "after" : "before"} ${formatDate(parseDate(start))}`;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
   };
 
   const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
@@ -101,7 +118,7 @@ export default function DateCalculator() {
               role="tab"
               aria-selected={mode === value}
               tabIndex={mode === value ? 0 : -1}
-              onClick={() => setMode(value)}
+              onClick={() => { setMode(value); setCopied(false); }}
               className={`min-h-11 rounded-lg border px-3 text-sm font-semibold transition ${focusRing} ${mode === value ? "border-[#171717] bg-[#171717] text-white" : "border-transparent bg-transparent text-black/50 hover:border-[#d8d4c9] hover:bg-white hover:text-black"}`}
             >
               {label}
@@ -118,7 +135,7 @@ export default function DateCalculator() {
               type="date"
               value={start}
               aria-label={mode === "difference" ? "Start date" : "Starting date"}
-              onChange={(event) => setStart(event.target.value)}
+              onChange={(event) => { setStart(event.target.value); setCopied(false); }}
               className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
             />
           </label>
@@ -133,7 +150,7 @@ export default function DateCalculator() {
                 value={end}
                 min={start}
                 aria-label="End date"
-                onChange={(event) => setEnd(event.target.value)}
+                onChange={(event) => { setEnd(event.target.value); setCopied(false); }}
                 className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
               />
             </label>
@@ -151,7 +168,7 @@ export default function DateCalculator() {
                 value={days}
                 aria-label="Number of days"
                 aria-invalid={daysInputInvalid}
-                onChange={(event) => setDays(event.target.value)}
+                onChange={(event) => { setDays(event.target.value); setCopied(false); }}
                 className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
               />
             </label>
@@ -165,12 +182,20 @@ export default function DateCalculator() {
             <p className="mt-2 text-sm text-black/60">
               {result.difference === 0 ? "The two dates are the same." : result.difference > 0 ? "The end date is after the start date." : "The end date is before the start date."}
             </p>
+            <button type="button" onClick={copyResult} className={`mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#171717] bg-white px-4 text-sm font-bold text-[#171717] transition hover:bg-[#fffdf8] ${focusRing}`} aria-label={copied ? "Date difference copied" : "Copy date difference"}>
+              {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
+              {copied ? "Copied" : "Copy result"}
+            </button>
           </div>
         ) : result ? (
           <div className="mt-7 rounded-2xl border border-[#171717] bg-[#c8f169] p-5 sm:p-6" aria-live="polite" aria-atomic="true">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-black/55">Result date</p>
             <p className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{formatDate(result.date)}</p>
             <p className="mt-2 text-sm text-black/60">{result.amount.toLocaleString("en-IN")} days {mode === "add" ? "after" : "before"} {formatDate(parseDate(start))}.</p>
+            <button type="button" onClick={copyResult} className={`mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#171717] bg-white px-4 text-sm font-bold text-[#171717] transition hover:bg-[#fffdf8] ${focusRing}`} aria-label={copied ? "Result date copied" : "Copy result date"}>
+              {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
+              {copied ? "Copied" : "Copy result"}
+            </button>
           </div>
         ) : (
           <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">
