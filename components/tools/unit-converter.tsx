@@ -38,17 +38,24 @@ export default function UnitConverter() {
   const { result, error } = useMemo(() => {
     const number = Number(value);
     if (!value.trim() || !Number.isFinite(number)) return { result: null, error: null };
+    if (Math.abs(number) > 1e15) return { result: null, error: "Enter a value between −1 quadrillion and 1 quadrillion." };
 
     if (category === "temperature") {
       const celsius = from === "c" ? number : from === "f" ? (number - 32) * 5 / 9 : number - 273.15;
       if (celsius < -273.15) return { result: null, error: "Temperature cannot be below absolute zero (−273.15 °C)." };
-      return { result: convertTemperature(number, from, to), error: null };
+      const converted = convertTemperature(number, from, to);
+      return Number.isFinite(converted)
+        ? { result: converted, error: null }
+        : { result: null, error: "This value is too large to convert safely." };
     }
 
     const source = units[category].find((unit) => unit.value === from);
     const target = units[category].find((unit) => unit.value === to);
     if (!source?.factor || !target?.factor) return { result: null, error: null };
-    return { result: number * source.factor / target.factor, error: null };
+    const converted = number * source.factor / target.factor;
+    return Number.isFinite(converted)
+      ? { result: converted, error: null }
+      : { result: null, error: "This value is too large to convert safely." };
   }, [category, value, from, to]);
 
   function changeCategory(next: Category) {
@@ -102,7 +109,7 @@ export default function UnitConverter() {
           <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
             <span className="text-sm font-bold">Value</span>
             <span className="mt-1 block text-xs leading-5 text-black/40">Enter the amount you want to convert.</span>
-            <input id="unit-value" value={value} onChange={(event) => setValue(event.target.value)} inputMode="decimal" placeholder="1" aria-label="Value to convert" className={`mt-3 min-h-14 w-full rounded-xl border border-[#bcb8ae] bg-white px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
+            <input id="unit-value" value={value} onChange={(event) => setValue(event.target.value)} inputMode="decimal" placeholder="1" max="1000000000000000" aria-label="Value to convert" className={`mt-3 min-h-14 w-full rounded-xl border border-[#bcb8ae] bg-white px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
           </label>
 
           <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
