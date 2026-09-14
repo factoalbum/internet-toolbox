@@ -19,9 +19,34 @@ export const metadata: Metadata = {
 export default function Home() {
   const liveTools = tools.filter((tool) => tool.status === "live");
   const popular = featuredTools.filter((tool) => tool?.status === "live").slice(0, 12);
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        url: `${siteUrl}/`,
+        name: "Internet Toolbox",
+        description: "Simple free online tools for everyday tasks, calculations, development, text and files.",
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${siteUrl}/#featured-tools`,
+        name: "Featured Internet Toolbox tools",
+        itemListElement: popular.map((tool, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: tool.name,
+          url: `${siteUrl}/tools/${tool.slug}`,
+          description: tool.description,
+        })),
+      },
+    ],
+  };
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#faf9f6] text-[#101522]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <SiteHeader sticky />
       <section className="relative border-b border-[#e5e1d8] bg-[#faf9f6]"><div className="container pt-8 sm:pt-10 lg:pt-14"><div className="grid items-center gap-7 lg:grid-cols-[1fr_.72fr] lg:gap-12"><div className="order-1 min-w-0 pb-3 lg:pb-8"><p className="text-[11px] font-bold uppercase tracking-[.16em] text-[#65748d] sm:text-xs">Simple tools for everyday tasks</p><h1 className="display-heading mt-3 max-w-2xl text-[clamp(2.65rem,11vw,5.5rem)] leading-[.94]">Get small things<br />done <span className="relative inline-block px-1"><span className="absolute inset-x-0 bottom-[5%] -z-0 h-[40%] rounded-sm bg-[#c8f169]" /><span className="relative">online.</span></span></h1><p className="mt-5 max-w-xl text-[15px] leading-6 text-[#58657b] sm:mt-6 sm:text-base sm:leading-7 md:text-lg">Free calculators, converters, text tools, developer utilities, file tools and document comparison tools. No sign up. No complicated setup.</p><div className="mt-6 flex flex-col gap-2.5 min-[480px]:flex-row sm:mt-7"><Link href="/tools" className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#101522] px-5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(16,21,34,.14)] transition hover:-translate-y-0.5 hover:bg-[#1c2434] focus:outline-none focus:ring-4 focus:ring-[#c8f169] min-[480px]:flex-none"><Search size={18} aria-hidden="true" /> Browse all tools <ArrowRight size={16} aria-hidden="true" /></Link><Link href="/categories" className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#d9d5cc] bg-white px-5 text-sm font-bold transition hover:-translate-y-0.5 hover:border-[#101522] focus:outline-none focus:ring-4 focus:ring-[#c8f169] min-[480px]:flex-none">Explore categories</Link></div><div className="mt-6 grid grid-cols-3 gap-2 sm:mt-8 sm:max-w-2xl sm:gap-4"><div className="flex items-start gap-1.5 sm:gap-2"><Zap className="mt-0.5 shrink-0 text-[#f3b51b]" size={21} /><div><p className="text-xs font-black sm:text-sm">{liveTools.length}+</p><p className="text-[10px] leading-4 text-[#66758f] sm:text-xs">Free tools</p></div></div><div className="flex items-start gap-1.5 sm:gap-2"><Users className="mt-0.5 shrink-0 text-[#6555ee]" size={21} /><div><p className="text-xs font-black sm:text-sm">No sign up</p><p className="text-[10px] leading-4 text-[#66758f] sm:text-xs">Use instantly</p></div></div><div className="flex items-start gap-1.5 sm:gap-2"><Heart className="mt-0.5 shrink-0 text-[#ef476f]" size={21} /><div><p className="text-xs font-black sm:text-sm">Browser-first</p><p className="text-[10px] leading-4 text-[#66758f] sm:text-xs">Private by design</p></div></div></div></div><div className="order-2 min-w-0 lg:order-2"><HomeIllustration /></div></div><div className="relative z-10 mx-auto -mt-1 max-w-5xl sm:-mt-2 lg:-mt-1"><div className="mb-2 flex items-center justify-between px-1 text-[11px] font-bold uppercase tracking-[.13em] text-[#7a879b]"><span>What do you need to do?</span><span className="hidden sm:inline">Search by task, tool or keyword</span></div><ToolSearch /></div></div></section>
       <section className="container pb-4 pt-12 md:pt-16" aria-labelledby="category-heading"><div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.13em] text-[#71809a]">Browse</p><h2 id="category-heading" className="mt-1 text-2xl font-black tracking-tight md:text-3xl">Find the right tool</h2></div><Link href="/categories" className="hidden items-center gap-2 text-sm font-bold sm:inline-flex">View categories <ArrowRight size={15} /></Link></div><div className="mt-5 flex gap-2 overflow-x-auto pb-2 scrollbar-none"><Link href="/tools" className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#101522] px-5 py-3 text-sm font-bold text-white">All</Link>{categories.map((category) => { const Icon = category.icon; const accent = getToolAccent(category.slug, category.slug); return <Link key={category.slug} href={`/categories/${category.slug}`} className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#dedbd3] bg-white px-4 py-2.5 text-sm font-bold text-[#293247] transition hover:border-[#101522] focus:outline-none focus:ring-4 focus:ring-[#c8f169]"><span className={`flex size-7 items-center justify-center rounded-lg ${accent.bg} ${accent.text}`}><Icon size={14} aria-hidden="true" /></span>{category.name}</Link>; })}</div></section>
