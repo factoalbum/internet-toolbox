@@ -75,7 +75,7 @@ export default function DateCalculator() {
     if (!result) return;
     const text = result.kind === "difference"
       ? `${result.absolute.toLocaleString("en-IN")} days between ${formatDate(parseDate(start))} and ${formatDate(parseDate(end))}`
-      : `${formatDate(result.date)} — ${result.amount.toLocaleString("en-IN")} days ${mode === "add" ? "after" : "before"} ${formatDate(parseDate(start))}`;
+      : `${formatDate(result.date)} - ${result.amount.toLocaleString("en-IN")} days ${mode === "add" ? "after" : "before"} ${formatDate(parseDate(start))}`;
 
     try {
       await navigator.clipboard.writeText(text);
