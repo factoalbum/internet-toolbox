@@ -40,6 +40,22 @@ for (const target of linkTargets) { if (target.startsWith("/tools/") || target.s
 const pageFiles = ["app/page.tsx", "app/tools/page.tsx", "app/categories/page.tsx", "app/about/page.tsx", "app/privacy/page.tsx", "app/terms/page.tsx", "app/faq/page.tsx", "app/support/page.tsx", "app/contact/page.tsx", "app/disclaimer/page.tsx"];
 for (const file of pageFiles) { const content = fs.readFileSync(path.join(root, file), "utf8"); assert.match(content, /export const metadata|generateMetadata/, `${file} is missing page metadata`); }
 
+const staticPageRoutes = [];
+function collectStaticPages(dir, segments = []) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (["api", "_components"].includes(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) collectStaticPages(full, [...segments, entry.name]);
+    else if (entry.name === "page.tsx" && !segments.some((segment) => segment.startsWith("[") || (segment.startsWith("(") && segment.endsWith(")")))) {
+      staticPageRoutes.push(`/${segments.join("/")}`.replace(/\/$/, "") || "/");
+    }
+  }
+}
+collectStaticPages(path.join(root, "app"));
+for (const route of staticPageRoutes) {
+  assert.ok(knownRoutes.has(route) || linkTargets.has(route), `Static page is not discoverable from known navigation or internal links: ${route}`);
+}
+
 const registry = fs.readFileSync(path.join(root, "lib/tools.ts"), "utf8");
 const toolContent = fs.readFileSync(path.join(root, "lib/tool-content.ts"), "utf8");
 const extraContent = fs.readFileSync(path.join(root, "lib/tool-content-extra.ts"), "utf8");
@@ -137,4 +153,4 @@ assert.match(privacy, /cookies|analytics|third-party|browser/i);
 assert.match(terms, /tools|responsibility|availability/i);
 assert.match(disclaimer, /estimate|accuracy|professional|financial|medical/i);
 
-console.log(`Site audit passed: ${required.length} trust/readiness files, ${linkTargets.size} explicit internal links, ${registrySlugs.length} registered tools (${liveSlugs.length} live), ${contentSlugs.size + tradingSlugs.size} editorial tool entries, ${routedSlugs.length} exact router mappings and ${sourceFiles.length} source files checked.`);
+console.log(`Site audit passed: ${required.length} trust/readiness files, ${linkTargets.size} explicit internal links, ${staticPageRoutes.length} static routes checked for discoverability, ${registrySlugs.length} registered tools (${liveSlugs.length} live), ${contentSlugs.size + tradingSlugs.size} editorial tool entries, ${routedSlugs.length} exact router mappings and ${sourceFiles.length} source files checked.`);
