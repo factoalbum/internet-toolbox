@@ -13,6 +13,7 @@ export default function CharacterCounter() {
       withoutSpaces: [...text].filter((c) => !/\s/.test(c)).length,
       words: text.trim() ? text.trim().split(/\s+/).length : 0,
       lines: text ? text.split(/\r?\n/).length : 0,
+      bytes: typeof TextEncoder !== "undefined" ? new TextEncoder().encode(text).length : 0,
     }),
     [text],
   );
@@ -28,6 +29,7 @@ export default function CharacterCounter() {
         `Characters without spaces: ${stats.withoutSpaces}`,
         `Words: ${stats.words}`,
         `Lines: ${stats.lines}`,
+        `UTF-8 bytes: ${stats.bytes}`,
       ].join("\n");
       await navigator.clipboard.writeText(summary);
       setCopied(true);
@@ -49,7 +51,7 @@ export default function CharacterCounter() {
             <div className="min-w-0">
               <p className="text-[11px] font-black uppercase tracking-[.14em] text-black/45">Writing utility</p>
               <h2 id="character-counter-title" className="mt-1 text-xl font-black tracking-[-.025em] text-[#171717] md:text-2xl">Count your text instantly</h2>
-              <p className="mt-1.5 max-w-2xl text-sm leading-6 text-black/50">Type or paste text to see character, word, line, and space-free counts as you work.</p>
+              <p className="mt-1.5 max-w-2xl text-sm leading-6 text-black/50">Type or paste text to see character, word, line, space-free, and UTF-8 byte counts as you work.</p>
             </div>
           </div>
           <button
@@ -104,12 +106,13 @@ export default function CharacterCounter() {
             </button>
           </div>
 
-          <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Text statistics">
+          <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5" aria-label="Text statistics">
             {[
               ["Characters", stats.characters],
               ["Without spaces", stats.withoutSpaces],
               ["Words", stats.words],
               ["Lines", stats.lines],
+              ["UTF-8 bytes", stats.bytes],
             ].map(([label, value]) => (
               <div key={label as string} className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-4 transition sm:p-5">
                 <dt className="text-[10px] font-black uppercase tracking-[.12em] text-black/45">{label}</dt>
@@ -117,12 +120,13 @@ export default function CharacterCounter() {
               </div>
             ))}
           </dl>
+          <p className="mt-3 text-xs leading-5 text-black/45">UTF-8 bytes measure the encoded size of your text, which can differ from the visible character count for emoji and non-Latin scripts.</p>
           {copyError && <p className="mt-4 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-3 text-sm leading-5 text-[#7b3d31]" role="alert">{copyError}</p>}
         </section>
 
         <div className="mt-6 rounded-2xl border border-dashed border-[#d8d4c9] bg-[#faf9f6] p-4">
           <p className="text-xs font-bold text-black/55">What gets counted?</p>
-          <p className="mt-1 text-xs leading-5 text-black/45">Characters include letters, numbers, punctuation, spaces, and emoji. Nothing is uploaded or stored by this tool.</p>
+          <p className="mt-1 text-xs leading-5 text-black/45">Characters include letters, numbers, punctuation, spaces, and emoji. UTF-8 bytes reflect how the text is encoded. Nothing is uploaded or stored by this tool.</p>
         </div>
       </div>
     </div>
