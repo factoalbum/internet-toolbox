@@ -1,6 +1,6 @@
 "use client";
 
-import { Banknote, RotateCcw } from "lucide-react";
+import { Banknote, Check, Copy, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
@@ -41,6 +41,7 @@ export default function SalaryCalculator() {
   const [basicPercent, setBasicPercent] = useState("50");
   const [professionalTax, setProfessionalTax] = useState("200");
   const [pfMode, setPfMode] = useState<"capped" | "full">("capped");
+  const [copyState, setCopyState] = useState<"idle" | "success" | "error">("idle");
 
   const result = useMemo(() => {
     const parsedCtc = Number(ctc);
@@ -63,7 +64,37 @@ export default function SalaryCalculator() {
 
   const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
   const inputClass = `mt-2 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-base font-semibold text-[#171717] outline-none transition hover:border-black/30 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`;
-  const reset = () => { setCtc("1200000"); setBasicPercent("50"); setProfessionalTax("200"); setPfMode("capped"); };
+  const isDefault = ctc === "1200000" && basicPercent === "50" && professionalTax === "200" && pfMode === "capped";
+
+  const reset = () => {
+    setCtc("1200000");
+    setBasicPercent("50");
+    setProfessionalTax("200");
+    setPfMode("capped");
+    setCopyState("idle");
+  };
+
+  async function copyResult() {
+    const summary = [
+      `Estimated monthly in-hand: ${inr.format(result.monthlyTakeHome)}`,
+      `Annual take-home: ${inr.format(result.annualTakeHome)}`,
+      `Gross salary: ${inr.format(result.gross)}`,
+      `Income tax + cess: ${inr.format(result.tax.total)}`,
+      `Employee PF: ${inr.format(result.employeePf)}`,
+      `Employer PF + gratuity: ${inr.format(result.employerPf + result.gratuity)}`,
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(summary);
+      setCopyState("success");
+      window.setTimeout(() => setCopyState("idle"), 1800);
+    } catch {
+      setCopyState("error");
+      window.setTimeout(() => setCopyState("idle"), 2500);
+    }
+  }
+
+  const copyLabel = copyState === "success" ? "Copied" : copyState === "error" ? "Copy failed" : "Copy result";
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]">
@@ -77,7 +108,7 @@ export default function SalaryCalculator() {
               <p className="mt-1 max-w-xl text-sm leading-5 text-black/50">Enter your CTC and a few salary details to estimate your monthly in-hand pay.</p>
             </div>
           </div>
-          <button type="button" onClick={reset} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black ${focusRing}`} aria-label="Reset salary calculator">
+          <button type="button" onClick={reset} disabled={isDefault} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`} aria-label="Reset salary calculator">
             <RotateCcw size={15} aria-hidden="true" /><span className="hidden sm:inline">Reset</span>
           </button>
         </div>
@@ -89,7 +120,7 @@ export default function SalaryCalculator() {
             <div className="rounded-2xl border border-[#e2dfd7] bg-white p-4">
               <label className="block text-sm font-black" htmlFor="salary-ctc">Annual CTC</label>
               <p className="mt-1 text-xs leading-5 text-black/45">Your total Cost to Company for the year.</p>
-              <input id="salary-ctc" className={inputClass} type="number" min="0" max={MAX_CTC} step="10000" inputMode="decimal" value={ctc} onChange={e => setCtc(e.target.value)} placeholder="e.g. 1200000" aria-describedby="salary-ctc-help" />
+              <input id="salary-ctc" className={inputClass} type="number" min="0" max={MAX_CTC} step="10000" inputMode="decimal" value={ctc} onChange={e => { setCtc(e.target.value); setCopyState("idle"); }} placeholder="e.g. 1200000" aria-describedby="salary-ctc-help" />
               <p id="salary-ctc-help" className="mt-2 text-xs text-black/40">Include employer-side benefits that are part of your package.</p>
             </div>
 
@@ -97,13 +128,13 @@ export default function SalaryCalculator() {
               <div className="rounded-2xl border border-[#e2dfd7] bg-white p-4">
                 <label className="block text-sm font-black" htmlFor="salary-basic">Basic salary</label>
                 <p className="mt-1 text-xs leading-5 text-black/45">Basic as a percentage of CTC.</p>
-                <div className="relative"><input id="salary-basic" className={`${inputClass} pr-11`} type="number" min="0" max="100" step="1" inputMode="numeric" value={basicPercent} onChange={e => setBasicPercent(e.target.value)} aria-describedby="salary-basic-help" /><span className="pointer-events-none absolute right-4 top-[25px] text-sm font-bold text-black/40">%</span></div>
+                <div className="relative"><input id="salary-basic" className={`${inputClass} pr-11`} type="number" min="0" max="100" step="1" inputMode="numeric" value={basicPercent} onChange={e => { setBasicPercent(e.target.value); setCopyState("idle"); }} aria-describedby="salary-basic-help" /><span className="pointer-events-none absolute right-4 top-[25px] text-sm font-bold text-black/40">%</span></div>
                 <p id="salary-basic-help" className="mt-2 text-xs text-black/40">Common example: 50%.</p>
               </div>
               <div className="rounded-2xl border border-[#e2dfd7] bg-white p-4">
                 <label className="block text-sm font-black" htmlFor="salary-pt">Professional tax</label>
                 <p className="mt-1 text-xs leading-5 text-black/45">Tax deducted each month.</p>
-                <div className="relative"><input id="salary-pt" className={`${inputClass} pl-9`} type="number" min="0" max={MAX_MONTHLY_PROFESSIONAL_TAX} step="50" inputMode="decimal" value={professionalTax} onChange={e => setProfessionalTax(e.target.value)} aria-describedby="salary-pt-help" /><span className="pointer-events-none absolute left-4 top-[25px] text-sm font-bold text-black/40">₹</span></div>
+                <div className="relative"><input id="salary-pt" className={`${inputClass} pl-9`} type="number" min="0" max={MAX_MONTHLY_PROFESSIONAL_TAX} step="50" inputMode="decimal" value={professionalTax} onChange={e => { setProfessionalTax(e.target.value); setCopyState("idle"); }} aria-describedby="salary-pt-help" /><span className="pointer-events-none absolute left-4 top-[25px] text-sm font-bold text-black/40">₹</span></div>
                 <p id="salary-pt-help" className="mt-2 text-xs text-black/40">Use the amount on your payslip.</p>
               </div>
             </div>
@@ -113,11 +144,11 @@ export default function SalaryCalculator() {
               <p className="mt-1 text-xs leading-5 text-black/45">Choose how your employer calculates provident fund.</p>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 <label className={`flex min-h-12 cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition ${pfMode === "capped" ? "border-[#171717] bg-[#f3f8e7]" : "border-[#d8d4c9] bg-[#faf9f6] hover:bg-white"}`}>
-                  <input className="mt-1 size-4 accent-[#171717]" type="radio" name="pf-mode" checked={pfMode === "capped"} onChange={() => setPfMode("capped")} />
+                  <input className="mt-1 size-4 accent-[#171717]" type="radio" name="pf-mode" checked={pfMode === "capped"} onChange={() => { setPfMode("capped"); setCopyState("idle"); }} />
                   <span><strong className="block">Capped at ₹15,000/month</strong><span className="text-xs text-black/50">Common simplified estimate.</span></span>
                 </label>
                 <label className={`flex min-h-12 cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition ${pfMode === "full" ? "border-[#171717] bg-[#f3f8e7]" : "border-[#d8d4c9] bg-[#faf9f6] hover:bg-white"}`}>
-                  <input className="mt-1 size-4 accent-[#171717]" type="radio" name="pf-mode" checked={pfMode === "full"} onChange={() => setPfMode("full")} />
+                  <input className="mt-1 size-4 accent-[#171717]" type="radio" name="pf-mode" checked={pfMode === "full"} onChange={() => { setPfMode("full"); setCopyState("idle"); }} />
                   <span><strong className="block">Full basic salary</strong><span className="text-xs text-black/50">For PF calculated on full basic.</span></span>
                 </label>
               </div>
@@ -125,10 +156,16 @@ export default function SalaryCalculator() {
           </div>
 
           <div className="min-w-0 rounded-2xl border border-[#e2dfd7] bg-white p-4 md:p-5">
-            <div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5" aria-live="polite" aria-atomic="true">
-              <p className="text-[10px] font-black uppercase tracking-[.15em] text-black/55">Estimated monthly in-hand</p>
-              <p className="mt-2 break-words text-3xl font-black tracking-[-.035em] sm:text-4xl">{inr.format(result.monthlyTakeHome)}</p>
-              <p className="mt-2 text-sm font-medium text-black/55">Annual take-home: {inr.format(result.annualTakeHome)}</p>
+            <div className="flex items-start justify-between gap-3 rounded-2xl border border-[#171717] bg-[#c8f169] p-5" aria-live="polite" aria-atomic="true">
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-[.15em] text-black/55">Estimated monthly in-hand</p>
+                <p className="mt-2 break-words text-3xl font-black tracking-[-.035em] sm:text-4xl">{inr.format(result.monthlyTakeHome)}</p>
+                <p className="mt-2 text-sm font-medium text-black/55">Annual take-home: {inr.format(result.annualTakeHome)}</p>
+              </div>
+              <button type="button" onClick={copyResult} disabled={!result.annualCtc} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#171717] bg-white px-3.5 text-xs font-black text-[#171717] transition hover:bg-[#f4f1e9] ${focusRing} disabled:cursor-not-allowed disabled:opacity-40`} aria-label={copyLabel}>
+                {copyState === "success" ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
+                <span className="hidden sm:inline">{copyLabel}</span>
+              </button>
             </div>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -157,6 +194,7 @@ export default function SalaryCalculator() {
           </div>
         </div>
 
+        {copyState === "error" && <p className="mt-5 rounded-xl border border-[#ead9c8] bg-[#fff7ed] p-4 text-sm leading-6 text-[#7b4a20]" role="alert">Copying was blocked by your browser. Select the result and copy it manually.</p>}
         <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Estimate for FY 2026-27 using a simplified salary structure. PF is estimated at 12% of the selected PF wage basis; gratuity provision uses 15 days of wages for each completed year (annualised here as 15/26/12 of basic). Income tax uses the new-regime ₹75,000 standard deduction, ₹60,000 Section 87A rebate up to ₹12 lakh taxable income, and marginal relief just above that threshold. Actual payroll can differ based on your employer’s PF arrangement, wage definition, benefits, bonus, professional tax and other deductions. This is not a payslip or tax-filing calculation.</p>
       </div>
     </div>
