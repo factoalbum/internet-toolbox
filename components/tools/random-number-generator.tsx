@@ -111,6 +111,7 @@ export default function RandomNumberGenerator() {
           <div className={`mt-4 flex min-h-40 flex-1 items-start rounded-2xl border p-4 transition ${numbers.length ? "border-[#c9d99e] bg-[#eef5dc]" : "border-dashed border-[#d8d4c9] bg-white"}`} aria-live="polite" aria-atomic="true">
             {numbers.length > 0 ? <div className="flex flex-wrap content-start gap-2">{numbers.map((number, index) => <output key={`${number}-${index}`} className="rounded-xl border border-black/10 bg-white px-4 py-3 font-mono text-xl font-black shadow-sm">{number.toLocaleString()}</output>)}</div> : <div><p className="text-sm font-bold">Nothing generated yet</p><p className="mt-1 text-sm leading-6 text-black/45">Set your range, then choose Generate numbers.</p></div>}
           </div>
+          <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">{copied ? "Generated numbers copied to clipboard." : ""}</div>
           <p className="mt-4 text-xs leading-5 text-black/50"><strong className="text-black/70">Local and secure:</strong> numbers are generated with your browser&apos;s cryptographically secure random number generator. Nothing is uploaded or stored.</p>
         </aside>
       </div>
