@@ -8,6 +8,7 @@ const MAX_TEXT_LENGTH = 500_000;
 export default function WordCounter() {
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState("");
 
   const stats = useMemo(() => {
     const words = text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -20,18 +21,21 @@ export default function WordCounter() {
 
   const copyCounts = async () => {
     const summary = `Words: ${stats.words}\nCharacters: ${stats.characters}\nCharacters without spaces: ${stats.noSpaces}\nSentences: ${stats.sentences}\nEstimated reading time: ${stats.readingMinutes ? `${stats.readingMinutes} min` : "-"}`;
+    setCopyError("");
     try {
       await navigator.clipboard.writeText(summary);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
       setCopied(false);
+      setCopyError("Copying was blocked by your browser. The counts are still available above to copy manually.");
     }
   };
 
   const clearText = () => {
     setText("");
     setCopied(false);
+    setCopyError("");
   };
 
   return (
@@ -62,7 +66,7 @@ export default function WordCounter() {
           <textarea
             id="word-counter-input"
             value={text}
-            onChange={(event) => { setText(event.target.value); setCopied(false); }}
+            onChange={(event) => { setText(event.target.value); setCopied(false); setCopyError(""); }}
             placeholder="Start typing or paste text here..."
             aria-describedby="word-counter-help word-counter-limit"
             maxLength={MAX_TEXT_LENGTH}
@@ -95,6 +99,7 @@ export default function WordCounter() {
           </div>
         </section>
 
+        {copyError && <p className="mt-5 rounded-xl border border-[#ead9c8] bg-[#fff7ed] p-4 text-sm leading-6 text-[#7b4a20]" role="alert">{copyError}</p>}
         <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Everything is counted locally in your browser. No text is uploaded or stored by this tool.</p>
       </div>
     </section>
