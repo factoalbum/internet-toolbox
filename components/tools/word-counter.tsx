@@ -84,10 +84,13 @@ export default function WordCounter() {
               <p className="text-[10px] font-black uppercase tracking-[.14em] text-[#6d8e25]">Live counts</p>
               <h3 id="word-counter-results-heading" className="mt-1 text-base font-black">Your text at a glance</h3>
             </div>
-            <button type="button" onClick={copyCounts} disabled={!text} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3.5 text-xs font-bold text-[#171717] transition hover:border-[#171717] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]" aria-label={copied ? "Text counts copied" : "Copy text counts"}>
-              <Clipboard size={15} aria-hidden="true" />
-              <span>{copied ? "Copied" : "Copy counts"}</span>
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <span className="sr-only" aria-live="polite" aria-atomic="true">{copied ? "Text counts copied." : ""}</span>
+              <button type="button" onClick={copyCounts} disabled={!text} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3.5 text-xs font-bold text-[#171717] transition hover:border-[#171717] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]" aria-label={copied ? "Text counts copied" : "Copy text counts"}>
+                <Clipboard size={15} aria-hidden="true" />
+                <span>{copied ? "Copied" : "Copy counts"}</span>
+              </button>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
             {[["Words", stats.words], ["Characters", stats.characters], ["No spaces", stats.noSpaces], ["Sentences", stats.sentences], ["Read time", stats.readingMinutes ? `${stats.readingMinutes} min` : "-"]].map(([label, value], index) => (
