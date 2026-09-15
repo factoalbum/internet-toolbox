@@ -39,23 +39,29 @@ export default function TimeZoneConverter() {
   const [to, setTo] = useState("America/New_York");
   const [initialValue] = useState(() => value);
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
 
   const result = useMemo(() => convertLocalDateTime(value, from, to), [value, from, to]);
   const hasInvalidDate = value.trim() !== "" && !result;
   const isPristine = value === initialValue && from === "Asia/Kolkata" && to === "America/New_York";
   const destinationLabel = zones.find((zone) => zone.value === to)?.label ?? to;
 
+  const clearCopyState = () => {
+    setCopied(false);
+    setCopyError(false);
+  };
+
   const swapZones = () => {
     setFrom(to);
     setTo(from);
-    setCopied(false);
+    clearCopyState();
   };
 
   const reset = () => {
     setValue(initialValue);
     setFrom("Asia/Kolkata");
     setTo("America/New_York");
-    setCopied(false);
+    clearCopyState();
   };
 
   const copyResult = async () => {
@@ -64,9 +70,11 @@ export default function TimeZoneConverter() {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
+      setCopyError(false);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
       setCopied(false);
+      setCopyError(true);
     }
   };
 
@@ -91,13 +99,13 @@ export default function TimeZoneConverter() {
       <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_1fr_auto_1fr] lg:items-end">
         <div className={`rounded-2xl border bg-[#faf9f6] p-4 ${hasInvalidDate ? "border-[#d7a9a2]" : "border-[#e0ddd5]"}`}>
           <label htmlFor="timezone-date" className="block text-xs font-black uppercase tracking-[.08em] text-black/55">Date & time</label>
-          <input id="timezone-date" type="datetime-local" value={value} onChange={(event) => { setValue(event.target.value); setCopied(false); }} className={`mt-2 min-h-12 w-full min-w-0 rounded-xl border bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50 ${hasInvalidDate ? "border-[#b8756d]" : "border-[#c9c5ba]"} ${focusRing}`} aria-describedby="timezone-date-help" aria-invalid={hasInvalidDate} />
+          <input id="timezone-date" type="datetime-local" value={value} onChange={(event) => { setValue(event.target.value); clearCopyState(); }} className={`mt-2 min-h-12 w-full min-w-0 rounded-xl border bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50 ${hasInvalidDate ? "border-[#b8756d]" : "border-[#c9c5ba]"} ${focusRing}`} aria-describedby="timezone-date-help" aria-invalid={hasInvalidDate} />
           <p id="timezone-date-help" className={`mt-2 text-[11px] leading-4 ${hasInvalidDate ? "text-[#8f4f48]" : "text-black/40"}`}>{hasInvalidDate ? "Enter a valid date and time for the selected time zone." : "The starting date and local clock time."}</p>
         </div>
 
         <div className="rounded-2xl border border-[#e0ddd5] bg-[#faf9f6] p-4">
           <label htmlFor="timezone-from" className="block text-xs font-black uppercase tracking-[.08em] text-black/55">From</label>
-          <select id="timezone-from" value={from} onChange={(event) => { setFrom(event.target.value); setCopied(false); }} className={`mt-2 min-h-12 w-full rounded-xl border border-[#c9c5ba] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50 ${focusRing}`}>
+          <select id="timezone-from" value={from} onChange={(event) => { setFrom(event.target.value); clearCopyState(); }} className={`mt-2 min-h-12 w-full rounded-xl border border-[#c9c5ba] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50 ${focusRing}`}>
             {zones.map((zone) => <option key={zone.value} value={zone.value}>{zone.label}</option>)}
           </select>
           <p className="mt-2 text-[11px] leading-4 text-black/40">The time zone the input belongs to.</p>
@@ -109,14 +117,14 @@ export default function TimeZoneConverter() {
 
         <div className="rounded-2xl border border-[#e0ddd5] bg-[#faf9f6] p-4">
           <label htmlFor="timezone-to" className="block text-xs font-black uppercase tracking-[.08em] text-black/55">Convert to</label>
-          <select id="timezone-to" value={to} onChange={(event) => { setTo(event.target.value); setCopied(false); }} className={`mt-2 min-h-12 w-full rounded-xl border border-[#c9c5ba] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50 ${focusRing}`}>
+          <select id="timezone-to" value={to} onChange={(event) => { setTo(event.target.value); clearCopyState(); }} className={`mt-2 min-h-12 w-full rounded-xl border border-[#c9c5ba] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50 ${focusRing}`}>
             {zones.map((zone) => <option key={zone.value} value={zone.value}>{zone.label}</option>)}
           </select>
           <p className="mt-2 text-[11px] leading-4 text-black/40">The destination time zone.</p>
         </div>
       </div>
 
-      <section className="mt-5 rounded-2xl border border-[#d9e5b7] bg-[#f1f6df] p-5 sm:p-6" aria-labelledby="timezone-result-title" aria-live="polite">
+      <section className="mt-5 rounded-2xl border border-[#d9e5b7] bg-[#f1f6df] p-5 sm:p-6" aria-labelledby="timezone-result-title">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <p id="timezone-result-title" className="text-[10px] font-black uppercase tracking-[.15em] text-[#668025]">Converted time</p>
@@ -124,12 +132,13 @@ export default function TimeZoneConverter() {
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <span className="rounded-full bg-white/75 px-3 py-1.5 text-[10px] font-bold text-[#5a6e29]">{destinationLabel}</span>
-            <button type="button" onClick={copyResult} disabled={!result} className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[#cdd9ab] bg-white px-3 text-xs font-black text-[#526a22] transition hover:border-[#7f952f] hover:text-black disabled:cursor-not-allowed disabled:opacity-40 ${focusRing}`} aria-label="Copy converted time" aria-live="polite">
+            <button type="button" onClick={copyResult} disabled={!result} className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[#cdd9ab] bg-white px-3 text-xs font-black text-[#526a22] transition hover:border-[#7f952f] hover:text-black disabled:cursor-not-allowed disabled:opacity-40 ${focusRing}`} aria-label="Copy converted time" aria-describedby={copyError ? "timezone-copy-error" : undefined}>
               {copied ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
               {copied ? "Copied" : "Copy result"}
             </button>
           </div>
         </div>
+        <p id="timezone-copy-error" className={`mt-3 text-[11px] font-semibold ${copyError ? "text-[#8f4f48]" : "sr-only"}`} aria-live="polite">{copyError ? "Could not copy the converted time. Check your browser clipboard permissions." : ""}</p>
         <p className="sr-only" aria-live="polite">{copied ? "Converted time copied to clipboard." : ""}</p>
       </section>
 
