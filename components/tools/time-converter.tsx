@@ -33,6 +33,8 @@ export default function TimeConverter() {
     return Number.isFinite(converted) ? converted : null;
   }, [value, from, to]);
 
+  const isDefault = value === "1" && from === "minutes" && to === "hours";
+
   const reset = () => {
     setValue("1");
     setFrom("minutes");
@@ -57,45 +59,48 @@ export default function TimeConverter() {
               <p className="mt-1 text-sm leading-5 text-black/50">Convert seconds, minutes, hours or days.</p>
             </div>
           </div>
-          <button type="button" onClick={reset} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black ${focusRing}`} aria-label="Reset time converter">
-            <RotateCcw size={16} />
+          <button type="button" onClick={reset} disabled={isDefault} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`} aria-label="Reset time converter">
+            <RotateCcw size={16} aria-hidden="true" />
             <span className="hidden sm:inline">Reset</span>
           </button>
         </div>
       </div>
 
       <div className="p-5 md:p-7">
-        <div className="grid gap-4 md:grid-cols-[1.1fr_1fr_auto_1fr] md:items-end">
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
-            <span className="text-sm font-bold">Value</span>
-            <span className="mt-1 block text-xs leading-5 text-black/40">Enter the amount you want to convert.</span>
-            <input id="time-value" type="number" value={value} onChange={(event) => setValue(event.target.value)} inputMode="decimal" aria-label="Time value" aria-invalid={value.trim() !== "" && !Number.isFinite(Number(value))} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-4 text-lg font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
-          </label>
+        <fieldset className="min-w-0 border-0 p-0">
+          <legend className="sr-only">Time conversion inputs</legend>
+          <div className="grid gap-4 md:grid-cols-[1.1fr_1fr_auto_1fr] md:items-end">
+            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
+              <span className="text-sm font-bold">Value</span>
+              <span className="mt-1 block text-xs leading-5 text-black/40">Enter the amount you want to convert.</span>
+              <input id="time-value" type="number" value={value} onChange={(event) => setValue(event.target.value)} inputMode="decimal" aria-label="Time value" aria-invalid={value.trim() !== "" && !Number.isFinite(Number(value))} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-4 text-lg font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
+            </label>
 
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
-            <span className="text-sm font-bold">From</span>
-            <span className="mt-1 block text-xs leading-5 text-black/40">The current unit.</span>
-            <select id="time-from" value={from} onChange={(event) => setFrom(event.target.value as Unit)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}>
-              {units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}
-            </select>
-          </label>
+            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
+              <span className="text-sm font-bold">From</span>
+              <span className="mt-1 block text-xs leading-5 text-black/40">The current unit.</span>
+              <select id="time-from" value={from} onChange={(event) => setFrom(event.target.value as Unit)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}>
+                {units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}
+              </select>
+            </label>
 
-          <button type="button" onClick={swap} disabled={from === to} aria-label="Swap time units" title="Swap units" className={`mx-auto flex size-11 shrink-0 items-center justify-center rounded-xl border border-[#d8d4c9] bg-white text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 md:mb-1 ${focusRing}`}>
-            <ArrowRightLeft size={17} aria-hidden="true" />
-          </button>
+            <button type="button" onClick={swap} disabled={from === to} aria-label="Swap time units" title="Swap units" className={`mx-auto flex size-11 shrink-0 items-center justify-center rounded-xl border border-[#d8d4c9] bg-white text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 md:mb-1 ${focusRing}`}>
+              <ArrowRightLeft size={17} aria-hidden="true" />
+            </button>
 
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
-            <span className="text-sm font-bold">Convert to</span>
-            <span className="mt-1 block text-xs leading-5 text-black/40">The unit you want back.</span>
-            <select id="time-to" value={to} onChange={(event) => setTo(event.target.value as Unit)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}>
-              {units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}
-            </select>
-          </label>
-        </div>
+            <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4">
+              <span className="text-sm font-bold">Convert to</span>
+              <span className="mt-1 block text-xs leading-5 text-black/40">The unit you want back.</span>
+              <select id="time-to" value={to} onChange={(event) => setTo(event.target.value as Unit)} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}>
+                {units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}
+              </select>
+            </label>
+          </div>
+        </fieldset>
 
-        <div className="mt-6 rounded-2xl border border-[#171717] bg-[#c8f169] p-5 md:p-6" aria-live="polite" aria-atomic="true">
-          <p className="text-[11px] font-black uppercase tracking-[.15em] text-black/55">Converted result</p>
-          <p className="mt-2 break-words text-4xl font-black tracking-[-.04em] sm:text-5xl">
+        <div className="mt-6 rounded-2xl border border-[#dfe6c9] bg-[#f3f7e8] p-5 md:p-6" aria-live="polite" aria-atomic="true">
+          <p className="text-[11px] font-black uppercase tracking-[.15em] text-[#5b7025]">Converted result</p>
+          <p className="mt-2 break-words text-4xl font-black tracking-[-.04em] text-[#171717] sm:text-5xl">
             {result === null ? "Enter a valid value" : `${formatNumber(result)} ${to}`}
           </p>
           {result !== null && <p className="mt-2 text-sm font-medium text-black/50">{formatNumber(Number(value))} {from} = {formatNumber(result)} {to}</p>}
