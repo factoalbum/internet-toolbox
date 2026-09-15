@@ -1,12 +1,13 @@
 "use client";
 
-import { RotateCcw, Type } from "lucide-react";
+import { Clipboard, RotateCcw, Type } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const MAX_TEXT_LENGTH = 500_000;
 
 export default function WordCounter() {
   const [text, setText] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const stats = useMemo(() => {
     const words = text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -16,6 +17,22 @@ export default function WordCounter() {
     const readingMinutes = words ? Math.max(1, Math.ceil(words / 200)) : 0;
     return { words, characters, noSpaces, sentences, readingMinutes };
   }, [text]);
+
+  const copyCounts = async () => {
+    const summary = `Words: ${stats.words}\nCharacters: ${stats.characters}\nCharacters without spaces: ${stats.noSpaces}\nSentences: ${stats.sentences}\nEstimated reading time: ${stats.readingMinutes ? `${stats.readingMinutes} min` : "-"}`;
+    try {
+      await navigator.clipboard.writeText(summary);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const clearText = () => {
+    setText("");
+    setCopied(false);
+  };
 
   return (
     <section aria-labelledby="word-counter-title" className="overflow-hidden rounded-2xl border border-[#dedbd3] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.04)]">
@@ -29,7 +46,7 @@ export default function WordCounter() {
               <p className="mt-1 max-w-xl text-sm leading-6 text-black/50">Paste or type text below. Counts and estimated reading time update instantly in your browser.</p>
             </div>
           </div>
-          <button type="button" onClick={() => setText("")} disabled={!text} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-4 text-sm font-bold text-black/60 transition hover:border-[#171717] hover:text-black focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] disabled:cursor-not-allowed disabled:opacity-40" aria-label="Clear text"><RotateCcw size={16} aria-hidden="true" /><span>Clear</span></button>
+          <button type="button" onClick={clearText} disabled={!text} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-4 text-sm font-bold text-black/60 transition hover:border-[#171717] hover:text-black focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] disabled:cursor-not-allowed disabled:opacity-40" aria-label="Clear text"><RotateCcw size={16} aria-hidden="true" /><span>Clear</span></button>
         </div>
       </div>
 
@@ -45,7 +62,7 @@ export default function WordCounter() {
           <textarea
             id="word-counter-input"
             value={text}
-            onChange={(event) => setText(event.target.value)}
+            onChange={(event) => { setText(event.target.value); setCopied(false); }}
             placeholder="Start typing or paste text here..."
             aria-describedby="word-counter-help word-counter-limit"
             maxLength={MAX_TEXT_LENGTH}
@@ -58,9 +75,15 @@ export default function WordCounter() {
         </section>
 
         <section className="mt-6" aria-labelledby="word-counter-results-heading" aria-live="polite" aria-atomic="true">
-          <div className="mb-3">
-            <p className="text-[10px] font-black uppercase tracking-[.14em] text-[#6d8e25]">Live counts</p>
-            <h3 id="word-counter-results-heading" className="mt-1 text-base font-black">Your text at a glance</h3>
+          <div className="mb-3 flex items-end justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[.14em] text-[#6d8e25]">Live counts</p>
+              <h3 id="word-counter-results-heading" className="mt-1 text-base font-black">Your text at a glance</h3>
+            </div>
+            <button type="button" onClick={copyCounts} disabled={!text} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3.5 text-xs font-bold text-[#171717] transition hover:border-[#171717] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]" aria-label={copied ? "Text counts copied" : "Copy text counts"}>
+              <Clipboard size={15} aria-hidden="true" />
+              <span>{copied ? "Copied" : "Copy counts"}</span>
+            </button>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
             {[["Words", stats.words], ["Characters", stats.characters], ["No spaces", stats.noSpaces], ["Sentences", stats.sentences], ["Read time", stats.readingMinutes ? `${stats.readingMinutes} min` : "-"]].map(([label, value], index) => (
