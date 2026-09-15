@@ -78,7 +78,7 @@ export default function WordCounter() {
           </div>
         </section>
 
-        <section className="mt-6" aria-labelledby="word-counter-results-heading" aria-live="polite" aria-atomic="true">
+        <section className="mt-6" aria-labelledby="word-counter-results-heading">
           <div className="mb-3 flex items-end justify-between gap-3">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[.14em] text-[#6d8e25]">Live counts</p>
@@ -86,7 +86,7 @@ export default function WordCounter() {
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <span className="sr-only" aria-live="polite" aria-atomic="true">{copied ? "Text counts copied." : ""}</span>
-              <button type="button" onClick={copyCounts} disabled={!text} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3.5 text-xs font-bold text-[#171717] transition hover:border-[#171717] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]" aria-label={copied ? "Text counts copied" : "Copy text counts"}>
+              <button type="button" onClick={copyCounts} disabled={!text} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3.5 text-xs font-bold text-[#171717] transition hover:border-[#171717] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]" aria-describedby={copyError ? "word-counter-copy-error" : undefined} aria-label={copied ? "Text counts copied" : "Copy text counts"}>
                 <Clipboard size={15} aria-hidden="true" />
                 <span>{copied ? "Copied" : "Copy counts"}</span>
               </button>
@@ -102,7 +102,7 @@ export default function WordCounter() {
           </div>
         </section>
 
-        {copyError && <p className="mt-5 rounded-xl border border-[#ead9c8] bg-[#fff7ed] p-4 text-sm leading-6 text-[#7b4a20]" role="alert">{copyError}</p>}
+        {copyError && <p id="word-counter-copy-error" className="mt-5 rounded-xl border border-[#ead9c8] bg-[#fff7ed] p-4 text-sm leading-6 text-[#7b4a20]" role="alert">{copyError}</p>}
         <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Everything is counted locally in your browser. No text is uploaded or stored by this tool.</p>
       </div>
     </section>
