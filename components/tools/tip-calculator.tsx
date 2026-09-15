@@ -23,6 +23,7 @@ export default function TipCalculator() {
     return { tipAmount, total, perPerson };
   }, [bill, tip, people]);
 
+  const isDefault = bill === "1000" && tip === "10" && people === "2";
   const reset = () => { setBill("1000"); setTip("10"); setPeople("2"); };
   const inputClass = "mt-2 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-base outline-none transition hover:border-black/30 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] focus:ring-offset-1";
   const invalid = (value: string, kind: "bill" | "tip" | "people") => {
@@ -42,14 +43,15 @@ export default function TipCalculator() {
             <h2 className="mt-1 text-lg font-black">Split the bill in seconds</h2>
             <p className="mt-1 text-sm leading-6 text-black/50">Calculate the tip, final bill and each person&apos;s share.</p>
           </div>
-          <button type="button" onClick={reset} className="flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]" aria-label="Reset tip calculator">
+          <button type="button" onClick={reset} disabled={isDefault} className="flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:border-[#d8d4c9] disabled:hover:text-black/55 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]" aria-label="Reset tip calculator">
             <RotateCcw size={16} aria-hidden="true" /><span className="hidden sm:inline">Reset</span>
           </button>
         </div>
       </div>
 
       <div className="p-5 md:p-8">
-        <div className="grid gap-5 md:grid-cols-3">
+        <fieldset className="grid gap-5 md:grid-cols-3">
+          <legend className="sr-only">Tip calculator inputs</legend>
           <label className="block" htmlFor="tip-bill">
             <span className="text-sm font-semibold">Bill amount</span>
             <span className="mt-1 block text-xs leading-5 text-black/40">Total before adding the tip.</span>
@@ -65,14 +67,14 @@ export default function TipCalculator() {
             <span className="mt-1 block text-xs leading-5 text-black/40">Whole number from 1 to 100.</span>
             <input id="tip-people" aria-label="Number of people" aria-invalid={invalid(people, "people")} value={people} onChange={(event) => setPeople(event.target.value)} type="number" min="1" max="100" step="1" inputMode="numeric" className={inputClass} />
           </label>
-        </div>
+        </fieldset>
 
-        <div className="mt-5" aria-label="Quick tip percentages">
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-black/40">Quick tip</p>
+        <fieldset className="mt-5" aria-label="Quick tip percentages">
+          <legend className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-black/40">Quick tip</legend>
           <div className="flex flex-wrap gap-2">
             {tipOptions.map((option) => <button key={option} type="button" onClick={() => setTip(String(option))} aria-pressed={tip === String(option)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] ${tip === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717]"}`}>{option}%</button>)}
           </div>
-        </div>
+        </fieldset>
 
         {result ? (
           <div className="mt-7" aria-live="polite" aria-atomic="true">
@@ -80,7 +82,7 @@ export default function TipCalculator() {
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Tip</p><p className="mt-2 break-words text-2xl font-black">{money.format(result.tipAmount)}</p></div>
               <div className="rounded-2xl border border-[#d8d4c9] bg-white p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Total bill</p><p className="mt-2 break-words text-2xl font-black">{money.format(result.total)}</p></div>
-              <div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/55">Each person</p><p className="mt-2 break-words text-3xl font-black">{money.format(result.perPerson)}</p></div>
+              <div className="rounded-2xl border border-[#d8d4c9] bg-[#e8f4c9] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/55">Each person</p><p className="mt-2 break-words text-3xl font-black">{money.format(result.perPerson)}</p></div>
             </div>
           </div>
         ) : <div className="mt-6 rounded-xl border border-[#e1d8d2] bg-[#fff6f2] px-4 py-3 text-sm text-black/55" role="alert"><p className="font-semibold">Check the values above</p><p className="mt-1 leading-5">Enter a valid bill, a tip from 0% to 100%, and a whole number of people.</p></div>}
