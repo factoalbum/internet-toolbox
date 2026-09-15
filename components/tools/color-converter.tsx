@@ -42,21 +42,30 @@ export default function ColorConverter() {
   const [b, setB] = useState("41");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
+  const [copyError, setCopyError] = useState("");
 
   const color = useMemo(() => parseHex(hex), [hex]);
   const hsl = color ? rgbToHsl(...color) : null;
   const normalizedHex = color ? `#${componentToHex(color[0])}${componentToHex(color[1])}${componentToHex(color[2])}`.toUpperCase() : "";
   const rgbText = color ? `rgb(${color[0]}, ${color[1]}, ${color[2]})` : "";
   const hslText = hsl ? `hsl(${Math.round(hsl[0])}, ${Math.round(hsl[1])}%, ${Math.round(hsl[2])}%)` : "";
+  const isPristine = hex === "#5f7429" && r === "95" && g === "116" && b === "41" && !error && !copied && !copyError;
+
+  const clearCopyState = () => {
+    setCopied("");
+    setCopyError("");
+  };
 
   const updateFromHex = (value: string) => {
     setHex(value);
+    clearCopyState();
     const parsed = parseHex(value);
     if (!parsed) { setError("Enter a valid 3- or 6-digit hex color."); return; }
     setError(""); setR(String(parsed[0])); setG(String(parsed[1])); setB(String(parsed[2]));
   };
 
   const updateFromRgb = (channel: "r" | "g" | "b", value: string) => {
+    clearCopyState();
     const next = { r, g, b, [channel]: value };
     if (channel === "r") setR(value); if (channel === "g") setG(value); if (channel === "b") setB(value);
     const red = Number(next.r), green = Number(next.g), blue = Number(next.b);
@@ -66,10 +75,18 @@ export default function ColorConverter() {
   };
 
   const applyPreset = (value: string) => updateFromHex(value);
-  const reset = () => { setHex("#5f7429"); setR("95"); setG("116"); setB("41"); setError(""); setCopied(""); };
+  const reset = () => { setHex("#5f7429"); setR("95"); setG("116"); setB("41"); setError(""); clearCopyState(); };
   const copyValue = async (label: string, value: string) => {
     if (!value || !navigator.clipboard) return;
-    try { await navigator.clipboard.writeText(value); setCopied(label); window.setTimeout(() => setCopied(""), 1400); } catch { setCopied(""); }
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(label);
+      setCopyError("");
+      window.setTimeout(() => setCopied(""), 1400);
+    } catch {
+      setCopied("");
+      setCopyError(`Could not copy the ${label} value. Check your browser clipboard permissions.`);
+    }
   };
 
   return (
@@ -80,7 +97,7 @@ export default function ColorConverter() {
             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#f4e8ff] text-[#7042a8]" aria-hidden="true"><Palette size={20} /></span>
             <div className="min-w-0"><p className="font-bold">Convert color values</p><p className="mt-1 text-sm leading-5 text-black/50">Enter HEX or RGB and get matching HEX, RGB, and HSL values.</p></div>
           </div>
-          <button type="button" onClick={reset} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black ${focusRing}`} aria-label="Reset color converter"><RotateCcw size={16}/><span className="hidden sm:inline">Reset</span></button>
+          <button type="button" onClick={reset} disabled={isPristine} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`} aria-label="Reset color converter"><RotateCcw size={16}/><span className="hidden sm:inline">Reset</span></button>
         </div>
       </div>
 
@@ -89,12 +106,12 @@ export default function ColorConverter() {
           <div className="grid gap-4 sm:grid-cols-3">
             <label className="block sm:col-span-3 rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
               <span className="text-sm font-bold">HEX color</span><span className="mt-1 block text-xs leading-5 text-black/40">Use 3 or 6 hexadecimal digits, with or without #.</span>
-              <input value={hex} onChange={(event) => updateFromHex(event.target.value)} spellCheck={false} aria-invalid={Boolean(error)} className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 font-mono text-lg font-bold uppercase outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} placeholder="#5F7429" />
+              <input value={hex} onChange={(event) => updateFromHex(event.target.value)} spellCheck={false} aria-invalid={Boolean(error)} aria-describedby={error ? "color-error" : undefined} className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 font-mono text-lg font-bold uppercase outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} placeholder="#5F7429" />
             </label>
             {([['Red','r',r],['Green','g',g],['Blue','b',b]] as const).map(([label, channel, value]) => (
               <label key={channel} className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
                 <span className="text-sm font-bold">{label}</span><span className="mt-1 block text-xs text-black/40">0 to 255</span>
-                <input type="number" min="0" max="255" inputMode="numeric" value={value} onChange={(event) => updateFromRgb(channel, event.target.value)} aria-label={`${label} RGB value`} className={`mt-3 h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 font-mono text-base font-bold outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
+                <input type="number" min="0" max="255" inputMode="numeric" value={value} onChange={(event) => updateFromRgb(channel, event.target.value)} aria-label={`${label} RGB value`} aria-invalid={Boolean(error)} className={`mt-3 h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 font-mono text-base font-bold outline-none focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
               </label>
             ))}
           </div>
@@ -106,7 +123,7 @@ export default function ColorConverter() {
             </div>
           </div>
 
-          {error && <p className="mt-4 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">{error}</p>}
+          {error && <p id="color-error" className="mt-4 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">{error}</p>}
 
           <section className="mt-6" aria-labelledby="color-conversions-heading">
             <div className="flex items-center justify-between gap-3"><h2 id="color-conversions-heading" className="text-xs font-black uppercase tracking-[.14em] text-black/45">Conversions</h2><span className="text-xs text-black/40">Copy any value</span></div>
@@ -116,6 +133,8 @@ export default function ColorConverter() {
                 <p className="mt-3 break-all font-mono text-sm font-bold">{value || "Invalid"}</p>
               </div>)}
             </div>
+            <p className={`mt-3 text-xs font-semibold ${copyError ? "text-[#7b3d31]" : "sr-only"}`} role="status" aria-live="polite">{copyError}</p>
+            <p className="sr-only" aria-live="polite">{copied ? `${copied} value copied to clipboard.` : ""}</p>
           </section>
         </div>
 
