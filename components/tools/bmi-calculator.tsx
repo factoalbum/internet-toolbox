@@ -3,7 +3,7 @@
 import { Activity, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
-const inputClass = "mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-base font-semibold text-[#171717] outline-none transition hover:border-black/30 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] focus:ring-offset-1";
+const inputClass = "mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-base font-semibold text-[#171717] outline-none transition hover:border-black/30 focus:border-[#171717] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
 
 export default function BmiCalculator() {
   const [height, setHeight] = useState("170");
@@ -13,6 +13,7 @@ export default function BmiCalculator() {
   const parsedWeight = Number(weight);
   const hasInvalidHeight = height.trim() === "" || !Number.isFinite(parsedHeight) || parsedHeight <= 0;
   const hasInvalidWeight = weight.trim() === "" || !Number.isFinite(parsedWeight) || parsedWeight <= 0;
+  const isDefault = height === "170" && weight === "70";
 
   const result = useMemo(() => {
     const h = Number(height) / 100;
@@ -43,7 +44,7 @@ export default function BmiCalculator() {
               <p className="mt-1.5 max-w-2xl text-sm leading-6 text-black/50">Enter your height and weight to get an instant BMI estimate and category.</p>
             </div>
           </div>
-          <button type="button" onClick={reset} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d0ccc2] bg-white px-3.5 text-sm font-bold text-[#171717] transition hover:border-[#171717] hover:bg-[#f7f5ef] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]" aria-label="Reset BMI calculator">
+          <button type="button" onClick={reset} disabled={isDefault} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d0ccc2] bg-white px-3.5 text-sm font-bold text-[#171717] transition hover:border-[#171717] hover:bg-[#f7f5ef] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] disabled:cursor-not-allowed disabled:opacity-40" aria-label="Reset BMI calculator">
             <RotateCcw size={16} aria-hidden="true" />
             <span className="hidden sm:inline">Reset</span>
           </button>
@@ -58,7 +59,8 @@ export default function BmiCalculator() {
             <p className="mt-1 text-sm leading-5 text-black/45">Use centimetres for height and kilograms for weight.</p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <fieldset className="grid gap-4 md:grid-cols-2">
+            <legend className="sr-only">BMI measurements</legend>
             <label className={`block min-w-0 rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_30%)] ${hasInvalidHeight ? "border-[#c46b5c]" : "border-[#e2dfd7]"}`}>
               <span className="flex items-center justify-between gap-3 text-sm font-bold"><span>Height</span><span className="text-xs font-semibold text-black/40">centimetres</span></span>
               <span className="mt-1 block text-xs leading-5 text-black/45">Your height in centimetres.</span>
@@ -76,7 +78,7 @@ export default function BmiCalculator() {
                 <span aria-hidden="true" className="pt-3 text-sm font-bold text-black/40">kg</span>
               </span>
             </label>
-          </div>
+          </fieldset>
 
           {(hasInvalidHeight || hasInvalidWeight) && (
             <p className="mt-3 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-3 text-xs font-semibold leading-5 text-[#7b3d31]" role="alert">
