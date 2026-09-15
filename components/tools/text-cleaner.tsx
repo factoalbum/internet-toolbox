@@ -15,20 +15,28 @@ function cleanText(value: string) {
 export default function TextCleaner() {
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const result = useMemo(() => cleanText(text), [text]);
   const inputCharacters = text.length;
   const resultCharacters = result.length;
 
   async function copyResult() {
     if (!result) return;
-    await navigator.clipboard.writeText(result);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1400);
+    setCopyError(false);
+    try {
+      await navigator.clipboard.writeText(result);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
+      setCopyError(true);
+    }
   }
 
   function clear() {
     setText("");
     setCopied(false);
+    setCopyError(false);
   }
 
   return (
@@ -55,21 +63,21 @@ export default function TextCleaner() {
               <label htmlFor="text-cleaner-input" className="text-sm font-black">Your text</label>
               <span className="text-[11px] font-semibold text-black/35">{inputCharacters.toLocaleString()} characters</span>
             </div>
-            <textarea id="text-cleaner-input" value={text} onChange={(event) => { setText(event.target.value); setCopied(false); }} placeholder="Paste text here" aria-describedby="text-cleaner-help" className="min-h-72 w-full resize-y rounded-2xl border border-[#cfcabf] bg-[#faf9f6] p-4 text-base leading-7 text-[#171717] outline-none transition placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
+            <textarea id="text-cleaner-input" value={text} onChange={(event) => { setText(event.target.value); setCopied(false); setCopyError(false); }} placeholder="Paste text here" aria-describedby="text-cleaner-help" className="min-h-72 w-full resize-y rounded-2xl border border-[#cfcabf] bg-[#faf9f6] p-4 text-base leading-7 text-[#171717] outline-none transition placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
             <p id="text-cleaner-help" className="mt-2 text-xs leading-5 text-black/40">Extra spaces are reduced and runs of three or more blank lines become one blank line.</p>
           </div>
 
           <div className="min-w-0">
             <div className="mb-2 flex items-center justify-between gap-3">
               <label htmlFor="text-cleaner-output" className="text-sm font-black">Cleaned text</label>
-              <button type="button" onClick={copyResult} disabled={!result} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#dedbd3] bg-white px-3.5 text-xs font-black transition hover:border-[#171717] hover:bg-[#faf9f6] disabled:cursor-not-allowed disabled:opacity-35 focus:outline-none focus:ring-4 focus:ring-[#c8f169]">
+              <button type="button" onClick={copyResult} disabled={!result} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#dedbd3] bg-white px-3.5 text-xs font-black transition hover:border-[#171717] hover:bg-[#faf9f6] disabled:cursor-not-allowed disabled:opacity-35 focus:outline-none focus:ring-4 focus:ring-[#c8f169]" aria-label={copied ? "Copied cleaned text" : "Copy cleaned text"}>
                 {copied ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}{copied ? "Copied" : "Copy"}
               </button>
             </div>
             <textarea id="text-cleaner-output" value={result} readOnly aria-describedby="text-cleaner-result-help" placeholder="Your cleaned text will appear here" className="min-h-72 w-full resize-y rounded-2xl border border-[#cfcabf] bg-[#f3f5ec] p-4 text-base leading-7 text-[#171717] outline-none transition placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
             <div id="text-cleaner-result-help" className="mt-2 flex items-center justify-between gap-3 text-xs text-black/40" aria-live="polite">
-              <span>{result ? `${resultCharacters.toLocaleString()} characters after cleaning` : "No text to clean yet"}</span>
-              {text && result !== text ? <span className="font-semibold text-[#6d8e25]">Cleaned</span> : null}
+              <span>{copyError ? "Could not copy. Check your browser clipboard permission and try again." : result ? `${resultCharacters.toLocaleString()} characters after cleaning` : "No text to clean yet"}</span>
+              {text && result !== text && !copyError ? <span className="font-semibold text-[#6d8e25]">Cleaned</span> : null}
             </div>
           </div>
         </div>
