@@ -71,6 +71,7 @@ export default function JsonFormatter() {
 
   const inputLines = input ? input.split(/\r?\n/).length : 0;
   const outputLines = output ? output.split(/\r?\n/).length : 0;
+  const isDirty = input !== DEFAULT_INPUT || !!output || !!error || !!copyError || copied;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]" aria-labelledby="json-workspace-title">
@@ -84,7 +85,7 @@ export default function JsonFormatter() {
               <p className="mt-1.5 max-w-2xl text-sm leading-6 text-black/55">Turn compact JSON into readable, indented data or minify it for a smaller payload. Everything runs locally in your browser.</p>
             </div>
           </div>
-          <button type="button" onClick={reset} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[#c9c5ba] bg-white px-3.5 text-sm font-semibold text-[#171717] transition hover:bg-black/[0.035] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60" aria-label="Reset JSON formatter"><RotateCcw size={16} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
+          <button type="button" onClick={reset} disabled={!isDirty} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[#c9c5ba] bg-white px-3.5 text-sm font-semibold text-[#171717] transition hover:bg-black/[0.035] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 disabled:cursor-not-allowed disabled:opacity-40" aria-label="Reset JSON formatter"><RotateCcw size={16} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
         </div>
       </header>
 
