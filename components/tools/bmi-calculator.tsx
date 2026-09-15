@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, RotateCcw } from "lucide-react";
+import { Activity, Check, Copy, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const inputClass = "mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-base font-semibold text-[#171717] outline-none transition hover:border-black/30 focus:border-[#171717] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
@@ -8,6 +8,8 @@ const inputClass = "mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[
 export default function BmiCalculator() {
   const [height, setHeight] = useState("170");
   const [weight, setWeight] = useState("70");
+  const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
 
   const parsedHeight = Number(height);
   const parsedWeight = Number(weight);
@@ -28,6 +30,40 @@ export default function BmiCalculator() {
   const reset = () => {
     setHeight("170");
     setWeight("70");
+    setCopied(false);
+    setCopyError(false);
+  };
+
+  const handleHeightChange = (value: string) => {
+    setHeight(value);
+    setCopied(false);
+    setCopyError(false);
+  };
+
+  const handleWeightChange = (value: string) => {
+    setWeight(value);
+    setCopied(false);
+    setCopyError(false);
+  };
+
+  const copyResult = async () => {
+    if (!result) return;
+    const text = [
+      `BMI: ${result.bmi.toFixed(1)}`,
+      `Category: ${result.category}`,
+      `Height: ${height} cm`,
+      `Weight: ${weight} kg`,
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setCopyError(false);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopyError(true);
+      setCopied(false);
+    }
   };
 
   return (
@@ -65,7 +101,7 @@ export default function BmiCalculator() {
               <span className="flex items-center justify-between gap-3 text-sm font-bold"><span>Height</span><span className="text-xs font-semibold text-black/40">centimetres</span></span>
               <span className="mt-1 block text-xs leading-5 text-black/45">Your height in centimetres.</span>
               <span className="flex items-center gap-3">
-                <input aria-label="Height in centimetres" aria-invalid={hasInvalidHeight} value={height} onChange={e => setHeight(e.target.value)} type="number" min="1" step="0.1" inputMode="decimal" className={inputClass} />
+                <input aria-label="Height in centimetres" aria-invalid={hasInvalidHeight} value={height} onChange={e => handleHeightChange(e.target.value)} type="number" min="1" step="0.1" inputMode="decimal" className={inputClass} />
                 <span aria-hidden="true" className="pt-3 text-sm font-bold text-black/40">cm</span>
               </span>
             </label>
@@ -74,7 +110,7 @@ export default function BmiCalculator() {
               <span className="flex items-center justify-between gap-3 text-sm font-bold"><span>Weight</span><span className="text-xs font-semibold text-black/40">kilograms</span></span>
               <span className="mt-1 block text-xs leading-5 text-black/45">Your current weight in kilograms.</span>
               <span className="flex items-center gap-3">
-                <input aria-label="Weight in kilograms" aria-invalid={hasInvalidWeight} value={weight} onChange={e => setWeight(e.target.value)} type="number" min="1" step="0.1" inputMode="decimal" className={inputClass} />
+                <input aria-label="Weight in kilograms" aria-invalid={hasInvalidWeight} value={weight} onChange={e => handleWeightChange(e.target.value)} type="number" min="1" step="0.1" inputMode="decimal" className={inputClass} />
                 <span aria-hidden="true" className="pt-3 text-sm font-bold text-black/40">kg</span>
               </span>
             </label>
@@ -99,12 +135,21 @@ export default function BmiCalculator() {
           {result ? (
             <div className="space-y-3">
               <div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5 shadow-[0_5px_14px_rgba(23,23,23,.06)] sm:p-6">
-                <p className="text-[11px] font-black uppercase tracking-[.15em] text-black/55">BMI</p>
-                <div className="mt-2 flex flex-wrap items-end gap-x-3 gap-y-1">
-                  <p className="text-5xl font-black tabular-nums tracking-[-.04em] sm:text-6xl">{result.bmi.toFixed(1)}</p>
-                  <p className="pb-1 font-bold">{result.category}</p>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[11px] font-black uppercase tracking-[.15em] text-black/55">BMI</p>
+                    <div className="mt-2 flex flex-wrap items-end gap-x-3 gap-y-1">
+                      <p className="text-5xl font-black tabular-nums tracking-[-.04em] sm:text-6xl">{result.bmi.toFixed(1)}</p>
+                      <p className="pb-1 font-bold">{result.category}</p>
+                    </div>
+                  </div>
+                  <button type="button" onClick={copyResult} className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-black/15 bg-white/70 px-3 text-xs font-black text-[#171717] transition hover:bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/80" aria-label="Copy BMI result">
+                    {copied ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
+                    <span>{copied ? "Copied" : "Copy result"}</span>
+                  </button>
                 </div>
                 <p className="mt-2 text-xs font-medium text-black/55">Based on {height} cm and {weight} kg.</p>
+                {copyError && <p className="mt-2 text-xs font-semibold text-[#7b3d31]" role="alert">Could not copy the result. Try selecting the text manually.</p>}
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
