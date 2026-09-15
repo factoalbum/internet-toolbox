@@ -52,7 +52,9 @@ export default function CurrencyConverter() {
   const [loading, setLoading] = useState(true);
 
   async function loadRates() {
-    setLoading(true); setError("");
+    const hadRates = rates !== null;
+    setLoading(true);
+    setError("");
     try {
       const response = await fetchWithTimeout(HOURLY_SOURCE);
       if (!response.ok) throw new Error("Primary rate service unavailable");
@@ -71,7 +73,11 @@ export default function CurrencyConverter() {
         setUpdated(data.time_last_update_utc ?? "");
         setSourceName("ExchangeRate-API daily fallback");
       } catch {
-        setRates(null); setUpdated(""); setError("Live rates could not be loaded. Please try again.");
+        if (!hadRates) {
+          setRates(null);
+          setUpdated("");
+        }
+        setError(hadRates ? "Fresh rates could not be loaded. Showing the last available rates." : "Live rates could not be loaded. Please try again.");
       }
     } finally { setLoading(false); }
   }
@@ -109,7 +115,7 @@ export default function CurrencyConverter() {
               <p className="mt-1.5 max-w-2xl text-sm leading-6 text-black/50">Convert an amount using indicative live reference rates. Rates are refreshed from external providers.</p>
             </div>
           </div>
-          <span className="hidden shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-black/50 sm:inline-flex sm:items-center sm:gap-1.5"><span className={`size-1.5 rounded-full ${loading ? "bg-black/25" : error ? "bg-[#b45309]" : "bg-[#6d8e25]"}`} aria-hidden="true" />{loading ? "Loading rates" : error ? "Rate unavailable" : "Rates ready"}</span>
+          <span className="hidden shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-black/50 sm:inline-flex sm:items-center sm:gap-1.5"><span className={`size-1.5 rounded-full ${loading ? "bg-black/25" : error ? "bg-[#b45309]" : "bg-[#6d8e25]"}`} aria-hidden="true" />{loading ? "Loading rates" : error ? "Using last rates" : "Rates ready"}</span>
         </div>
       </header>
 
@@ -154,12 +160,11 @@ export default function CurrencyConverter() {
           </div>
         </section>
 
-        {error && <div role="alert" className="mt-4 flex flex-col gap-3 rounded-2xl border border-red-700/25 bg-red-50 p-4 text-sm font-semibold text-red-800 sm:flex-row sm:items-center sm:justify-between"><p>{error}</p><button type="button" onClick={() => void loadRates()} className="min-h-11 shrink-0 rounded-xl border border-red-700/25 bg-white px-4 font-black transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200">Retry</button></div>}
+        {error && <div role="alert" className="mt-4 flex flex-col gap-3 rounded-2xl border border-red-700/25 bg-red-50 p-4 text-sm font-semibold text-red-800 sm:flex-row sm:items-center sm:justify-between"><p>{error}</p><button type="button" onClick={() => void loadRates()} disabled={loading} className="min-h-11 shrink-0 rounded-xl border border-red-700/25 bg-white px-4 font-black transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200">{loading ? "Refreshing" : "Try again"}</button></div>}
 
         <section className="mt-7 border-t border-[#d8d4c9] pt-6" aria-labelledby="popular-currency-rates">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-[11px] font-black uppercase tracking-[0.14em] text-black/40">Reference rates</p><h2 id="popular-currency-rates" className="mt-1 text-lg font-black tracking-[-.02em]">Popular rates in INR</h2></div><span className="text-xs text-black/40">1 unit</span></div>
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">{popularRates.map(code => <div key={code} className="rounded-xl border border-[#d8d4c9] bg-[#f8f5ed] p-3.5"><p className="text-xs font-black text-black/45">{code}</p><p className="mt-1 font-bold">{loading ? "Not available" : rateToInr(code) === null ? "Not available" : formatInr(rateToInr(code)!)}</p></div>)}</div>
-        </section>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">{popularRates.map(code => <div key={code} className="rounded-xl border border-[#d8d4c9] bg-[#f8f5ed] p-3.5"><p className="text-xs font-black text-black/45">{code}</p><p className="mt-1 font-bold">{loading ? "Not available" : rateToInr(code) === null ? "Not available" : formatInr(rateToInr(code)!)}</p></div>)}</div></section>
 
         <div className="mt-6 flex flex-col gap-3 border-t border-[#d8d4c9] pt-5 text-xs text-black/45 sm:flex-row sm:items-center sm:justify-between"><p>Reference rates refresh about once per hour.</p><button type="button" onClick={() => void loadRates()} disabled={loading} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-4 font-black text-black/70 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/50"><RefreshCw size={14} aria-hidden="true" className={loading ? "animate-spin" : ""} />{loading ? "Refreshing" : "Refresh rates"}</button></div>
         {updated && <p className="mt-3 text-xs leading-5 text-black/40">Source update: {updated}. {sourceName} is indicative and may differ slightly from Google, banks, cards and remittance providers.</p>}
