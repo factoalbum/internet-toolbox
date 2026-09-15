@@ -69,6 +69,7 @@ export default function Base64Tool() {
   const inputPlaceholder = mode === "encode" ? "Hello, world!" : "SGVsbG8sIHdvcmxkIQ==";
   const inputLength = input.length;
   const outputLength = result.value.length;
+  const isDirty = Boolean(input) || mode !== "encode" || copied || Boolean(copyError);
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]" aria-labelledby="base64-workspace-title">
@@ -82,7 +83,7 @@ export default function Base64Tool() {
               <p className="mt-1.5 max-w-2xl text-sm leading-6 text-black/55">Convert text to Base64 or decode an encoded value. Everything runs locally in your browser.</p>
             </div>
           </div>
-          <button type="button" onClick={reset} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black ${focusRing}`} aria-label="Reset Base64 converter"><RotateCcw size={16} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
+          <button type="button" onClick={reset} disabled={!isDirty} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`} aria-label="Reset Base64 converter"><RotateCcw size={16} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
         </div>
 
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -120,7 +121,7 @@ export default function Base64Tool() {
               <button type="button" onClick={copy} disabled={!result.value} aria-label={copied ? "Result copied" : "Copy result"} className={`min-h-11 rounded-xl border border-[#bcb8ae] bg-white px-4 text-xs font-black text-[#171717] transition hover:border-[#171717] hover:bg-white ${focusRing} disabled:cursor-not-allowed disabled:opacity-35`}>{copied ? <span className="inline-flex items-center gap-1.5"><Check size={15} aria-hidden="true" />Copied</span> : <span className="inline-flex items-center gap-1.5"><Clipboard size={15} aria-hidden="true" />Copy</span>}</button>
             </div>
 
-            <textarea id="base64-output" readOnly value={result.value} spellCheck={false} placeholder="Your result will appear here" aria-label="Base64 conversion result" className="mt-4 min-h-56 w-full resize-y rounded-xl border border-[#d8d4c9] bg-white p-4 font-mono text-sm leading-6 text-[#171717] outline-none placeholder:text-black/25" />
+            <textarea id="base64-output" readOnly value={result.value} spellCheck={false} placeholder="Your result will appear here" aria-label="Base64 conversion result" aria-describedby={copyError ? "base64-copy-error" : undefined} className={`mt-4 min-h-56 w-full resize-y rounded-xl border border-[#d8d4c9] bg-white p-4 font-mono text-sm leading-6 text-[#171717] outline-none placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40 ${focusRing}`} />
             <div className="mt-2 flex items-center justify-between gap-3">
               <span className="text-xs font-semibold text-black/40">{outputLength ? `${outputLength.toLocaleString("en-IN")} chars` : "Waiting for input"}</span>
               {result.value && <span className="rounded-full bg-[#e9f1d8] px-2.5 py-1 text-[11px] font-bold text-[#52691f]">Ready</span>}
@@ -131,7 +132,7 @@ export default function Base64Tool() {
         {result.error ? (
           <p className="mt-5 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">{result.error}</p>
         ) : copyError ? (
-          <p className="mt-5 rounded-xl border border-[#ead9c8] bg-[#fff7ed] p-4 text-sm leading-6 text-[#7b4a20]" role="alert">{copyError}</p>
+          <p id="base64-copy-error" className="mt-5 rounded-xl border border-[#ead9c8] bg-[#fff7ed] p-4 text-sm leading-6 text-[#7b4a20]" role="alert">{copyError}</p>
         ) : null}
 
         <div className="mt-5 flex flex-col gap-3 border-t border-[#d8d4c9] pt-5 sm:flex-row sm:items-center sm:justify-between">
