@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 export default function CharacterCounter() {
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState("");
   const stats = useMemo(
     () => ({
       characters: [...text].length,
@@ -20,19 +21,20 @@ export default function CharacterCounter() {
 
   const copyStats = async () => {
     if (!text) return;
-    const summary = [
-      `Characters: ${stats.characters}`,
-      `Characters without spaces: ${stats.withoutSpaces}`,
-      `Words: ${stats.words}`,
-      `Lines: ${stats.lines}`,
-    ].join("\n");
-
+    setCopyError("");
     try {
+      const summary = [
+        `Characters: ${stats.characters}`,
+        `Characters without spaces: ${stats.withoutSpaces}`,
+        `Words: ${stats.words}`,
+        `Lines: ${stats.lines}`,
+      ].join("\n");
       await navigator.clipboard.writeText(summary);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
       setCopied(false);
+      setCopyError("Copying was blocked by your browser. Select the counts and copy them manually.");
     }
   };
 
@@ -52,7 +54,7 @@ export default function CharacterCounter() {
           </div>
           <button
             type="button"
-            onClick={() => { setText(""); setCopied(false); }}
+            onClick={() => { setText(""); setCopied(false); setCopyError(""); }}
             disabled={!text}
             className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-40 ${focusRing}`}
             aria-label="Clear text"
@@ -75,7 +77,7 @@ export default function CharacterCounter() {
             <textarea
               id="character-input"
               value={text}
-              onChange={(e) => { setText(e.target.value); setCopied(false); }}
+              onChange={(e) => { setText(e.target.value); setCopied(false); setCopyError(""); }}
               rows={10}
               placeholder="Type or paste text here..."
               aria-describedby="character-input-help"
@@ -84,7 +86,7 @@ export default function CharacterCounter() {
           </label>
         </section>
 
-        <section className="mt-7" aria-labelledby="character-results-heading" aria-live="polite" aria-atomic="true">
+        <section className="mt-7" aria-labelledby="character-results-heading">
           <div className="mb-3 flex items-end justify-between gap-3">
             <div>
               <p className="text-[11px] font-black uppercase tracking-[.13em] text-black/40">2. Your result</p>
@@ -115,6 +117,7 @@ export default function CharacterCounter() {
               </div>
             ))}
           </dl>
+          {copyError && <p className="mt-4 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-3 text-sm leading-5 text-[#7b3d31]" role="alert">{copyError}</p>}
         </section>
 
         <div className="mt-6 rounded-2xl border border-dashed border-[#d8d4c9] bg-[#faf9f6] p-4">
