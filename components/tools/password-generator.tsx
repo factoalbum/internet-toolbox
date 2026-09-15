@@ -54,6 +54,7 @@ export default function PasswordGenerator() {
   }, [length, useUpper, useNumbers, useSymbols]);
 
   const strengthPercent = Math.min(100, Math.max(0, ((strength.entropyBits - 32) / 48) * 100));
+  const isDirty = length !== DEFAULT_LENGTH || !useUpper || !useNumbers || !useSymbols || !!password || copied || !!copyError;
 
   function generate() {
     setPassword(createPassword(length, useUpper, useNumbers, useSymbols));
@@ -98,7 +99,7 @@ export default function PasswordGenerator() {
               <p className="mt-1.5 max-w-2xl text-sm leading-6 text-black/55">Create a strong, random password locally in your browser. Nothing is uploaded or saved.</p>
             </div>
           </div>
-          <button type="button" onClick={reset} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/60 transition hover:border-[#171717] hover:text-[#171717] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60" aria-label="Reset password generator">
+          <button type="button" onClick={reset} disabled={!isDirty} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/60 transition hover:border-[#171717] hover:text-[#171717] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 disabled:cursor-not-allowed disabled:opacity-40" aria-label="Reset password generator">
             <RotateCcw size={16} aria-hidden="true" />
             <span className="hidden sm:inline">Reset</span>
           </button>
@@ -137,7 +138,7 @@ export default function PasswordGenerator() {
           </div>
 
           <div className="mt-6 border-t border-[#e2dfd7] pt-6">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-end justify-between gap-4">
               <div>
                 <label htmlFor="password-length" className="text-sm font-bold">Password length</label>
                 <p className="mt-1 text-xs text-black/45">Longer passwords are harder to guess.</p>
@@ -166,7 +167,7 @@ export default function PasswordGenerator() {
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <button type="button" onClick={generate} className="min-h-12 flex-1 rounded-xl bg-[#c8f169] px-5 text-sm font-black text-[#171717] transition hover:bg-[#b9e85b] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#171717]/20">Generate password</button>
-            <button type="button" onClick={reset} className="min-h-12 rounded-xl border border-[#d8d4c9] bg-[#f8f5ed] px-5 text-sm font-bold text-[#171717] transition hover:border-[#171717] hover:bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60">Reset</button>
+            <button type="button" onClick={reset} disabled={!isDirty} className="min-h-12 rounded-xl border border-[#d8d4c9] bg-[#f8f5ed] px-5 text-sm font-bold text-[#171717] transition hover:border-[#171717] hover:bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 disabled:cursor-not-allowed disabled:opacity-40">Reset</button>
           </div>
 
           {copyError && <p className="mt-4 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-3 text-sm leading-6 text-[#7b3d31]" role="alert">{copyError}</p>}
