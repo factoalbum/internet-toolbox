@@ -1,6 +1,6 @@
 "use client";
 
-import { Calculator, RotateCcw } from "lucide-react";
+import { Calculator, Copy, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 function formatNumber(value: number): string {
@@ -19,6 +19,7 @@ export default function PercentageCalculator() {
   const [value, setValue] = useState("500");
   const [percentage, setPercentage] = useState("20");
   const [mode, setMode] = useState<"of" | "increase" | "decrease">("of");
+  const [copied, setCopied] = useState(false);
 
   const result = useMemo(() => {
     if (value.trim() === "" || percentage.trim() === "") return null;
@@ -39,6 +40,25 @@ export default function PercentageCalculator() {
     setValue("500");
     setPercentage("20");
     setMode("of");
+    setCopied(false);
+  }
+
+  async function copyResult() {
+    if (!result) return;
+    const numberText = formatNumber(Number(value));
+    const percentageText = formatNumber(Number(percentage));
+    const resultText = formatNumber(result.primary);
+    const changeText = formatNumber(result.secondary);
+    const text = mode === "of"
+      ? `${percentageText}% of ${numberText} = ${resultText}`
+      : `${numberText} ${mode === "increase" ? "increased" : "decreased"} by ${percentageText}% = ${resultText} (change: ${changeText})`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
   }
 
   function handleModeKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, currentIndex: number) {
@@ -46,6 +66,7 @@ export default function PercentageCalculator() {
     event.preventDefault();
     const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? modes.length - 1 : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + modes.length) % modes.length;
     setMode(modes[nextIndex][0]);
+    setCopied(false);
     document.getElementById(`percentage-mode-${modes[nextIndex][0]}`)?.focus();
   }
 
@@ -79,14 +100,14 @@ export default function PercentageCalculator() {
             <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgba(200,241,105,.35)] ${invalidValue ? "border-[#c46b5c]" : "border-[#dedbd3]"}`}>
               <span className="text-sm font-bold">Number</span>
               <span className="mt-1 block text-xs leading-5 text-black/40">The starting value.</span>
-              <input type="number" min="0" step="any" inputMode="decimal" value={value} onChange={(event) => setValue(event.target.value)} className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} aria-label="Number" aria-invalid={invalidValue} />
+              <input type="number" min="0" step="any" inputMode="decimal" value={value} onChange={(event) => { setValue(event.target.value); setCopied(false); }} className={`mt-3 h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} aria-label="Number" aria-invalid={invalidValue} />
             </label>
             <div className="hidden pb-3 font-mono text-xl text-black/25 md:block" aria-hidden="true">×</div>
             <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgba(200,241,105,.35)] ${invalidPercentage ? "border-[#c46b5c]" : "border-[#dedbd3]"}`}>
               <span className="text-sm font-bold">Percentage</span>
               <span className="mt-1 block text-xs leading-5 text-black/40">The percentage to apply.</span>
               <div className="relative mt-3">
-                <input type="number" min="0" step="any" inputMode="decimal" value={percentage} onChange={(event) => setPercentage(event.target.value)} className={`h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 pr-12 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} aria-label="Percentage" aria-invalid={invalidPercentage} />
+                <input type="number" min="0" step="any" inputMode="decimal" value={percentage} onChange={(event) => { setPercentage(event.target.value); setCopied(false); }} className={`h-14 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 pr-12 text-xl font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} aria-label="Percentage" aria-invalid={invalidPercentage} />
                 <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-bold text-black/35" aria-hidden="true">%</span>
               </div>
             </label>
@@ -101,7 +122,7 @@ export default function PercentageCalculator() {
             <p className="mt-1 text-xs leading-5 text-black/40">Choose a common rate or type your own.</p>
             <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Quick percentage choices">
               {quickPercentages.map((option) => (
-                <button key={option} type="button" onClick={() => setPercentage(String(option))} aria-pressed={percentage === String(option)} className={`min-h-11 rounded-full border px-4 text-xs font-bold transition ${focusRing} ${percentage === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{option}%</button>
+                <button key={option} type="button" onClick={() => { setPercentage(String(option)); setCopied(false); }} aria-pressed={percentage === String(option)} className={`min-h-11 rounded-full border px-4 text-xs font-bold transition ${focusRing} ${percentage === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{option}%</button>
               ))}
             </div>
           </div>
@@ -111,7 +132,7 @@ export default function PercentageCalculator() {
             <p className="mt-1 text-xs leading-5 text-black/40">Decide whether to find, add or subtract the percentage.</p>
             <div className="mt-3 grid grid-cols-3 gap-1 rounded-xl border border-[#d8d4c9] bg-[#f4f1e9] p-1" role="radiogroup" aria-label="Percentage operation">
               {modes.map(([key, label], index) => (
-                <button id={`percentage-mode-${key}`} key={key} type="button" role="radio" aria-checked={mode === key} tabIndex={mode === key ? 0 : -1} onClick={() => setMode(key)} onKeyDown={(event) => handleModeKeyDown(event, index)} className={`min-h-11 rounded-lg px-2 text-xs font-bold transition ${focusRing} ${mode === key ? "bg-[#171717] text-white" : "text-black/45 hover:bg-white hover:text-black"}`}>{label}</button>
+                <button id={`percentage-mode-${key}`} key={key} type="button" role="radio" aria-checked={mode === key} tabIndex={mode === key ? 0 : -1} onClick={() => { setMode(key); setCopied(false); }} onKeyDown={(event) => handleModeKeyDown(event, index)} className={`min-h-11 rounded-lg px-2 text-xs font-bold transition ${focusRing} ${mode === key ? "bg-[#171717] text-white" : "text-black/45 hover:bg-white hover:text-black"}`}>{label}</button>
               ))}
             </div>
           </div>
@@ -138,6 +159,14 @@ export default function PercentageCalculator() {
               <p className="mt-2 text-lg font-bold text-black/55">Enter non-negative numbers to calculate.</p>
             )}
           </div>
+          <div className="mt-3 flex items-center justify-between gap-3">
+            <p className="text-xs leading-5 text-black/40">Copy the exact calculation for sharing or saving.</p>
+            <button type="button" onClick={copyResult} disabled={!result} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d0ccc2] bg-white px-3.5 text-sm font-bold text-[#171717] transition hover:border-[#171717] hover:bg-[#f7f5ef] disabled:cursor-not-allowed disabled:opacity-40 ${focusRing}`} aria-label="Copy percentage result">
+              <Copy size={15} aria-hidden="true" />
+              <span>{copied ? "Copied" : "Copy result"}</span>
+            </button>
+          </div>
+          <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{copied ? "Percentage result copied to clipboard." : ""}</p>
         </section>
 
         <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Calculated instantly in your browser. For increase and decrease modes, the displayed change is the percentage amount added to or subtracted from the starting value.</p>
