@@ -130,47 +130,20 @@ export default function DateCalculator() {
           <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
             <span className="text-sm font-bold">{mode === "difference" ? "Start date" : "Starting date"}</span>
             <span className="mt-1 block text-xs leading-5 text-black/40">{mode === "difference" ? "The first date in your range." : "The date you want to move."}</span>
-            <input
-              id="date-calculator-start"
-              type="date"
-              value={start}
-              aria-label={mode === "difference" ? "Start date" : "Starting date"}
-              onChange={(event) => { setStart(event.target.value); setCopied(false); }}
-              className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
-            />
+            <input id="date-calculator-start" type="date" value={start} aria-label={mode === "difference" ? "Start date" : "Starting date"} onChange={(event) => { setStart(event.target.value); setCopied(false); }} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
           </label>
 
           {mode === "difference" ? (
             <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
               <span className="text-sm font-bold">End date</span>
               <span className="mt-1 block text-xs leading-5 text-black/40">The second date in your range.</span>
-              <input
-                id="date-calculator-end"
-                type="date"
-                value={end}
-                min={start}
-                aria-label="End date"
-                onChange={(event) => { setEnd(event.target.value); setCopied(false); }}
-                className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
-              />
+              <input id="date-calculator-end" type="date" value={end} min={start} aria-label="End date" onChange={(event) => { setEnd(event.target.value); setCopied(false); }} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
             </label>
           ) : (
             <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
               <span className="text-sm font-bold">Number of days</span>
               <span className="mt-1 block text-xs leading-5 text-black/40">Whole calendar days to move the date. Maximum {MAX_DAYS.toLocaleString("en-IN")}.</span>
-              <input
-                id="date-calculator-days"
-                type="number"
-                min="0"
-                max={MAX_DAYS}
-                step="1"
-                inputMode="numeric"
-                value={days}
-                aria-label="Number of days"
-                aria-invalid={daysInputInvalid}
-                onChange={(event) => { setDays(event.target.value); setCopied(false); }}
-                className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`}
-              />
+              <input id="date-calculator-days" type="number" min="0" max={MAX_DAYS} step="1" inputMode="numeric" value={days} aria-label="Number of days" aria-invalid={daysInputInvalid} onChange={(event) => { setDays(event.target.value); setCopied(false); }} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
             </label>
           )}
         </div>
@@ -179,28 +152,18 @@ export default function DateCalculator() {
           <div className="mt-7 rounded-2xl border border-[#171717] bg-[#c8f169] p-5 sm:p-6" aria-live="polite" aria-atomic="true">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-black/55">Date difference</p>
             <p className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{result.absolute.toLocaleString("en-IN")} days</p>
-            <p className="mt-2 text-sm text-black/60">
-              {result.difference === 0 ? "The two dates are the same." : result.difference > 0 ? "The end date is after the start date." : "The end date is before the start date."}
-            </p>
-            <button type="button" onClick={copyResult} className={`mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#171717] bg-white px-4 text-sm font-bold text-[#171717] transition hover:bg-[#fffdf8] ${focusRing}`} aria-label={copied ? "Date difference copied" : "Copy date difference"}>
-              {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
-              {copied ? "Copied" : "Copy result"}
-            </button>
+            <p className="mt-2 text-sm text-black/60">{result.difference === 0 ? "The two dates are the same." : result.difference > 0 ? "The end date is after the start date." : "The end date is before the start date."}</p>
+            <button type="button" onClick={copyResult} className={`mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#171717] bg-white px-4 text-sm font-bold text-[#171717] transition hover:bg-[#fffdf8] ${focusRing}`} aria-label={copied ? "Date difference copied" : "Copy date difference"}>{copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}{copied ? "Copied" : "Copy result"}</button>
           </div>
         ) : result ? (
           <div className="mt-7 rounded-2xl border border-[#171717] bg-[#c8f169] p-5 sm:p-6" aria-live="polite" aria-atomic="true">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-black/55">Result date</p>
             <p className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{formatDate(result.date)}</p>
             <p className="mt-2 text-sm text-black/60">{result.amount.toLocaleString("en-IN")} days {mode === "add" ? "after" : "before"} {formatDate(parseDate(start))}.</p>
-            <button type="button" onClick={copyResult} className={`mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#171717] bg-white px-4 text-sm font-bold text-[#171717] transition hover:bg-[#fffdf8] ${focusRing}`} aria-label={copied ? "Result date copied" : "Copy result date"}>
-              {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
-              {copied ? "Copied" : "Copy result"}
-            </button>
+            <button type="button" onClick={copyResult} className={`mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#171717] bg-white px-4 text-sm font-bold text-[#171717] transition hover:bg-[#fffdf8] ${focusRing}`} aria-label={copied ? "Result date copied" : "Copy result date"}>{copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}{copied ? "Copied" : "Copy result"}</button>
           </div>
         ) : (
-          <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">
-            {mode === "difference" ? "Enter valid start and end dates." : `Enter a whole number of days from 0 to ${MAX_DAYS.toLocaleString("en-IN")}.`}
-          </p>
+          <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">{mode === "difference" ? "Enter valid start and end dates." : `Enter a whole number of days from 0 to ${MAX_DAYS.toLocaleString("en-IN")}.`}</p>
         )}
 
         <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Date differences count full calendar days. Results do not account for time zones or business days.</p>
