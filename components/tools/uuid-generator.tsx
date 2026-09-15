@@ -4,7 +4,21 @@ import { useState } from "react";
 import { Copy, RefreshCw } from "lucide-react";
 
 function createUuid() {
-  return crypto.randomUUID();
+  if (typeof crypto === "undefined" || typeof crypto.getRandomValues !== "function") {
+    throw new Error("Secure random UUID generation is unavailable in this browser.");
+  }
+
+  if (typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
 export default function UuidGenerator() {
@@ -12,11 +26,17 @@ export default function UuidGenerator() {
   const [uuids, setUuids] = useState<string[]>([]);
   const [copied, setCopied] = useState<string | null>(null);
   const [copyError, setCopyError] = useState("");
+  const [generateError, setGenerateError] = useState("");
 
   function generate() {
-    setUuids(Array.from({ length: count }, createUuid));
-    setCopied(null);
-    setCopyError("");
+    try {
+      setUuids(Array.from({ length: count }, createUuid));
+      setCopied(null);
+      setCopyError("");
+      setGenerateError("");
+    } catch {
+      setGenerateError("Secure UUID generation is unavailable in this browser. Try using a modern browser over HTTPS.");
+    }
   }
 
   async function copy(value: string, label: string) {
@@ -108,6 +128,7 @@ export default function UuidGenerator() {
         <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
           {copied ? (copied === "all" ? "All generated UUIDs copied to clipboard." : "UUID copied to clipboard.") : ""}
         </div>
+        {generateError && <p role="alert" className="mt-3 rounded-xl border border-[#ead9c8] bg-[#fff7ed] px-3 py-2.5 text-xs font-medium leading-5 text-[#7b4a20]">{generateError}</p>}
         {copyError && <p role="alert" className="mt-3 rounded-xl border border-[#ead9c8] bg-[#fff7ed] px-3 py-2.5 text-xs font-medium leading-5 text-[#7b4a20]">{copyError}</p>}
 
         <div className="mt-5 flex flex-col gap-2 border-t border-[#e3dfd5] pt-4 sm:flex-row sm:items-center sm:justify-between">
