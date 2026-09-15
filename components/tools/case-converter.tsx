@@ -85,19 +85,19 @@ export default function CaseConverter() {
       </header>
 
       <div className="p-5 md:p-7">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs font-black uppercase tracking-[.12em] text-black/45">Choose a format</p>
-          <span className="text-xs font-semibold text-black/40">Result updates as you type</span>
-        </div>
-        <div className="mt-3 rounded-xl border border-[#d8d4c9] bg-[#f4f1e9] p-1" role="group" aria-label="Text case options">
-          <div className="grid grid-cols-2 gap-1 sm:grid-cols-4 lg:grid-cols-7">
-            {modes.map((item) => (
-              <button key={item.id} type="button" onClick={() => { setMode(item.id); setCopyState("idle"); }} aria-pressed={mode === item.id} className={`min-h-11 rounded-lg border px-2 text-xs font-bold transition ${mode === item.id ? "border-[#171717] bg-[#171717] text-white" : "border-transparent bg-transparent text-black/55 hover:border-[#d8d4c9] hover:bg-white hover:text-black"} ${focusRing}`}>
-                {item.label}
-              </button>
-            ))}
+        <fieldset>
+          <legend className="text-xs font-black uppercase tracking-[.12em] text-black/45">Choose a format</legend>
+          <p className="mt-1 text-xs font-semibold text-black/40">Result updates as you type</p>
+          <div className="mt-3 rounded-xl border border-[#d8d4c9] bg-[#f4f1e9] p-1" role="group" aria-label="Text case options">
+            <div className="grid grid-cols-2 gap-1 sm:grid-cols-4 lg:grid-cols-7">
+              {modes.map((item) => (
+                <button key={item.id} type="button" onClick={() => { setMode(item.id); setCopyState("idle"); }} aria-pressed={mode === item.id} className={`min-h-11 rounded-lg border px-2 text-xs font-bold transition ${mode === item.id ? "border-[#171717] bg-[#171717] text-white" : "border-transparent bg-transparent text-black/55 hover:border-[#d8d4c9] hover:bg-white hover:text-black"} ${focusRing}`}>
+                  {item.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </fieldset>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <section className="rounded-2xl border border-[#e2dfd7] bg-white p-4 md:p-5" aria-labelledby="case-input-heading">
@@ -115,7 +115,7 @@ export default function CaseConverter() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-[#d8d4c9] bg-[#f4f1e9] p-4 md:p-5" aria-labelledby="case-output-heading" aria-live="polite">
+          <section className="rounded-2xl border border-[#d8d4c9] bg-[#f4f1e9] p-4 md:p-5" aria-labelledby="case-output-heading">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h3 id="case-output-heading" className="text-sm font-black text-[#171717]">2. Your result</h3>
