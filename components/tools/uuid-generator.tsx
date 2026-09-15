@@ -105,6 +105,7 @@ export default function UuidGenerator() {
           </div>
         )}
 
+        <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">{copied ? (copied === "all" ? "All generated UUIDs copied to clipboard." : "UUID copied to clipboard.") : ""}</div>
         {copyError && <p role="alert" className="mt-3 rounded-xl border border-[#ead9c8] bg-[#fff7ed] px-3 py-2.5 text-xs font-medium leading-5 text-[#7b4a20]">{copyError}</p>}
 
         <div className="mt-5 flex flex-col gap-2 border-t border-[#e3dfd5] pt-4 sm:flex-row sm:items-center sm:justify-between">
