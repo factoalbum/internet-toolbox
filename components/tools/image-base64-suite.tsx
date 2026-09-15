@@ -105,7 +105,7 @@ export default function ImageBase64Suite({ variant }: { variant: Variant }) {
           <label htmlFor="image-base64-value" className="block">
             <span className="text-xs font-black uppercase tracking-[.1em] text-black/45">{isEncode ? "Base64 data URL" : "Base64 image"}</span>
             <span className="mt-1 block text-xs leading-5 text-black/40">{isEncode ? (fileName ? `Loaded from ${fileName}` : "Your encoded image appears here after you choose a file.") : "Paste a Base64 string or complete data URL to preview it."}</span>
-            <textarea id="image-base64-value" value={value} onChange={(e) => { setValue(e.target.value); setError(""); setCopied(false); setPreviewUrl(""); }} rows={isEncode ? 8 : 10} placeholder={isEncode ? "Choose an image above to generate Base64..." : "Paste a Base64 image string or data URL..."} spellCheck={false} className="mt-3 min-h-44 w-full resize-y rounded-xl border border-[#d8d4c9] bg-[#fffdf8] p-4 font-mono text-xs leading-5 outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" aria-describedby="image-base64-help" aria-invalid={Boolean(error)} />
+            <textarea id="image-base64-value" value={value} onChange={(e) => { setValue(e.target.value); setError(""); setCopied(false); setPreviewUrl(""); }} rows={isEncode ? 8 : 10} placeholder={isEncode ? "Choose an image above to generate Base64..." : "Paste a Base64 image string or data URL..."} spellCheck={false} className="mt-3 min-h-44 w-full resize-y rounded-xl border border-[#d8d4c9] bg-[#fffdf8] p-4 font-mono text-xs leading-5 outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]" aria-describedby={error ? "image-base64-help image-base64-error" : "image-base64-help"} />
           </label>
           <div className="mt-3 flex items-center justify-between gap-3 text-xs text-black/40">
             <span id="image-base64-help">{isEncode ? "Local browser processing · no upload" : "Whitespace is ignored while validating the Base64 data"}</span>
@@ -123,7 +123,7 @@ export default function ImageBase64Suite({ variant }: { variant: Variant }) {
           </div>
         )}
 
-        {error && <p role="alert" className="rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm font-medium leading-6 text-[#7b3d31]">{error}</p>}
+        {error && <p id="image-base64-error" role="alert" className="rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm font-medium leading-6 text-[#7b3d31]">{error}</p>}
 
         <div className="flex flex-col gap-3 sm:flex-row">
           <button type="button" onClick={isEncode ? copy : decode} disabled={!value} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#c8f169] px-5 text-sm font-black text-[#171717] transition hover:bg-[#b9e85b] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#c8f169]">
@@ -133,7 +133,7 @@ export default function ImageBase64Suite({ variant }: { variant: Variant }) {
         </div>
 
         {previewUrl && !isEncode && (
-          <div className="rounded-2xl border border-[#d8d4c9] bg-[#faf8f2] p-4 md:p-5" aria-live="polite">
+          <div className="rounded-2xl border border-[#d8d4c9] bg-[#faf8f2] p-4 md:p-5">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <div><p className="text-xs font-black uppercase tracking-[.12em] text-black/40">Preview</p><p className="mt-1 text-xs text-black/40">Decoded locally in your browser</p></div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-black/55">{extension.toUpperCase()}</span>
