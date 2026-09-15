@@ -11,6 +11,11 @@ function parseTimestamp(value: string, unit: "seconds" | "milliseconds") {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+function toLocalDateTimeValue(date: Date) {
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 export default function TimestampConverter() {
   const [timestamp, setTimestamp] = useState("");
   const [unit, setUnit] = useState<"seconds" | "milliseconds">("seconds");
@@ -49,6 +54,12 @@ export default function TimestampConverter() {
     setCopyError(false);
   }
 
+  function useCurrentDate() {
+    setDateValue(toLocalDateTimeValue(new Date()));
+    setCopied(null);
+    setCopyError(false);
+  }
+
   function reset() {
     setTimestamp("");
     setUnit("seconds");
@@ -82,7 +93,8 @@ export default function TimestampConverter() {
         </section>
         <section className="bg-[#fffdf8] p-5 md:p-7" aria-labelledby="date-to-timestamp-heading">
           <div className="flex items-start gap-3"><span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#e8f4d0] text-[#5d7c21]" aria-hidden="true"><CalendarClock size={18} /></span><div><h2 id="date-to-timestamp-heading" className="text-lg font-black tracking-[-.02em]">Date → timestamp</h2><p className="mt-1 text-sm leading-6 text-black/50">Convert a date and time into Unix seconds or milliseconds.</p></div></div>
-          <label htmlFor="date-input" className="mt-6 block text-sm font-bold">Date and time</label><p id="date-help" className="mt-1 text-xs leading-5 text-black/40">Your browser interprets this date in your local time zone.</p><input id="date-input" aria-describedby="date-help" type="datetime-local" value={dateValue} onChange={(event) => { setDateValue(event.target.value); setCopyError(false); }} className={field} />
+          <label htmlFor="date-input" className="mt-6 block text-sm font-bold">Date and time</label><p id="date-help" className="mt-1 text-xs leading-5 text-black/40">Your browser interprets this date in your local time zone.</p><input id="date-input" aria-describedby="date-help" type="datetime-local" value={dateValue} onChange={(event) => { setDateValue(event.target.value); setCopied(null); setCopyError(false); }} className={field} />
+          <div className="mt-4 flex flex-wrap gap-2"><button type="button" onClick={useCurrentDate} className={`${action} bg-[#171717] text-white hover:-translate-y-0.5 hover:shadow-[0_6px_16px_rgba(23,23,23,.14)]`}><Clock3 size={15} aria-hidden="true" />Use current time</button><button type="button" onClick={() => { setDateValue(""); setCopied(null); setCopyError(false); }} disabled={!dateValue} className={`${action} border border-[#bcb8ae] bg-white text-black/65 hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-40`}>Clear</button></div>
           {dateResult ? <div className="mt-6 grid gap-3" aria-live="polite" aria-atomic="true"><div className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-4"><div className="flex items-center justify-between gap-3"><p className="text-xs font-black uppercase tracking-[.14em] text-black/40">Unix seconds</p><button type="button" onClick={() => copyValue("seconds", String(dateResult.seconds))} className={`${action} min-h-9 px-2.5 text-xs text-black/50 hover:bg-white hover:text-black`} aria-label="Copy Unix seconds">{copied === "seconds" ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}{copied === "seconds" ? "Copied" : "Copy"}</button></div><p className="mt-2 break-all font-mono text-xl font-black">{dateResult.seconds}</p></div><div className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-4"><div className="flex items-center justify-between gap-3"><p className="text-xs font-black uppercase tracking-[.14em] text-black/40">Unix milliseconds</p><button type="button" onClick={() => copyValue("milliseconds", String(dateResult.milliseconds))} className={`${action} min-h-9 px-2.5 text-xs text-black/50 hover:bg-white hover:text-black`} aria-label="Copy Unix milliseconds">{copied === "milliseconds" ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}{copied === "milliseconds" ? "Copied" : "Copy"}</button></div><p className="mt-2 break-all font-mono text-xl font-black">{dateResult.milliseconds}</p></div></div> : <div className="mt-6 rounded-2xl border border-dashed border-[#cfcac0] bg-[#f8f6f0] p-5 text-sm leading-6 text-black/45" role="status"><p className="font-bold text-black/65">Your timestamp results will appear here.</p><p className="mt-1">Choose a date and time to generate Unix seconds and milliseconds.</p></div>}
         </section>
       </div>
