@@ -50,7 +50,7 @@ export default function UuidGenerator() {
                 id="uuid-count"
                 value={count}
                 onChange={(event) => setCount(Number(event.target.value))}
-                className="mt-1.5 min-h-11 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] sm:w-28"
+                className="mt-1.5 min-h-11 w-full rounded-xl border border-[#bcb8ae] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]"
               >
                 {[1, 5, 10, 20].map((value) => <option key={value} value={value}>{value}</option>)}
               </select>
@@ -67,7 +67,7 @@ export default function UuidGenerator() {
 
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[.12em] text-black/40">Generated results</p>
+            <p id="uuid-results-label" className="text-[10px] font-black uppercase tracking-[.12em] text-black/40">Generated results</p>
             <p className="mt-1 text-sm font-semibold">{uuids.length ? `${uuids.length} UUID${uuids.length === 1 ? "" : "s"} ready to use` : "Choose a quantity and generate your UUIDs"}</p>
           </div>
           {uuids.length > 0 && (
@@ -82,7 +82,7 @@ export default function UuidGenerator() {
         </div>
 
         {uuids.length > 0 ? (
-          <div className="mt-3 space-y-2" aria-live="polite" aria-label="Generated UUIDs">
+          <div className="mt-3 space-y-2" aria-labelledby="uuid-results-label">
             {uuids.map((uuid, index) => (
               <div key={uuid} className="flex min-w-0 items-center gap-2 rounded-xl border border-[#e2ded3] bg-[#f3f0e8] p-2.5 sm:gap-3 sm:p-3">
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-[10px] font-black text-black/40" aria-hidden="true">{index + 1}</span>
@@ -99,13 +99,15 @@ export default function UuidGenerator() {
             ))}
           </div>
         ) : (
-          <div className="mt-3 rounded-2xl border border-dashed border-[#d8d4c9] bg-[#faf9f6] px-5 py-8 text-center">
+          <div className="mt-3 rounded-2xl border border-dashed border-[#d8d4c9] bg-[#faf9f6] px-5 py-8 text-center" aria-labelledby="uuid-results-label">
             <p className="text-sm font-bold text-[#171717]">No UUIDs generated yet</p>
             <p className="mt-1 text-xs leading-5 text-black/45">Generation starts only when you press the button, so the page stays hydration-safe and predictable.</p>
           </div>
         )}
 
-        <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">{copied ? (copied === "all" ? "All generated UUIDs copied to clipboard." : "UUID copied to clipboard.") : ""}</div>
+        <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {copied ? (copied === "all" ? "All generated UUIDs copied to clipboard." : "UUID copied to clipboard.") : ""}
+        </div>
         {copyError && <p role="alert" className="mt-3 rounded-xl border border-[#ead9c8] bg-[#fff7ed] px-3 py-2.5 text-xs font-medium leading-5 text-[#7b4a20]">{copyError}</p>}
 
         <div className="mt-5 flex flex-col gap-2 border-t border-[#e3dfd5] pt-4 sm:flex-row sm:items-center sm:justify-between">
