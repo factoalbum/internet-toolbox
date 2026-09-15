@@ -59,7 +59,7 @@ export default function RemoveDuplicateLines() {
               <p className="text-sm leading-5 text-black/50">Remove repeated non-empty lines while keeping their first occurrence.</p>
             </div>
           </div>
-          <button type="button" onClick={clear} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3.5 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black ${focusRing}`} aria-label="Clear text">
+          <button type="button" onClick={clear} disabled={!text} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3.5 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`} aria-label="Clear text">
             <RotateCcw size={15} aria-hidden="true" />
             <span className="hidden sm:inline">Clear</span>
           </button>
@@ -81,18 +81,18 @@ export default function RemoveDuplicateLines() {
             <div className="mb-2 flex items-center justify-between gap-3">
               <div>
                 <label htmlFor="duplicate-lines-output" className="text-sm font-bold">Unique lines</label>
-                <p className="mt-1 text-xs leading-5 text-black/40">The cleaned result updates as you type.</p>
+                <p id="duplicate-lines-output-help" className="mt-1 text-xs leading-5 text-black/40">The cleaned result updates as you type.</p>
               </div>
-              <button type="button" onClick={copyResult} disabled={!result} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3.5 text-xs font-bold transition hover:border-[#171717] hover:bg-[#f7f5ef] disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`} aria-label={copied ? "Unique lines copied" : "Copy unique lines"}>
+              <button type="button" onClick={copyResult} disabled={!result} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3.5 text-xs font-bold transition hover:border-[#171717] hover:bg-[#f7f5ef] disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`} aria-label={copied ? "Unique lines copied" : "Copy unique lines"} aria-describedby={copyFailed ? "duplicate-lines-copy-error" : undefined}>
                 {copied ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
                 <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
               </button>
             </div>
-            <textarea id="duplicate-lines-output" value={result} readOnly placeholder="Your unique lines will appear here" aria-label="Unique lines result" className="min-h-72 w-full resize-y rounded-xl border border-[#d8d4c9] bg-[#f3f0e8] p-4 text-base leading-7 text-[#171717] outline-none placeholder:text-black/25" />
-            <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-black/40" aria-live="polite" aria-atomic="true">
-              <span>{stats.unique.toLocaleString()} unique {stats.unique === 1 ? "line" : "lines"}</span>
+            <textarea id="duplicate-lines-output" value={result} readOnly placeholder="Your unique lines will appear here" aria-describedby="duplicate-lines-output-help" className={`min-h-72 w-full resize-y rounded-xl border border-[#d8d4c9] bg-[#f3f0e8] p-4 text-base leading-7 text-[#171717] outline-none placeholder:text-black/25 transition focus:border-[#171717] ${focusRing}`} />
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-black/40">
+              <span id="duplicate-lines-stats">{stats.unique.toLocaleString()} unique {stats.unique === 1 ? "line" : "lines"}</span>
               {stats.removed > 0 ? <span className="font-bold text-[#6d8e25]">{stats.removed.toLocaleString()} duplicates removed</span> : <span>No duplicates found</span>}
-              {copyFailed ? <span className="font-semibold text-[#9a4b2f]">Copy was blocked. Select the result and copy it manually.</span> : null}
+              {copyFailed ? <span id="duplicate-lines-copy-error" className="font-semibold text-[#9a4b2f]" role="alert">Copy was blocked. Select the result and copy it manually.</span> : null}
             </div>
           </div>
         </div>
