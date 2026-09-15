@@ -24,6 +24,8 @@ const zones: Zone[] = [
   { value: "Australia/Sydney", label: "Sydney (AET)" },
 ];
 
+const focusRing = "focus:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169] focus-visible:ring-offset-1";
+
 function defaultDateTime() {
   const now = new Date();
   const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(now);
@@ -35,8 +37,11 @@ export default function TimeZoneConverter() {
   const [value, setValue] = useState(defaultDateTime);
   const [from, setFrom] = useState("Asia/Kolkata");
   const [to, setTo] = useState("America/New_York");
+  const [initialValue] = useState(() => value);
 
   const result = useMemo(() => convertLocalDateTime(value, from, to), [value, from, to]);
+  const hasInvalidDate = value.trim() !== "" && !result;
+  const isPristine = value === initialValue && from === "Asia/Kolkata" && to === "America/New_York";
 
   const swapZones = () => {
     setFrom(to);
@@ -44,7 +49,7 @@ export default function TimeZoneConverter() {
   };
 
   const reset = () => {
-    setValue(defaultDateTime());
+    setValue(initialValue);
     setFrom("Asia/Kolkata");
     setTo("America/New_York");
   };
@@ -62,33 +67,33 @@ export default function TimeZoneConverter() {
             <p className="mt-1 max-w-xl text-xs leading-5 text-black/45">Pick a date and time, choose the two locations, and get the equivalent local time.</p>
           </div>
         </div>
-        <button type="button" onClick={reset} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-4 text-xs font-black text-black/65 transition hover:border-[#171717] hover:text-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]/50" aria-label="Reset time zone converter">
+        <button type="button" onClick={reset} disabled={isPristine} className={`inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-4 text-xs font-black text-black/65 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-[#d8d4c9] disabled:hover:text-black/65 ${focusRing}`} aria-label="Reset time zone converter">
           <RotateCcw size={14} aria-hidden="true" /> Reset
         </button>
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_1fr_auto_1fr] lg:items-end">
-        <div className="rounded-2xl border border-[#e0ddd5] bg-[#faf9f6] p-4">
+        <div className={`rounded-2xl border bg-[#faf9f6] p-4 ${hasInvalidDate ? "border-[#d7a9a2]" : "border-[#e0ddd5]"}`}>
           <label htmlFor="timezone-date" className="block text-xs font-black uppercase tracking-[.08em] text-black/55">Date & time</label>
-          <input id="timezone-date" type="datetime-local" value={value} onChange={(event) => setValue(event.target.value)} className="mt-2 min-h-12 w-full min-w-0 rounded-xl border border-[#c9c5ba] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50" aria-describedby="timezone-date-help" />
-          <p id="timezone-date-help" className="mt-2 text-[11px] leading-4 text-black/40">The starting date and local clock time.</p>
+          <input id="timezone-date" type="datetime-local" value={value} onChange={(event) => setValue(event.target.value)} className={`mt-2 min-h-12 w-full min-w-0 rounded-xl border bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50 ${hasInvalidDate ? "border-[#b8756d]" : "border-[#c9c5ba]"} ${focusRing}`} aria-describedby="timezone-date-help" aria-invalid={hasInvalidDate} />
+          <p id="timezone-date-help" className={`mt-2 text-[11px] leading-4 ${hasInvalidDate ? "text-[#8f4f48]" : "text-black/40"}`}>{hasInvalidDate ? "Enter a valid date and time for the selected time zone." : "The starting date and local clock time."}</p>
         </div>
 
         <div className="rounded-2xl border border-[#e0ddd5] bg-[#faf9f6] p-4">
           <label htmlFor="timezone-from" className="block text-xs font-black uppercase tracking-[.08em] text-black/55">From</label>
-          <select id="timezone-from" value={from} onChange={(event) => setFrom(event.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-[#c9c5ba] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50">
+          <select id="timezone-from" value={from} onChange={(event) => setFrom(event.target.value)} className={`mt-2 min-h-12 w-full rounded-xl border border-[#c9c5ba] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50 ${focusRing}`}>
             {zones.map((zone) => <option key={zone.value} value={zone.value}>{zone.label}</option>)}
           </select>
           <p className="mt-2 text-[11px] leading-4 text-black/40">The time zone the input belongs to.</p>
         </div>
 
-        <button type="button" onClick={swapZones} className="mx-auto inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-[#d8d4c9] bg-white text-black/60 transition hover:border-[#171717] hover:text-black focus:outline-none focus:ring-4 focus:ring-[#c8f169]/50 lg:mb-4" aria-label={`Swap ${from} and ${to} time zones`} title="Swap time zones">
+        <button type="button" onClick={swapZones} className={`mx-auto inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-[#d8d4c9] bg-white text-black/60 transition hover:border-[#171717] hover:text-black ${focusRing} lg:mb-4`} aria-label={`Swap ${from} and ${to} time zones`} title="Swap time zones">
           <ArrowRightLeft size={16} aria-hidden="true" />
         </button>
 
         <div className="rounded-2xl border border-[#e0ddd5] bg-[#faf9f6] p-4">
           <label htmlFor="timezone-to" className="block text-xs font-black uppercase tracking-[.08em] text-black/55">Convert to</label>
-          <select id="timezone-to" value={to} onChange={(event) => setTo(event.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-[#c9c5ba] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50">
+          <select id="timezone-to" value={to} onChange={(event) => setTo(event.target.value)} className={`mt-2 min-h-12 w-full rounded-xl border border-[#c9c5ba] bg-white px-3 text-sm font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/50 ${focusRing}`}>
             {zones.map((zone) => <option key={zone.value} value={zone.value}>{zone.label}</option>)}
           </select>
           <p className="mt-2 text-[11px] leading-4 text-black/40">The destination time zone.</p>
