@@ -136,8 +136,8 @@ export default function DateCalculator() {
           {mode === "difference" ? (
             <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
               <span className="text-sm font-bold">End date</span>
-              <span className="mt-1 block text-xs leading-5 text-black/40">The second date in your range.</span>
-              <input id="date-calculator-end" type="date" value={end} min={start} aria-label="End date" onChange={(event) => { setEnd(event.target.value); setCopied(false); }} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
+              <span className="mt-1 block text-xs leading-5 text-black/40">The second date in your range. It can be before or after the start date.</span>
+              <input id="date-calculator-end" type="date" value={end} aria-label="End date" onChange={(event) => { setEnd(event.target.value); setCopied(false); }} className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-3 text-base outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`} />
             </label>
           ) : (
             <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
