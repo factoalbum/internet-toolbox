@@ -1,6 +1,6 @@
 "use client";
 
-import { Banknote, RotateCcw } from "lucide-react";
+import { Banknote, Check, Copy, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const money = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
@@ -13,6 +13,7 @@ export default function FdCalculator() {
   const [rate, setRate] = useState("7");
   const [years, setYears] = useState("5");
   const [frequency, setFrequency] = useState("4");
+  const [copied, setCopied] = useState(false);
 
   const result = useMemo(() => {
     const p = Number(principal), annual = Number(rate), y = Number(years), n = Number(frequency);
@@ -22,9 +23,28 @@ export default function FdCalculator() {
     return { interest: Math.max(0, maturity - p), maturity };
   }, [principal, rate, years, frequency]);
 
-  const reset = () => { setPrincipal("100000"); setRate("7"); setYears("5"); setFrequency("4"); };
+  const reset = () => { setPrincipal("100000"); setRate("7"); setYears("5"); setFrequency("4"); setCopied(false); };
   const inputClass = `mt-2 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3.5 text-base font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`;
   const hasCustomInputs = principal !== "100000" || rate !== "7" || years !== "5" || frequency !== "4";
+
+  const copyResult = async () => {
+    if (!result || !navigator.clipboard) return;
+    const text = [
+      `Deposit amount: ${money.format(Number(principal))}`,
+      `Interest rate: ${rate}% per year`,
+      `Tenure: ${years} years`,
+      `Compounding: ${frequency === "1" ? "Yearly" : frequency === "2" ? "Half-yearly" : frequency === "4" ? "Quarterly" : "Monthly"}`,
+      `Interest earned: ${money.format(result.interest)}`,
+      `Maturity amount: ${money.format(result.maturity)}`,
+    ].join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]">
@@ -41,18 +61,18 @@ export default function FdCalculator() {
       <div className="p-5 md:p-7">
         <fieldset className="grid gap-4 md:grid-cols-2">
           <legend className="sr-only">Fixed deposit details</legend>
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Deposit amount (₹)</span><span className="mt-1 block text-xs leading-5 text-black/40">How much you are depositing.</span><input aria-label="Deposit amount in rupees" value={principal} onChange={e => setPrincipal(e.target.value)} type="number" min="1" step="1000" inputMode="decimal" className={inputClass} /></label>
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Interest rate (%/year)</span><span className="mt-1 block text-xs leading-5 text-black/40">Annual interest rate offered by the bank.</span><input aria-label="Annual interest rate" value={rate} onChange={e => setRate(e.target.value)} type="number" min="0" max="100" step="0.01" inputMode="decimal" className={inputClass} /></label>
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Tenure (years)</span><span className="mt-1 block text-xs leading-5 text-black/40">How long the deposit stays invested.</span><input aria-label="Deposit tenure in years" value={years} onChange={e => setYears(e.target.value)} type="number" min="0.01" max="100" step="0.25" inputMode="decimal" className={inputClass} /></label>
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Compounding frequency</span><span className="mt-1 block text-xs leading-5 text-black/40">How often interest is compounded.</span><select aria-label="Compounding frequency" value={frequency} onChange={e => setFrequency(e.target.value)} className={inputClass}><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4">Quarterly</option><option value="12">Monthly</option></select></label>
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Deposit amount (₹)</span><span className="mt-1 block text-xs leading-5 text-black/40">How much you are depositing.</span><input aria-label="Deposit amount in rupees" value={principal} onChange={e => { setPrincipal(e.target.value); setCopied(false); }} type="number" min="1" step="1000" inputMode="decimal" className={inputClass} /></label>
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Interest rate (%/year)</span><span className="mt-1 block text-xs leading-5 text-black/40">Annual interest rate offered by the bank.</span><input aria-label="Annual interest rate" value={rate} onChange={e => { setRate(e.target.value); setCopied(false); }} type="number" min="0" max="100" step="0.01" inputMode="decimal" className={inputClass} /></label>
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Tenure (years)</span><span className="mt-1 block text-xs leading-5 text-black/40">How long the deposit stays invested.</span><input aria-label="Deposit tenure in years" value={years} onChange={e => { setYears(e.target.value); setCopied(false); }} type="number" min="0.01" max="100" step="0.25" inputMode="decimal" className={inputClass} /></label>
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Compounding frequency</span><span className="mt-1 block text-xs leading-5 text-black/40">How often interest is compounded.</span><select aria-label="Compounding frequency" value={frequency} onChange={e => { setFrequency(e.target.value); setCopied(false); }} className={inputClass}><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4">Quarterly</option><option value="12">Monthly</option></select></label>
         </fieldset>
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2" aria-label="Quick fixed deposit presets">
-          <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Deposit amount</p><div className="mt-2 flex flex-wrap gap-2">{depositOptions.map(option => <button key={option} type="button" onClick={() => setPrincipal(String(option))} aria-pressed={principal === String(option)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold transition ${focusRing} ${principal === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{money.format(option)}</button>)}</div></div>
-          <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Tenure</p><div className="mt-2 flex flex-wrap gap-2">{tenureOptions.map(option => <button key={option} type="button" onClick={() => setYears(String(option))} aria-pressed={years === String(option)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold transition ${focusRing} ${years === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{option} {option === 1 ? "year" : "years"}</button>)}</div></div>
+          <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Deposit amount</p><div className="mt-2 flex flex-wrap gap-2">{depositOptions.map(option => <button key={option} type="button" onClick={() => { setPrincipal(String(option)); setCopied(false); }} aria-pressed={principal === String(option)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold transition ${focusRing} ${principal === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{money.format(option)}</button>)}</div></div>
+          <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Tenure</p><div className="mt-2 flex flex-wrap gap-2">{tenureOptions.map(option => <button key={option} type="button" onClick={() => { setYears(String(option)); setCopied(false); }} aria-pressed={years === String(option)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold transition ${focusRing} ${years === option ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{option} {option === 1 ? "year" : "years"}</button>)}</div></div>
         </div>
 
-        {result ? <div className="mt-7 grid gap-3 sm:grid-cols-2" aria-live="polite"><div className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Interest earned</p><p className="mt-2 text-2xl font-black tracking-tight">{money.format(result.interest)}</p></div><div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/50">Maturity amount</p><p className="mt-2 text-3xl font-black tracking-tight">{money.format(result.maturity)}</p></div></div> : <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">Enter a positive deposit, a rate from 0% to 100%, and a tenure from 0.01 to 100 years.</p>}
+        {result ? <div className="mt-7" aria-live="polite"><div className="grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Interest earned</p><p className="mt-2 text-2xl font-black tracking-tight">{money.format(result.interest)}</p></div><div className="rounded-2xl border border-[#171717] bg-[#c8f169] p-5"><p className="text-xs font-bold uppercase tracking-[0.14em] text-black/50">Maturity amount</p><p className="mt-2 text-3xl font-black tracking-tight">{money.format(result.maturity)}</p></div></div><div className="mt-4 flex flex-wrap items-center gap-3"><button onClick={copyResult} type="button" className={`inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-4 text-sm font-bold text-black/65 transition hover:border-[#171717] hover:text-black ${focusRing}`} aria-label="Copy fixed deposit calculation results" aria-live="polite">{copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}{copied ? "Copied" : "Copy result"}</button>{copied && <span className="sr-only" role="status">Fixed deposit calculation copied to clipboard.</span>}</div></div> : <p className="mt-6 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-4 text-sm leading-6 text-[#7b3d31]" role="alert">Enter a positive deposit, a rate from 0% to 100%, and a tenure from 0.01 to 100 years.</p>}
         <p className="mt-6 border-t border-[#d8d4c9] pt-5 text-xs leading-5 text-black/45">Estimate only. Actual fixed-deposit maturity can vary by bank rules, compounding method, taxes and applicable rates.</p>
       </div>
     </div>
