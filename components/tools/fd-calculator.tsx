@@ -24,6 +24,7 @@ export default function FdCalculator() {
 
   const reset = () => { setPrincipal("100000"); setRate("7"); setYears("5"); setFrequency("4"); };
   const inputClass = `mt-2 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-white px-3.5 text-base font-semibold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169] ${focusRing}`;
+  const hasCustomInputs = principal !== "100000" || rate !== "7" || years !== "5" || frequency !== "4";
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]">
@@ -33,17 +34,18 @@ export default function FdCalculator() {
             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#eef8d8] text-[#4e7417]" aria-hidden="true"><Banknote size={20} /></span>
             <div className="min-w-0"><p className="font-bold">Estimate your fixed-deposit maturity</p><p className="mt-1 text-sm text-black/50">Enter your deposit details to see interest earned and the maturity amount.</p></div>
           </div>
-          <button onClick={reset} type="button" className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black ${focusRing}`} aria-label="Reset fixed deposit calculator"><RotateCcw size={16} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
+          <button onClick={reset} type="button" disabled={!hasCustomInputs} className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-[#d8d4c9] disabled:hover:text-black/55 ${focusRing}`} aria-label="Reset fixed deposit calculator"><RotateCcw size={16} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
         </div>
       </div>
 
       <div className="p-5 md:p-7">
-        <div className="grid gap-4 md:grid-cols-2">
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4"><span className="text-sm font-semibold">Deposit amount (₹)</span><input aria-label="Deposit amount in rupees" value={principal} onChange={e => setPrincipal(e.target.value)} type="number" min="1" step="1000" inputMode="decimal" className={inputClass} /></label>
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4"><span className="text-sm font-semibold">Interest rate (%/year)</span><input aria-label="Annual interest rate" value={rate} onChange={e => setRate(e.target.value)} type="number" min="0" max="100" step="0.01" inputMode="decimal" className={inputClass} /></label>
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4"><span className="text-sm font-semibold">Tenure (years)</span><input aria-label="Deposit tenure in years" value={years} onChange={e => setYears(e.target.value)} type="number" min="0.01" max="100" step="0.25" inputMode="decimal" className={inputClass} /></label>
-          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4"><span className="text-sm font-semibold">Compounding frequency</span><select aria-label="Compounding frequency" value={frequency} onChange={e => setFrequency(e.target.value)} className={inputClass}><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4">Quarterly</option><option value="12">Monthly</option></select></label>
-        </div>
+        <fieldset className="grid gap-4 md:grid-cols-2">
+          <legend className="sr-only">Fixed deposit details</legend>
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Deposit amount (₹)</span><span className="mt-1 block text-xs leading-5 text-black/40">How much you are depositing.</span><input aria-label="Deposit amount in rupees" value={principal} onChange={e => setPrincipal(e.target.value)} type="number" min="1" step="1000" inputMode="decimal" className={inputClass} /></label>
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Interest rate (%/year)</span><span className="mt-1 block text-xs leading-5 text-black/40">Annual interest rate offered by the bank.</span><input aria-label="Annual interest rate" value={rate} onChange={e => setRate(e.target.value)} type="number" min="0" max="100" step="0.01" inputMode="decimal" className={inputClass} /></label>
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Tenure (years)</span><span className="mt-1 block text-xs leading-5 text-black/40">How long the deposit stays invested.</span><input aria-label="Deposit tenure in years" value={years} onChange={e => setYears(e.target.value)} type="number" min="0.01" max="100" step="0.25" inputMode="decimal" className={inputClass} /></label>
+          <label className="block rounded-2xl border border-[#e2dfd7] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]"><span className="text-sm font-semibold">Compounding frequency</span><span className="mt-1 block text-xs leading-5 text-black/40">How often interest is compounded.</span><select aria-label="Compounding frequency" value={frequency} onChange={e => setFrequency(e.target.value)} className={inputClass}><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4">Quarterly</option><option value="12">Monthly</option></select></label>
+        </fieldset>
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2" aria-label="Quick fixed deposit presets">
           <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-black/40">Deposit amount</p><div className="mt-2 flex flex-wrap gap-2">{depositOptions.map(option => <button key={option} type="button" onClick={() => setPrincipal(String(option))} aria-pressed={principal === String(option)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold transition ${focusRing} ${principal === String(option) ? "border-[#171717] bg-[#171717] text-white" : "border-[#d8d4c9] bg-[#f3f0e8] hover:border-[#171717] hover:bg-white"}`}>{money.format(option)}</button>)}</div></div>
