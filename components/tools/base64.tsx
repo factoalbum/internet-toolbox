@@ -112,19 +112,19 @@ export default function Base64Tool() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-[#d8d4c9] bg-[#f4f1e9] p-4 md:p-5" aria-labelledby="base64-output-heading" aria-live="polite" aria-atomic="true">
+          <section className="rounded-2xl border border-[#d8d4c9] bg-[#f4f1e9] p-4 md:p-5" aria-labelledby="base64-output-heading">
             <div className="flex items-end justify-between gap-3">
               <div>
                 <h3 id="base64-output-heading" className="text-sm font-black text-[#171717]">Result</h3>
                 <p className="mt-1 text-xs leading-5 text-black/45">Your converted value appears here</p>
               </div>
-              <button type="button" onClick={copy} disabled={!result.value} aria-label={copied ? "Result copied" : "Copy result"} className={`min-h-11 rounded-xl border border-[#bcb8ae] bg-white px-4 text-xs font-black text-[#171717] transition hover:border-[#171717] hover:bg-white ${focusRing} disabled:cursor-not-allowed disabled:opacity-35`}>{copied ? <span className="inline-flex items-center gap-1.5"><Check size={15} aria-hidden="true" />Copied</span> : <span className="inline-flex items-center gap-1.5"><Clipboard size={15} aria-hidden="true" />Copy</span>}</button>
+              <button type="button" onClick={copy} disabled={!result.value} aria-label={copied ? "Result copied" : "Copy result"} aria-describedby={copyError ? "base64-copy-error" : undefined} className={`min-h-11 rounded-xl border border-[#bcb8ae] bg-white px-4 text-xs font-black text-[#171717] transition hover:border-[#171717] hover:bg-white ${focusRing} disabled:cursor-not-allowed disabled:opacity-35`}>{copied ? <span className="inline-flex items-center gap-1.5"><Check size={15} aria-hidden="true" />Copied</span> : <span className="inline-flex items-center gap-1.5"><Clipboard size={15} aria-hidden="true" />Copy</span>}</button>
             </div>
 
-            <textarea id="base64-output" readOnly value={result.value} spellCheck={false} placeholder="Your result will appear here" aria-label="Base64 conversion result" aria-describedby={copyError ? "base64-copy-error" : undefined} className={`mt-4 min-h-56 w-full resize-y rounded-xl border border-[#d8d4c9] bg-white p-4 font-mono text-sm leading-6 text-[#171717] outline-none placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40 ${focusRing}`} />
+            <textarea id="base64-output" readOnly value={result.value} spellCheck={false} placeholder="Your result will appear here" aria-label="Base64 conversion result" className={`mt-4 min-h-56 w-full resize-y rounded-xl border border-[#d8d4c9] bg-white p-4 font-mono text-sm leading-6 text-[#171717] outline-none placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40 ${focusRing}`} />
             <div className="mt-2 flex items-center justify-between gap-3">
               <span className="text-xs font-semibold text-black/40">{outputLength ? `${outputLength.toLocaleString("en-IN")} chars` : "Waiting for input"}</span>
-              {result.value && <span className="rounded-full bg-[#e9f1d8] px-2.5 py-1 text-[11px] font-bold text-[#52691f]">Ready</span>}
+              {result.value && <span className="rounded-full bg-[#e9f1d8] px-2.5 py-1 text-[11px] font-bold text-[#52691f]" role="status">Ready</span>}
             </div>
           </section>
         </div>
