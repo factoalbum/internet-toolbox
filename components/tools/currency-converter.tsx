@@ -87,6 +87,8 @@ export default function CurrencyConverter() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  const invalidAmount = amount.trim() !== "" && (!Number.isFinite(Number(amount)) || Number(amount) < 0);
+
   const result = useMemo(() => {
     const value = Number(amount);
     if (!rates || !Number.isFinite(value) || value < 0 || rates[base] === undefined || rates[target] === undefined || rates[base] <= 0) return null;
@@ -127,10 +129,10 @@ export default function CurrencyConverter() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1.05fr_1fr_1fr_auto] lg:items-end">
-            <label className="block rounded-2xl border border-[#dedbd3] bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)]">
+            <label className={`block rounded-2xl border bg-white p-4 transition focus-within:border-[#171717] focus-within:shadow-[0_0_0_4px_rgb(200_241_105_/_35%)] ${invalidAmount ? "border-[#c46b5c]" : "border-[#dedbd3]"}`}>
               <span className="text-sm font-black">Amount</span>
               <span className="mt-1 block text-xs leading-5 text-black/40">Amount to convert</span>
-              <input id="currency-amount" value={amount} onChange={e => setAmount(e.target.value)} inputMode="decimal" aria-describedby="currency-amount-help" className="mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-lg font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40" />
+              <input id="currency-amount" type="number" min="0" step="any" value={amount} onChange={e => setAmount(e.target.value)} inputMode="decimal" aria-invalid={invalidAmount} aria-describedby="currency-amount-help" className={`mt-3 min-h-12 w-full rounded-xl border border-[#bcb8ae] bg-[#fffdf8] px-4 text-lg font-bold outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40 ${invalidAmount ? "border-[#c46b5c]" : ""}`} />
               <span id="currency-amount-help" className="sr-only">Use zero or a positive number.</span>
             </label>
 
@@ -148,6 +150,7 @@ export default function CurrencyConverter() {
 
             <button type="button" onClick={swapCurrencies} aria-label={`Swap ${base} and ${target}`} className="min-h-12 rounded-xl border border-[#d8d4c9] bg-white px-4 text-sm font-bold text-black/65 transition hover:border-[#171717] hover:text-black focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f169]/60 lg:size-12 lg:min-h-12 lg:px-0"><ArrowLeftRight size={17} className="mx-auto" aria-hidden="true" /><span className="ml-2 lg:sr-only">Swap currencies</span></button>
           </div>
+          {invalidAmount && <p className="mt-3 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-3 text-xs font-semibold leading-5 text-[#7b3d31]" role="alert">Enter a valid amount of 0 or more.</p>}
         </section>
 
         <section className="mt-6" aria-labelledby="currency-result-heading" aria-live="polite">
