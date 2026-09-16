@@ -19,6 +19,7 @@ export default function UrlEncoder() {
   }, [input, mode]);
 
   const hasError = input.length > 0 && output === "Invalid encoded URL text.";
+  const hasDefaultState = input === "" && mode === "encode";
 
   function updateInput(value: string) {
     setInput(value);
@@ -71,7 +72,8 @@ export default function UrlEncoder() {
           <button
             type="button"
             onClick={reset}
-            className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black ${focusRing}`}
+            disabled={hasDefaultState}
+            className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#d8d4c9] bg-white px-3 text-sm font-bold text-black/55 transition hover:border-[#171717] hover:text-black disabled:cursor-not-allowed disabled:opacity-35 ${focusRing}`}
             aria-label="Reset URL encoder and decoder"
           >
             <RotateCcw size={16} aria-hidden="true" />
@@ -136,7 +138,7 @@ export default function UrlEncoder() {
               <span id="url-input-help" className="mt-2 block text-xs text-black/35">Processed locally in your browser.</span>
             </label>
 
-            <section className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-4" aria-labelledby="url-result-label" aria-live="polite" aria-atomic="true">
+            <section className="rounded-2xl border border-[#d8d4c9] bg-[#f3f0e8] p-4" aria-labelledby="url-result-label">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <span className="block text-xs font-black uppercase tracking-[.12em] text-black/40">Result</span>
@@ -147,6 +149,7 @@ export default function UrlEncoder() {
                   type="button"
                   onClick={copy}
                   disabled={!output || hasError}
+                  aria-describedby={copyError ? "url-copy-error" : undefined}
                   className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-35 ${copied ? "border-[#171717] bg-[#c8f169] text-black" : "border-[#d0ccc2] bg-white hover:border-[#171717] hover:bg-[#c8f169]"} ${focusRing}`}
                   aria-label={copied ? "URL result copied" : "Copy URL result"}
                 >
@@ -161,7 +164,7 @@ export default function UrlEncoder() {
                 placeholder="Your result will appear here"
                 aria-label="URL conversion result"
                 aria-invalid={hasError}
-                className={`mt-3 min-h-56 w-full resize-y rounded-xl border bg-white p-4 font-mono text-sm leading-6 outline-none transition ${hasError ? "border-[#c98b80] bg-[#fff7f5] text-[#7b3d31]" : "border-[#d0ccc2]"}`}
+                className={`mt-3 min-h-56 w-full resize-y rounded-xl border bg-white p-4 font-mono text-sm leading-6 outline-none transition focus:border-[#171717] ${hasError ? "border-[#c98b80] bg-[#fff7f5] text-[#7b3d31]" : "border-[#d0ccc2]"} ${focusRing}`}
               />
               <div className="mt-2 flex items-center justify-between gap-3">
                 <span className="text-xs text-black/35">Output is not uploaded.</span>
@@ -172,7 +175,7 @@ export default function UrlEncoder() {
         </section>
 
         {(hasError || copyError) && (
-          <p className="mt-4 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-3 text-sm leading-5 text-[#7b3d31]" role="alert">
+          <p id="url-copy-error" className="mt-4 rounded-xl border border-[#ead7d2] bg-[#fff7f5] p-3 text-sm leading-5 text-[#7b3d31]" role="alert">
             {copyError || "The encoded value could not be decoded. Check that the percent-encoding is complete and try again."}
           </p>
         )}
