@@ -73,6 +73,14 @@ export default function JsonFormatter() {
   const outputLines = output ? output.split(/\r?\n/).length : 0;
   const isDirty = input !== DEFAULT_INPUT || !!output || !!error || !!copyError || copied;
 
+  function updateInput(value: string) {
+    setInput(value);
+    setOutput("");
+    setError("");
+    setCopyError("");
+    setCopied(false);
+  }
+
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d8d4c9] bg-[#fffdf8] shadow-[0_8px_24px_rgba(23,23,23,.045)]" aria-labelledby="json-workspace-title">
       <header className="border-b border-[#d8d4c9] bg-[#f4f1e9] px-5 py-6 md:px-7">
@@ -99,7 +107,7 @@ export default function JsonFormatter() {
             </div>
             <span className="rounded-full bg-[#f2efe7] px-2.5 py-1 text-[11px] font-semibold text-black/50">Local only</span>
           </div>
-          <textarea id="json-input" value={input} onChange={(event) => { setInput(event.target.value); setError(""); setCopyError(""); setCopied(false); }} onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); formatJson(); } }} spellCheck={false} aria-describedby="json-input-help" aria-keyshortcuts="Control+Enter Meta+Enter" aria-invalid={!!error} className="mt-4 min-h-72 w-full resize-y rounded-lg border border-[#c9c5ba] bg-[#fffdf8] p-4 font-mono text-sm leading-6 text-[#171717] outline-none transition-shadow placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40 aria-[invalid=true]:border-red-400 aria-[invalid=true]:focus:ring-red-100" />
+          <textarea id="json-input" value={input} onChange={(event) => updateInput(event.target.value)} onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); formatJson(); } }} spellCheck={false} aria-describedby="json-input-help" aria-keyshortcuts="Control+Enter Meta+Enter" aria-invalid={!!error} className="mt-4 min-h-72 w-full resize-y rounded-lg border border-[#c9c5ba] bg-[#fffdf8] p-4 font-mono text-sm leading-6 text-[#171717] outline-none transition-shadow placeholder:text-black/25 focus:border-[#171717] focus:ring-4 focus:ring-[#c8f169]/40 aria-[invalid=true]:border-red-400 aria-[invalid=true]:focus:ring-red-100" />
           <p id="json-input-help" className="mt-2 text-xs leading-5 text-black/45">Formatting preserves the JSON data; it only changes whitespace and indentation. Press Ctrl/Cmd + Enter to format.</p>
         </section>
 
